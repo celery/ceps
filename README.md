@@ -1,2 +1,0 @@
-# ceps
-Celery Enhancement Proposals

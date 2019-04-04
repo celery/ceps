@@ -211,7 +211,7 @@ committing and pushing a new CEP. However, when doing so they need to take on
 the tasks normally handled by the reviewer described above. This includes
 ensuring the initial version meets the expected standards for submitting a CEP.
 Of course, committers may still choose to submit CEPs as a pull request to
-benfit from peer review.
+benefit from peer review.
 
 Discussion, development, and updates
 ------------------------------------
@@ -435,7 +435,7 @@ a competing CEP.
 
 If you are interested in assuming ownership of a CEP, first try to contact the
 original author and ask for permission. If they approve, ask them to open a pull
-request transfering the CEP to you. If the original author doesn't respond to
+request transferring the CEP to you. If the original author doesn't respond to
 email within a few weeks, contact Celery-developers.
 
 

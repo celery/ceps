@@ -38,11 +38,19 @@ As such, our next major version should represent a paradigm shift in the way we 
 Specification
 =============
 
-This section should contain a complete, detailed technical specification should
-describe the syntax and semantics of any new feature.  The specification should
-be detailed enough to allow implementation -- that is, developers other than the
-author should (given the right experience) be able to independently implement
-the feature, given only the CEP.
+Message Types
+-------------
+
+`Enterprise Integration Patterns`_ defines multiple common message types:
+
+* `Command Messsages <https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html>`_
+* `Event Messages <https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html>`_
+* `Document Messages <https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html>`_
+
+An event message triggers all the tasks subscribed to it.
+A data message triggers all the tasks subscribed to it.
+When a command message is received by a worker, a task is executed.
+The task may produce a document message as a result.
 
 Motivation
 ==========
@@ -84,3 +92,5 @@ This document has been placed in the public domain per the Creative Commons
 CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed).
 
 (All CEPs must include this exact copyright statement.)
+
+.. _Enterprise Integration Patterns: https://www.enterpriseintegrationpatterns.com

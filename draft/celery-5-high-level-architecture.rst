@@ -24,12 +24,12 @@ Nowdays most applications are (or should be):
 
 * Deployed to a cloud provider's computing resources.
 * Distributed, sometimes between datacenters.
-* Failure reselient and Fault Tolerant.
+* Failure resilient and Fault Tolerant.
 * Observable.
 * Built with scalibility in mind.
 * Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheudler.
 
-In addition, Celery lacks proper support for large scale deployments and some very useful messaging architectual patterns.
+In addition, Celery lacks proper support for large scale deployments and some very useful messaging architectural patterns.
 
 Celery 5 is the next major version of Celery and so we are able to break backwards compatibility, even in major ways.
 
@@ -90,6 +90,44 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this document
 and in Celery 5's codebase as well.
 
+Publisher
+---------
+
+Scheduler
+---------
+
+Router
+------
+
+Message Broker
+++++++++++++++
+
+`Enterprise Integration Patterns`_ defines a `Message Broker`_ as an architectural
+building block which that can receive messages from
+multiple destinations, determine the correct destination and route the message
+to the correct channel.
+
+The Router is responsible for managing the connection to a message broker and
+consuming messages from the broker.
+
+The Router can maintain a connection to a cluster of message brokers or even
+clusters of message brokers.
+
+Data Source
++++++++++++
+
+Ingress Only Data Sources
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Ingress/Egress Data Sources
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Controller
+----------
+
+Worker
+------
+
 Motivation
 ==========
 
@@ -136,3 +174,4 @@ CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed
 .. _Event Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html
 .. _Document Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/DocumentMessage.html
 .. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
+.. _Message Broker: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html

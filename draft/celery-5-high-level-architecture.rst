@@ -43,9 +43,9 @@ Message Types
 
 `Enterprise Integration Patterns`_ defines multiple common message types:
 
-* **`Command Message`_** - A message which instructs a worker to execute a task.
-* **`Event Message`_** - A message which indicates that an event has occurred.
-* **`Document Message`_** - A message containing data from a data source.
+* `Command Message`_ - A message which instructs a worker to execute a task.
+* `Event Message`_ - A message which indicates that an event has occurred.
+* `Document Message`_ - A message containing data from a data source.
 
 In relation to Celery Command messages are the messages we publish whenever we delay a task.
 Document messages are the messages we get as a result.
@@ -65,7 +65,7 @@ occurred. Multiple tasks can be subscribed to an event.
 
 The API presented here is a draft to be determined by anohter CEP:
 
-.. code-blcok:: pycon
+.. code-block:: pycon
 
   >>> from uuid import UUID
   >>> from celery import task, event
@@ -76,8 +76,8 @@ The API presented here is a draft to be determined by anohter CEP:
   ...   User.objects.filter(pk=user_id).update(welcome_email_sent=True)
   >>> @task
   ... def notify_account_manager(user_id, email):
-        account_manager = AccountManager.objects.assign_account_manager(user_id)
-        send_email(email=account_manager.email, contents="you have a new user to attend to", subject="Alert") # Send an email to the account manager...
+  ...   account_manager = AccountManager.objects.assign_account_manager(user_id)
+  ...   send_email(email=account_manager.email, contents="you have a new user to attend to", subject="Alert") # Send an email to the account manager...
   >>> @event
   ... class UserRegistered:
   ...   user_id: uuid.UUID

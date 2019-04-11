@@ -29,7 +29,7 @@ Nowdays most applications are (or should be):
 * Built with scalibility in mind.
 * Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheudler.
 
-In addition, Celery lacks proper support for large scale deployments and some very useful messaging architectural patterns.
+In addition, Celery lacks proper support for large scale deployments and some useful messaging architectural patterns.
 
 Celery 5 is the next major version of Celery and so we are able to break backwards compatibility, even in major ways.
 

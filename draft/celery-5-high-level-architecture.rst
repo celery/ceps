@@ -43,14 +43,52 @@ Message Types
 
 `Enterprise Integration Patterns`_ defines multiple common message types:
 
-* `Command Messsages <https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html>`_
-* `Event Messages <https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html>`_
-* `Document Messages <https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html>`_
+* **`Command Message`_** - A message which instructs a worker to execute a task.
+* **`Event Message`_** - A message which indicates that an event has occurred.
+* **`Document Message`_** - A message containing data from a data source.
 
-An event message triggers all the tasks subscribed to it.
-A data message triggers all the tasks subscribed to it.
-When a command message is received by a worker, a task is executed.
-The task may produce a document message as a result.
+In relation to Celery Command messages are the messages we publish whenever we delay a task.
+Document messages are the messages we get as a result.
+
+.. code-block:: pycon
+
+  >>> from celery import task
+  >>> @task
+  ... def add(a, b):
+  ...   return a + b
+  >>> result = add.delay(1, 2)  # Publish a command message
+  >>> result.get()  # Consume a Document message
+  3
+
+Event messages are a new concept for Celery. They describe that a domain event
+occurred. Multiple tasks can be subscribed to an event.
+
+The API presented here is a draft to be determined by anohter CEP:
+
+.. code-blcok:: pycon
+
+  >>> from uuid import UUID
+  >>> from celery import task, event
+  >>> from myapp.models import User, AccountManager
+  >>> @task
+  ... def send_welcome_email(user_id, email):
+  ...   send_email(email=email, contents="hello, welcome", subject="welcome") # Send a welcome email to the user...
+  ...   User.objects.filter(pk=user_id).update(welcome_email_sent=True)
+  >>> @task
+  ... def notify_account_manager(user_id, email):
+        account_manager = AccountManager.objects.assign_account_manager(user_id)
+        send_email(email=account_manager.email, contents="you have a new user to attend to", subject="Alert") # Send an email to the account manager...
+  >>> @event
+  ... class UserRegistered:
+  ...   user_id: uuid.UUID
+  ...   email: str
+  >>> UserRegistered.subscribe(send_welcome_email)
+  >>> UserRegistered.subscribe(notify_account_manager)
+  >>> UserRegistered.delay(user_id=1, email='foo@bar.com')  # Calls both send_welcome_email and notify_account_manager with the provided arguments.
+
+These architectural building blocks will aid us in creating a better messaging
+system. To encourage `ubiquitous language`_, we will be using them in this document
+and in Celery 5's codebase as well.
 
 Motivation
 ==========
@@ -94,3 +132,7 @@ CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed
 (All CEPs must include this exact copyright statement.)
 
 .. _Enterprise Integration Patterns: https://www.enterpriseintegrationpatterns.com
+.. _Command Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html
+.. _Event Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html
+.. _Document Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/DocumentMessage.html
+.. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html

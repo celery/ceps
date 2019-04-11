@@ -90,22 +90,52 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this document
 and in Celery 5's codebase as well.
 
+Message Broker
+--------------
+
+`Enterprise Integration Patterns`_ defines a `Message Broker`_ as an architectural
+building block that can receive messages from
+multiple destinations, determine the correct destination and route the message
+to the correct channel.
+
 Publisher
 ---------
+
+The Publisher is responsible for publishing messages to a :ref:`message broker`.
+
+It is responsible for publishing the message to the appropriate broker cluster
+according to the configuration provided to the publisher.
+
+The publisher must be able to run in-process inside a long-running thread
+or a long running co-routine.
+
+It can also be run using a separate daemon which can serve all the processes
+publishing to the message brokers.
+
+Health Checks
++++++++++++++
+
+The Publisher will perform health checks to ensure that the message broker
+the user is publishing to is available.
+
+If a health check fails a configured number of times, the relevant
+:ref:`Circuit Breakers <Circuit Breaker>` are triggered.
+
+Each :ref:`message broker` Celery supports must provide an implementation for
+the default health checks the Publisher will use for verifying its
+availability for new messages.
+
+Circuit Breaker
++++++++++++++++
+
+Messages Backlog
+++++++++++++++++
 
 Scheduler
 ---------
 
 Router
 ------
-
-Message Broker
-++++++++++++++
-
-`Enterprise Integration Patterns`_ defines a `Message Broker`_ as an architectural
-building block which that can receive messages from
-multiple destinations, determine the correct destination and route the message
-to the correct channel.
 
 The Router is responsible for managing the connection to a message broker and
 consuming messages from the broker.

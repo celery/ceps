@@ -119,17 +119,66 @@ The Publisher will perform health checks to ensure that the message broker
 the user is publishing to is available.
 
 If a health check fails a configured number of times, the relevant
-:ref:`Circuit Breakers <Circuit Breaker>` are triggered.
+:ref:`Circuit Breakers <Circuit Breaker>` are tripped.
 
 Each :ref:`message broker` Celery supports must provide an implementation for
 the default health checks the Publisher will use for verifying its
 availability for new messages.
 
+Further health checks can be defined by the user.
+These health checks allows the user to avoid publishing tasks if for example
+a 3rd party API endpoint is not available or slow, if the database
+the user stores the results in is available or any other check for that matter.
+
 Circuit Breaker
 +++++++++++++++
 
+Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
+
+  | The basic idea behind the circuit breaker is very simple.
+  | You wrap a protected function call in a circuit breaker object, which monitors
+  | for failures.
+  | Once the failures reach a certain threshold, the circuit breaker trips,
+  | and all further calls to the circuit breaker return with an error,
+  | without the protected call being made at all.
+  | Usually you'll also want some kind of monitor alert if the circuit breaker
+  | trips.
+
+Each :ref:`health check <Health Checks>` has it's own Circuit Breaker.
+Once a circuit breaker is tripped, the messages are stored
+in the :ref:`messages backlog` until the health check recovers and the circuit
+is once again closed.
+
 Messages Backlog
 ++++++++++++++++
+
+The messages backlog is a temporary queue of messages yet to be published to
+the appropriate broker cluster.
+
+In the event where messages cannot be published for any reason, the messages
+are kept inside the queue.
+
+By default, an in-memory queue will be used. The user may provide another
+implementation which stores the messages on-disk or in a central database.
+
+Publisher Daemon
+++++++++++++++++
+
+In sufficiently large deployments, one server runs multiple workloads which
+may publish to a :ref:`message broker`.
+
+Therefore, it is unnecessary to maintain a publisher for each process that
+publishes to a :ref:`message broker`.
+
+In such cases, a Publisher Daemon can be used. The publishing processes will
+specify it as their target and communicate the messages to be published via
+a socket.
+
+If a disk based queue is used, the user may configure Celery to write to it
+directly, provided that the queue can perform inserts and deletes concurrently.
+
+Observability
++++++++++++++
 
 Scheduler
 ---------
@@ -205,3 +254,4 @@ CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed
 .. _Document Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/DocumentMessage.html
 .. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
 .. _Message Broker: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html
+.. _Circuit Breaker: https://martinfowler.com/bliki/CircuitBreaker.html

@@ -16,7 +16,7 @@ CEP XXXX: CEP template
    :local:
 
 This CEP provides a sample template for creating your own CEPs.  In conjunction
-with the content guidelines in `CEP 1 <https://github.com/celery/ceps/final/0001-cep-process.rst>`_,
+with the content guidelines in :ref:`CEP 1: CEP Purpose and Guidelines`,
 this should make it easy for you to conform your own CEPs to the format
 outlined below.
 
@@ -41,7 +41,7 @@ __ http://docutils.sourceforge.net/spec/rst/reStructuredText.html
 
 Once you've made a copy of this template, remove this abstract, fill out the
 metadata above and the sections below, then submit the CEP. Follow the
-guidelines in `CEP 1 <https://github.com/celery/ceps/final/0001-dep-process.rst>`_.
+guidelines in :ref:`CEP 1: CEP Purpose and Guidelines`.
 
 Abstract
 ========

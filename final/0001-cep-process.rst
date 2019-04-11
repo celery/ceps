@@ -4,7 +4,7 @@ CEP 1: CEP Purpose and Guidelines
 
 :CEP: 1
 :Author: Omer Katz
-:Status: Draft
+:Status: Final
 :Type: Process
 :Created: 2019-04-03
 :Last-Modified: 2019-04-03

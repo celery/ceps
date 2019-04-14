@@ -26,7 +26,7 @@ Nowdays most applications are (or should be):
 * Distributed, sometimes between datacenters.
 * Failure resilient and Fault Tolerant.
 * Observable.
-* Built with scalibility in mind.
+* Built with scalability in mind.
 * Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheudler.
 
 In addition, Celery lacks proper support for large scale deployments and some useful messaging architectural patterns.
@@ -206,7 +206,7 @@ By default, all metrics will be published to a broker cluster configured
 by the user.
 
 Alternative reporting mechanisms may be implemented by the user.
-As such, the design must ensure extensiblity of the reporting mechanism. 
+As such, the design must ensure extensibility of the reporting mechanism.
 
 Scheduler
 ---------
@@ -229,11 +229,12 @@ Ingress Only Data Sources
 Ingress/Egress Data Sources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Worker
+------
+
 Controller
 ----------
 
-Worker
-------
 
 Motivation
 ==========

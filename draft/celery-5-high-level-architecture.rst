@@ -208,8 +208,51 @@ by the user.
 Alternative reporting mechanisms may be implemented by the user.
 As such, the design must ensure extensibility of the reporting mechanism.
 
+
+Worker
+------
+
 Scheduler
 ---------
+
+The scheduler is responsible for managing the scheduling of tasks for execution.
+
+The scheduler is implemented as a worker which listens to messages directly
+from other Celery components instead of using a broker.
+
+The scheduler calculates the amount of tasks to be executed in any given time
+in order to make cluster wide decisions when autoscaling workers or increasing
+concurrency for an existing worker.
+To do so it communicates with the Controller.
+
+The scheduler is aware when tasks should no longer be executed due to manual
+intervention or a circuit breaker trip. To do so, it orders the router to avoid
+consuming the task or rejecting it.
+To do so it communicates with the Router.
+
+Suspend/Resume Tasks
+++++++++++++++++++++
+
+Task Prioritization
++++++++++++++++++++
+
+Resource Saturation
+~~~~~~~~~~~~~~~~~~~
+
+Rate Limiting
++++++++++++++
+
+Beat
+++++
+
+Concurrency Limitations
++++++++++++++++++++++++
+
+Autoscaler
+~~~~~~~~~~
+
+Observability
++++++++++++++
 
 Router
 ------
@@ -228,9 +271,6 @@ Ingress Only Data Sources
 
 Ingress/Egress Data Sources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Worker
-------
 
 Controller
 ----------

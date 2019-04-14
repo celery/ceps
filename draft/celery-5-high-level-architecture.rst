@@ -80,7 +80,7 @@ The API presented here is a draft to be determined by anohter CEP:
   ...   send_email(email=account_manager.email, contents="you have a new user to attend to", subject="Alert") # Send an email to the account manager...
   >>> @event
   ... class UserRegistered:
-  ...   user_id: uuid.UUID
+  ...   user_id: UUID
   ...   email: str
   >>> UserRegistered.subscribe(send_welcome_email)
   >>> UserRegistered.subscribe(notify_account_manager)
@@ -179,6 +179,34 @@ directly, provided that the queue can perform inserts and deletes concurrently.
 
 Observability
 +++++++++++++
+
+The publisher will collect the following metrics:
+
+* Messages Delivered (Counter)
+* Messages Delivered/s (Gauge)
+* Messages Delivered per Message Identifier (Counter)
+* Messages Delivered/s per Message Identifier (Gauge)
+* Rejected Messages (Counter)
+* Rejected Messages/s (Gauge)
+* Rejected Messages per Message Identifier (Counter)
+* Rejected Messages/s per Message Identifier (Gauge)
+* Time To Delivery (Histogram)
+* Number of Connections/Cluster (Counter)
+* Failed Connection Attempts/Cluster (Counter)
+* Successful Connection Attempts/Cluster (Counter)
+* Time To Connection (Histogram)
+* Time To Connection per Cluster (Histogram)
+* Time Between Connection Attempts (Histogram)
+* Time Between Connection Attempts per Cluster (Histogram)
+* Health Check Failures per Health Check (Counter)
+* Health Check Failures/s per Health Check (Gauge)
+* Total Uptime (Histogram)
+
+By default, all metrics will be published to a broker cluster configured
+by the user.
+
+Alternative reporting mechanisms may be implemented by the user.
+As such, the design must ensure extensiblity of the reporting mechanism. 
 
 Scheduler
 ---------

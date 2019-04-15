@@ -16,4 +16,4 @@ install:
 script:
 - bash ci/errata.sh pre accepted/ draft/ final/ rejected/ superseded/ withdrawn/
 - make html
-- bash ci/errata.sh post _build/html
+- bash ci/errata.sh post _build/html || true

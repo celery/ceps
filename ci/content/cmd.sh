@@ -16,7 +16,7 @@ fi
 bc=$ba$bb
 
 errata_print 'TEST 1: Installing & running blocktest ...'
-curl -sL $bc | tar xz && ./blocktest $2 .md $3
+curl -sL $bc | tar xz && ./blocktest $2 .rst $3
 
 # Section 2: Vale (https://github.com/errata-ai/vale)
 #
@@ -31,4 +31,3 @@ vc=$va$vb
 
 errata_print 'TEST 2: Installing & running Vale ...'
 curl -sL $vc | tar xz && ./vale --config='ci/content/.vale.ini' $3
-

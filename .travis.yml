@@ -8,7 +8,7 @@ cache:
     - $HOME/.cache/pip
 
 install:
-  - pip install --user Sphinx
+  - pip install --user 'sphinx>=2.0'
   - npm install prettyjson
 
 script:

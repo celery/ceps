@@ -293,35 +293,14 @@ Observability
 Motivation
 ==========
 
-This section should explain *why* this CEP is needed. The motivation is critical
-for CEPs that want to add substantial new features or materially refactor
-existing ones.  It should clearly explain why the existing solutions are
-inadequate to address the problem that the CEP solves.  CEP submissions without
-sufficient motivation may be rejected outright.
-
 Rationale
 =========
-
-This section should flesh out out the specification by describing what motivated
-the specific design design and why particular design decisions were made.  It
-should describe alternate designs that were considered and related work.
-
-The rationale should provide evidence of consensus within the community and
-discuss important objections or concerns raised during discussion.
 
 Backwards Compatibility
 =======================
 
-If this CEP introduces backwards incompatibilities, you must must include this
-section. It should describe these incompatibilities and their severity, and what
-mitigation you plan to take to deal with these incompatibilities.
-
 Reference Implementation
 ========================
-
-If there's an implementation of the feature under discussion in this CEP,
-this section should include or link to that implementation and provide any
-notes about installing/using/trying out the implementation.
 
 Copyright
 =========

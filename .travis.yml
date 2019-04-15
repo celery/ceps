@@ -7,7 +7,9 @@ cache:
   directories:
     - $HOME/.cache/pip
 
-install: pip install --user Sphinx
+install:
+  - pip install --user Sphinx
+  - npm install prettyjson
 
 script:
 - bash ci/errata.sh pre accepted/ draft/ final/ rejected/ superseded/ withdrawn/

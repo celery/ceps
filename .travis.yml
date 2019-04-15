@@ -1,0 +1,19 @@
+language: node_js
+dist: xenial
+node_js:
+- stable
+
+cache:
+  npm: true
+  directories:
+    - $HOME/.cache/pip
+
+install:
+  - pyenv global 3.7
+  - pip3 install --user 'sphinx>=2.0'
+  - npm install prettyjson
+
+script:
+- bash ci/errata.sh pre accepted/ draft/ final/ rejected/ superseded/ withdrawn/
+- make html
+- bash ci/errata.sh post _build/html || true

@@ -23,11 +23,11 @@ When Celery was conceived, production environments were radically different from
 Nowdays most applications are (or should be):
 
 * Deployed to a cloud provider's computing resources.
-* Distributed, sometimes between datacenters.
+* Distributed, sometimes between data centers.
 * Failure resilient and Fault Tolerant.
 * Observable.
 * Built with scalability in mind.
-* Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheudler.
+* Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheduler.
 
 In addition, Celery lacks proper support for large scale deployments and some useful messaging architectural patterns.
 
@@ -63,7 +63,7 @@ Document messages are the messages we get as a result.
 Event messages are a new concept for Celery. They describe that a domain event
 occurred. Multiple tasks can be subscribed to an event.
 
-The API presented here is a draft to be determined by anohter CEP:
+The API presented here is a draft to be determined by another CEP:
 
 .. code-block:: pycon
 

@@ -212,6 +212,15 @@ As such, the design must ensure extensibility of the reporting mechanism.
 Worker
 ------
 
+Protocol
+++++++++
+
+Introduction to AMQP 1.0 Terminology
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Observability
++++++++++++++
+
 Scheduler
 ---------
 
@@ -272,9 +281,14 @@ Ingress Only Data Sources
 Ingress/Egress Data Sources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Observability
++++++++++++++
+
 Controller
 ----------
 
+Observability
++++++++++++++
 
 Motivation
 ==========

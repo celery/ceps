@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+- stable
+
+cache:
+  npm: true
+  directories:
+    - $HOME/.cache/pip
+
+install: pip install --user Sphinx
+
+script:
+- bash ci/errata.sh pre accepted/ draft/ final/ rejected/ superseded/ withdrawn/
+- make html
+- bash ci/errata.sh post _build/html

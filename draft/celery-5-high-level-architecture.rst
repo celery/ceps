@@ -119,7 +119,7 @@ The Publisher will perform health checks to ensure that the message broker
 the user is publishing to is available.
 
 If a health check fails a configured number of times, the relevant
-:ref:`Circuit Breakers <Circuit Breaker>` are tripped.
+:ref:`Circuit Breaker` is tripped.
 
 Each :ref:`message broker` Celery supports must provide an implementation for
 the default health checks the Publisher will use for verifying its
@@ -218,6 +218,56 @@ Protocol
 Introduction to AMQP 1.0 Terminology
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+Health Checks
++++++++++++++
+
+The Worker will perform health checks to ensure that it can execute
+a task without errors.
+
+A task may have more than one health check. However, that does not necessarily
+means that if any of the health checks fail a configured number of times
+it will trip a Circuit Breaker.
+
+Task health checks have the following states:
+
+* **Healthy** - The task will be executed without errors.
+* **Degraded** - The task may fail, in which case it will be retried later.
+* **Unhealthy** - The task will surely fail and thus is rejected.
+
+A user can associate a health check with multiple Circuit Breakers.
+
+The API for task health checks will be determined in another CEP.
+
+Circuit Breaker
++++++++++++++++
+
+Each task has it's own Circuit Breaker.
+
+Whenever a circuit breaker trips, the worker will emit a warning log message.
+
+The user will configure the following properties of the Circuit Breaker:
+
+* How many times the health checks may fail before
+  the circuit breaker trips.
+* The period of time after which the circuit is yet
+  again closed. That time period may grow linearly or exponentially.
+* How many circuit breaker trips during a period of time should cause the worker
+  to produce an error log message instead of a warning log message.
+* The period of time after which the circuit breaker downgrades
+  it's log level back to warning.
+
+.. rubric:: Example
+
+  We allow 2 **Unhealthy** health checks
+  and/or 10 **Degraded** health checks in a period of 10 seconds.
+  If we cross that threshold, the circuit breaker trips.
+  The circuit will be closed again after 30 seconds. Afterwards, the task can
+  be executed again.
+  If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
+  all circuit breaker trips will emit an error log message instead of a warning.
+  The circuit breaker will downgrade it's log level after 30 minutes.
+
+
 Observability
 +++++++++++++
 
@@ -241,6 +291,20 @@ To do so it communicates with the Router.
 
 Suspend/Resume Tasks
 ++++++++++++++++++++
+
+Whenever a Circuit Breaker trips, the Router must issue an event
+to the scheduler. The exact payload of the suspension event will be determined
+in another CEP.
+
+This will notify the scheduler that it no longer has to take this task into
+account when calculating the Celery workers cluster capacity.
+
+The user may elect to send this event directly to the scheduler if suspension
+of execution is required (E.g. The task interacts with a database which is
+going under expected maintenance).
+
+Once scheduling can be resumed, the Router another event to the scheduler.
+The exact payload of the resumption event will be determined in another CEP.
 
 Task Prioritization
 +++++++++++++++++++

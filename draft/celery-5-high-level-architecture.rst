@@ -319,6 +319,18 @@ Resource Saturation
 Rate Limiting
 +++++++++++++
 
+A user may impose a rate limit on the execution of a task.
+
+For example, we only want to run 200 `send_welcome_email()` tasks per minute
+in order to avoid decreasing our email reputation.
+
+Tasks may define a global rate limit or a per worker rate limit.
+
+Whenever a task reaches it's rate limit, an event is sent to the :ref:`Router`
+to notify that is should not consume or reject these tasks.
+The exact payload of the rate limiting event will be determined
+in another CEP.
+
 Beat
 ++++
 

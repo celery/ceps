@@ -258,14 +258,18 @@ The user will configure the following properties of the Circuit Breaker:
 
 .. rubric:: Example
 
-  We allow 2 **Unhealthy** health checks
-  and/or 10 **Degraded** health checks in a period of 10 seconds.
-  If we cross that threshold, the circuit breaker trips.
-  The circuit will be closed again after 30 seconds. Afterwards, the task can
-  be executed again.
-  If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
-  all circuit breaker trips will emit an error log message instead of a warning.
-  The circuit breaker will downgrade it's log level after 30 minutes.
+We allow 2 **Unhealthy** health checks
+and/or 10 **Degraded** health checks in a period of 10 seconds.
+
+If we cross that threshold, the circuit breaker trips.
+
+The circuit will be closed again after 30 seconds. Afterwards, the task can
+be executed again.
+
+If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
+all circuit breaker trips will emit an error log message instead of a warning.
+
+The circuit breaker will downgrade it's log level after 30 minutes.
 
 
 Observability

@@ -180,27 +180,68 @@ directly, provided that the queue can perform inserts and deletes concurrently.
 Observability
 +++++++++++++
 
+Metrics
+~~~~~~~
+
 The publisher will collect the following metrics:
 
-* Messages Delivered (Counter)
-* Messages Delivered/s (Gauge)
-* Messages Delivered per Message Identifier (Counter)
-* Messages Delivered/s per Message Identifier (Gauge)
-* Rejected Messages (Counter)
-* Rejected Messages/s (Gauge)
-* Rejected Messages per Message Identifier (Counter)
-* Rejected Messages/s per Message Identifier (Gauge)
-* Time To Delivery (Histogram)
-* Number of Connections/Cluster (Counter)
-* Failed Connection Attempts/Cluster (Counter)
-* Successful Connection Attempts/Cluster (Counter)
-* Time To Connection (Histogram)
-* Time To Connection per Cluster (Histogram)
-* Time Between Connection Attempts (Histogram)
-* Time Between Connection Attempts per Cluster (Histogram)
-* Health Check Failures per Health Check (Counter)
-* Health Check Failures/s per Health Check (Gauge)
-* Total Uptime (Histogram)
++------------------------+-------------+
+| Metric Name            | Metric Type |
++========================+=============+
+| Messages Delivered     | Counter     |
++------------------------+-------------+
+| Messages Delivered     | Counter     |
+| per Message Identifier |             |
++------------------------+-------------+
+| Messages Delivered/s   | Gauge       |
++------------------------+-------------+
+| Messages Delivered     | Counter     |
+| per Message Identifier |             |
++------------------------+-------------+
+| Messages Delivered/s   | Gauge       |
+| per Message Identifier |             |
++------------------------+-------------+
+| Rejected Messages      | Counter     |
++------------------------+-------------+
+| Rejected Messages/s    | Gauge       |
++------------------------+-------------+
+| Rejected Messages      | Counter     |
+| per Message Identifier |             |
++------------------------+-------------+
+| Rejected Messages/s    | Gauge       |
+| per Message Identifier |             |
++------------------------+-------------+
+| Time To Delivery       | Histogram   |
++------------------------+-------------+
+| Number of              | Counter     |
+| Connections/Cluster    |             |
++------------------------+-------------+
+| Failed Connection      | Counter     |
+| Attempts/Cluster       |             |
++------------------------+-------------+
+| Successful Connection  | Counter     |
+| Attempts/Cluster       |             |
++------------------------+-------------+
+| Time To Connection     | Histogram   |
++------------------------+-------------+
+| Time To Connection     | Histogram   |
+| per Cluster            |             |
++------------------------+-------------+
+| Time To Connection     | Histogram   |
+| Attempts               |             |
++------------------------+-------------+
+| Time To Connection     | Histogram   |
+| Attempts per Cluster   |             |
++------------------------+-------------+
+| Health Check Failures  | Counter     |
+| per Health Check       |             |
++------------------------+-------------+
+| Health Check           | Gauge       |
+| Failures/s             |             |
+| per Health Check       |             |
++------------------------+-------------+
+| Total Uptime           | Histogram   |
++------------------------+-------------+
 
 By default, all metrics will be published to a broker cluster configured
 by the user.

@@ -329,6 +329,23 @@ The circuit breaker will downgrade it's log level after 30 minutes.
 Observability
 +++++++++++++
 
+Metrics
+~~~~~~~
+
+Log Messages
+~~~~~~~~~~~~
+
+Log messages will be structured.
+Structured logs provide context for our users which allows them to debug
+problems more easily.
+
+The Worker will be aware of it's execution platform and will format logs
+accordingly.
+
+For example, if the Worker is running using a systemd service,
+the Worker will detect that the `JOURNAL_STREAM`_ environment variable
+was set and use it to transmit structured data into `journald`_.
+
 Scheduler
 ---------
 
@@ -397,6 +414,23 @@ Autoscaler
 Observability
 +++++++++++++
 
+Metrics
+~~~~~~~
+
+Log Messages
+~~~~~~~~~~~~
+
+Log messages will be structured.
+Structured logs provide context for our users which allows them to debug
+problems more easily.
+
+The Scheduler will be aware of it's execution platform and will format logs
+accordingly.
+
+For example, if the Scheduler is running using a systemd service,
+the Scheduler will detect that the `JOURNAL_STREAM`_ environment variable
+was set and use it to transmit structured data into `journald`_.
+
 Router
 ------
 
@@ -418,11 +452,45 @@ Ingress/Egress Data Sources
 Observability
 +++++++++++++
 
+Metrics
+~~~~~~~
+
+Log Messages
+~~~~~~~~~~~~
+
+Log messages will be structured.
+Structured logs provide context for our users which allows them to debug
+problems more easily.
+
+The Router will be aware of it's execution platform and will format logs
+accordingly.
+
+For example, if the Router is running using a systemd service,
+the Router will detect that the `JOURNAL_STREAM`_ environment variable
+was set and use it to transmit structured data into `journald`_.
+
 Controller
 ----------
 
 Observability
 +++++++++++++
+
+Metrics
+~~~~~~~
+
+Log Messages
+~~~~~~~~~~~~
+
+Log messages will be structured.
+Structured logs provide context for our users which allows them to debug
+problems more easily.
+
+The Controller will be aware of it's execution platform and will format logs
+accordingly.
+
+For example, if the Controller is running using a systemd service,
+the Controller will detect that the `JOURNAL_STREAM`_ environment variable
+was set and use it to transmit structured data into `journald`_.
 
 Motivation
 ==========

@@ -249,6 +249,12 @@ by the user.
 Alternative reporting mechanisms may be implemented by the user.
 As such, the design must ensure extensibility of the reporting mechanism.
 
+Log Messages
+~~~~~~~~~~~~
+
+Log messages will be structured.
+Structured logs provide context for our users which allows them to debug
+problems more easily. 
 
 Worker
 ------

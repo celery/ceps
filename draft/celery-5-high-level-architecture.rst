@@ -254,7 +254,14 @@ Log Messages
 
 Log messages will be structured.
 Structured logs provide context for our users which allows them to debug
-problems more easily. 
+problems more easily.
+
+The Publisher will be aware of it's execution platform and will format logs
+accordingly.
+
+For example, if the Publisher is running using a systemd service,
+the Publisher will detect that the `JOURNAL_STREAM`_ environment variable
+was set and use it to transmit structured data into `journald`_.
 
 Worker
 ------
@@ -444,3 +451,5 @@ CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed
 .. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
 .. _Message Broker: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html
 .. _Circuit Breaker: https://martinfowler.com/bliki/CircuitBreaker.html
+.. _JOURNAL_STREAM: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#%24JOURNAL_STREAM
+.. _journald: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html

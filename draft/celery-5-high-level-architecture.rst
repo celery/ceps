@@ -472,6 +472,35 @@ was set and use it to transmit structured data into `journald`_.
 Controller
 ----------
 
+The Controller is responsible for managing the lifecycle of all other Celery
+components.
+
+It spawns the :ref:`Workers <Worker>`, :ref:`Routers <Router>`,
+:ref:`Schedulers <Scheduler>` and if configured and possible,
+the :ref:`Message Brokers <Message Broker>` as well.
+
+By default, the Controller creates sub-processes for
+all the required components. This is suitable for small scale deployments
+or for deployments where SystemD is unavailable.
+
+SystemD Integration
++++++++++++++++++++
+
+Unless it is explicitly overridden by the configuration, whenever the Controller
+is run as a SystemD service, it will use SystemD to spawn all other Celery
+components.
+
+Celery will provide the required services for such a deployment.
+
+The Controller will use the `sd_notify`_ protocol to announce when the cluster
+is fully operational.
+
+.. note::
+
+  The Controller is meant to be run as a user service.
+  If the Controller is run with root privileges, a log message with
+  the warning level will be emitted.
+
 Observability
 +++++++++++++
 
@@ -521,3 +550,4 @@ CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed
 .. _Circuit Breaker: https://martinfowler.com/bliki/CircuitBreaker.html
 .. _JOURNAL_STREAM: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#%24JOURNAL_STREAM
 .. _journald: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html
+.. _sd_notify: https://www.freedesktop.org/software/systemd/man/sd_notify.html

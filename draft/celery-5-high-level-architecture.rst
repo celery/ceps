@@ -20,11 +20,11 @@ Abstract
 
 When Celery was conceived, production environments were radically different from today.
 
-Nowdays most applications are (or should be):
+Nowadays most applications are (or should be):
 
 * Deployed to a cloud provider's computing resources.
 * Distributed, sometimes between data centers.
-* Failure resilient and Fault Tolerant.
+* Failure Resilient and Fault Tolerant.
 * Observable.
 * Built with scalability in mind.
 * Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheduler.
@@ -98,40 +98,39 @@ building block that can receive messages from
 multiple destinations, determine the correct destination and route the message
 to the correct channel.
 
-Publisher
----------
+Failure Resilience and Fault Tolerance
+--------------------------------------
 
-The Publisher is responsible for publishing messages to a :ref:`message broker`.
+Celery 5 aims to be failure resilient and fault tolerant.
+As an architectural guideline Celery must retry operations **by default**
+and must avoid doing so **indefinably and without proper limits**.
 
-It is responsible for publishing the message to the appropriate broker cluster
-according to the configuration provided to the publisher.
+Any operation which cannot be executed either momentarily or permanently
+as a result of a bug must not be retried beyond the the configured limits.
+Instead, Celery must store the operation for further inspection
+and if required, manual intervention.
 
-The publisher must be able to run in-process inside a long-running thread
-or a long running co-routine.
+Celery must track and automatically handle "poisonous messages" to ensure
+the recovery of the Celery cluster.
 
-It can also be run using a separate daemon which can serve all the processes
-publishing to the message brokers.
+Fault Tolerance
++++++++++++++++
 
-Health Checks
-+++++++++++++
+Distributed Systems suffer from an inherent property:
 
-The Publisher will perform health checks to ensure that the message broker
-the user is publishing to is available.
+  Any distributed system is unreliable.
 
-If a health check fails a configured number of times, the relevant
-:ref:`Circuit Breaker` is tripped.
+  * The network may be unavailable or slow.
+  * Some or all of the servers might suffer from a hardware failure
+  * A node in the system may arbitrarily crash
+    due to lack of memory or a bug.
+  * Any number of unaccounted failure modes.
 
-Each :ref:`message broker` Celery supports must provide an implementation for
-the default health checks the Publisher will use for verifying its
-availability for new messages.
-
-Further health checks can be defined by the user.
-These health checks allows the user to avoid publishing tasks if for example
-a 3rd party API endpoint is not available or slow, if the database
-the user stores the results in is available or any other check for that matter.
+Therefore, Celery must be fault tolerant and gracefully degrade it's operation
+when failures occur.
 
 Circuit Breaker
-+++++++++++++++
+~~~~~~~~~~~~~~~
 
 Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
 
@@ -143,125 +142,6 @@ Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
   | without the protected call being made at all.
   | Usually you'll also want some kind of monitor alert if the circuit breaker
   | trips.
-
-Each :ref:`health check <Health Checks>` has it's own Circuit Breaker.
-Once a circuit breaker is tripped, the messages are stored
-in the :ref:`messages backlog` until the health check recovers and the circuit
-is once again closed.
-
-Messages Backlog
-++++++++++++++++
-
-The messages backlog is a temporary queue of messages yet to be published to
-the appropriate broker cluster.
-
-In the event where messages cannot be published for any reason, the messages
-are kept inside the queue.
-
-By default, an in-memory queue will be used. The user may provide another
-implementation which stores the messages on-disk or in a central database.
-
-Publisher Daemon
-++++++++++++++++
-
-In sufficiently large deployments, one server runs multiple workloads which
-may publish to a :ref:`message broker`.
-
-Therefore, it is unnecessary to maintain a publisher for each process that
-publishes to a :ref:`message broker`.
-
-In such cases, a Publisher Daemon can be used. The publishing processes will
-specify it as their target and communicate the messages to be published via
-a socket.
-
-If a disk based queue is used, the user may configure Celery to write to it
-directly, provided that the queue can perform inserts and deletes concurrently.
-
-Observability
-+++++++++++++
-
-Metrics
-~~~~~~~
-
-The publisher will collect the following metrics:
-
-+------------------------+-------------+
-| Metric Name            | Metric Type |
-+========================+=============+
-| Messages Delivered     | Counter     |
-+------------------------+-------------+
-| Messages Delivered     | Counter     |
-| per Message Identifier |             |
-+------------------------+-------------+
-| Messages Delivered/s   | Gauge       |
-+------------------------+-------------+
-| Messages Delivered     | Counter     |
-| per Message Identifier |             |
-+------------------------+-------------+
-| Messages Delivered/s   | Gauge       |
-| per Message Identifier |             |
-+------------------------+-------------+
-| Rejected Messages      | Counter     |
-+------------------------+-------------+
-| Rejected Messages/s    | Gauge       |
-+------------------------+-------------+
-| Rejected Messages      | Counter     |
-| per Message Identifier |             |
-+------------------------+-------------+
-| Rejected Messages/s    | Gauge       |
-| per Message Identifier |             |
-+------------------------+-------------+
-| Time To Delivery       | Histogram   |
-+------------------------+-------------+
-| Number of              | Counter     |
-| Connections/Cluster    |             |
-+------------------------+-------------+
-| Failed Connection      | Counter     |
-| Attempts/Cluster       |             |
-+------------------------+-------------+
-| Successful Connection  | Counter     |
-| Attempts/Cluster       |             |
-+------------------------+-------------+
-| Time To Connection     | Histogram   |
-+------------------------+-------------+
-| Time To Connection     | Histogram   |
-| per Cluster            |             |
-+------------------------+-------------+
-| Time To Connection     | Histogram   |
-| Attempts               |             |
-+------------------------+-------------+
-| Time To Connection     | Histogram   |
-| Attempts per Cluster   |             |
-+------------------------+-------------+
-| Health Check Failures  | Counter     |
-| per Health Check       |             |
-+------------------------+-------------+
-| Health Check           | Gauge       |
-| Failures/s             |             |
-| per Health Check       |             |
-+------------------------+-------------+
-| Total Uptime           | Histogram   |
-+------------------------+-------------+
-
-By default, all metrics will be published to a broker cluster configured
-by the user.
-
-Alternative reporting mechanisms may be implemented by the user.
-As such, the design must ensure extensibility of the reporting mechanism.
-
-Log Messages
-~~~~~~~~~~~~
-
-Log messages will be structured.
-Structured logs provide context for our users which allows them to debug
-problems more easily.
-
-The Publisher will be aware of it's execution platform and will format logs
-accordingly.
-
-For example, if the Publisher is running using a systemd service,
-the Publisher will detect that the `JOURNAL_STREAM`_ environment variable
-was set and use it to transmit structured data into `journald`_.
 
 Worker
 ------
@@ -329,6 +209,12 @@ The circuit breaker will downgrade it's log level after 30 minutes.
 Observability
 +++++++++++++
 
+One of Celery 5's goals is to be observable.
+
+The Publisher will record statistics, provide trace points for application
+monitoring tools and distributed tracing tools and emit log messages when
+appropriate.
+
 Metrics
 ~~~~~~~
 
@@ -342,9 +228,77 @@ problems more easily.
 The Worker will be aware of it's execution platform and will format logs
 accordingly.
 
-For example, if the Worker is running using a systemd service,
+For example, if the Worker is running using a SystemD service,
 the Worker will detect that the `JOURNAL_STREAM`_ environment variable
 was set and use it to transmit structured data into `journald`_.
+
+Publisher
+---------
+
+The Publisher is responsible for publishing messages to a :ref:`message broker`.
+
+It is responsible for publishing the message to the appropriate broker cluster
+according to the configuration provided to the publisher.
+
+The publisher must be able to run in-process inside a long-running thread
+or a long running co-routine.
+
+It can also be run using a separate daemon which can serve all the processes
+publishing to the message brokers.
+
+Health Checks
++++++++++++++
+
+The Publisher will perform health checks to ensure that the message broker
+the user is publishing to is available.
+
+If a health check fails a configured number of times, the relevant
+:ref:`Circuit Breaker` is tripped.
+
+Each :ref:`message broker` Celery supports must provide an implementation for
+the default health checks the Publisher will use for verifying its
+availability for new messages.
+
+Further health checks can be defined by the user.
+These health checks allows the user to avoid publishing tasks if for example
+a 3rd party API endpoint is not available or slow, if the database
+the user stores the results in is available or any other check for that matter.
+
+Circuit Breaker
++++++++++++++++
+
+Each :ref:`health check <Health Checks>` has it's own Circuit Breaker.
+Once a circuit breaker is tripped, the messages are stored
+in the :ref:`messages backlog` until the health check recovers and the circuit
+is once again closed.
+
+Messages Backlog
+++++++++++++++++
+
+The messages backlog is a temporary queue of messages yet to be published to
+the appropriate broker cluster.
+
+In the event where messages cannot be published for any reason, the messages
+are kept inside the queue.
+
+By default, an in-memory queue will be used. The user may provide another
+implementation which stores the messages on-disk or in a central database.
+
+Publisher Daemon
+++++++++++++++++
+
+In sufficiently large deployments, one server runs multiple workloads which
+may publish to a :ref:`message broker`.
+
+Therefore, it is unnecessary to maintain a publisher for each process that
+publishes to a :ref:`message broker`.
+
+In such cases, a Publisher Daemon can be used. The publishing processes will
+specify it as their target and communicate the messages to be published via
+a socket.
+
+If a disk based queue is used, the user may configure Celery to write to it
+directly, provided that the queue can perform inserts and deletes concurrently.
 
 Scheduler
 ---------
@@ -427,7 +381,7 @@ problems more easily.
 The Scheduler will be aware of it's execution platform and will format logs
 accordingly.
 
-For example, if the Scheduler is running using a systemd service,
+For example, if the Scheduler is running using a SystemD service,
 the Scheduler will detect that the `JOURNAL_STREAM`_ environment variable
 was set and use it to transmit structured data into `journald`_.
 
@@ -465,7 +419,7 @@ problems more easily.
 The Router will be aware of it's execution platform and will format logs
 accordingly.
 
-For example, if the Router is running using a systemd service,
+For example, if the Router is running using a SystemD service,
 the Router will detect that the `JOURNAL_STREAM`_ environment variable
 was set and use it to transmit structured data into `journald`_.
 

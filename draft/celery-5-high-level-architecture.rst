@@ -103,7 +103,7 @@ Failure Resilience and Fault Tolerance
 
 Celery 5 aims to be failure resilient and fault tolerant.
 As an architectural guideline Celery must retry operations **by default**
-and must avoid doing so **indefinably and without proper limits**.
+and must avoid doing so **indefinitely and without proper limits**.
 
 Any operation which cannot be executed either momentarily or permanently
 as a result of a bug must not be retried beyond the the configured limits.

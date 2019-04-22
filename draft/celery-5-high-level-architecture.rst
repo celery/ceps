@@ -130,7 +130,11 @@ Distributed Systems suffer from an inherent property:
 Therefore, Celery must be fault tolerant and gracefully degrade it's operation
 when failures occur.
 
+Retries
+~~~~~~~
 
+Health Checks
+~~~~~~~~~~~~~
 
 Circuit Breaker
 ~~~~~~~~~~~~~~~
@@ -146,6 +150,38 @@ Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
   | Usually you'll also want some kind of monitor alert if the circuit breaker
   | trips.
 
+Failure Resilience
+++++++++++++++++++
+
+Observability
+-------------
+
+One of Celery 5's goals is to be observable.
+
+Each Celery component will record statistics, provide trace points for
+application monitoring tools and distributed tracing tools and emit log messages
+when appropriate.
+
+Metrics
++++++++
+
+Log Messages
+++++++++++++
+
+Log messages will be structured.
+Structured logs provide context for our users which allows them to debug
+problems more easily.
+
+Each Celery component will be aware of it's execution platform and will format
+it's logs accordingly.
+
+.. admonition:: Example
+
+  If a component's lifecycle is managed by a SystemD service,
+  it will detect that the `JOURNAL_STREAM`_ environment variable
+  is set when the process starts and use it's value to transmit structured
+  data into `journald`_.
+
 Worker
 ------
 
@@ -155,8 +191,8 @@ Protocol
 Introduction to AMQP 1.0 Terminology
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Health Checks
-+++++++++++++
+Worker Health Checks
+++++++++++++++++++++
 
 The Worker will perform health checks to ensure that it can execute
 a task without errors.
@@ -175,8 +211,8 @@ A user can associate a health check with multiple Circuit Breakers.
 
 The API for task health checks will be determined in another CEP.
 
-Circuit Breaker
-+++++++++++++++
+Worker Circuit Breakers
++++++++++++++++++++++++
 
 Each task has it's own Circuit Breaker.
 
@@ -193,52 +229,25 @@ The user will configure the following properties of the Circuit Breaker:
 * The period of time after which the circuit breaker downgrades
   it's log level back to warning.
 
-.. rubric:: Example
+.. admonition:: Example
 
-We allow 2 **Unhealthy** health checks
-and/or 10 **Degraded** health checks in a period of 10 seconds.
+  We allow 2 **Unhealthy** health checks
+  and/or 10 **Degraded** health checks in a period of 10 seconds.
 
-If we cross that threshold, the circuit breaker trips.
+  If we cross that threshold, the circuit breaker trips.
 
-The circuit will be closed again after 30 seconds. Afterwards, the task can
-be executed again.
+  The circuit will be closed again after 30 seconds. Afterwards, the task can
+  be executed again.
 
-If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
-all circuit breaker trips will emit an error log message instead of a warning.
+  If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
+  all circuit breaker trips will emit an error log message instead of a warning.
 
-The circuit breaker will downgrade it's log level after 30 minutes.
-
-
-Observability
-+++++++++++++
-
-One of Celery 5's goals is to be observable.
-
-The Publisher will record statistics, provide trace points for application
-monitoring tools and distributed tracing tools and emit log messages when
-appropriate.
-
-Metrics
-~~~~~~~
-
-Log Messages
-~~~~~~~~~~~~
-
-Log messages will be structured.
-Structured logs provide context for our users which allows them to debug
-problems more easily.
-
-The Worker will be aware of it's execution platform and will format logs
-accordingly.
-
-For example, if the Worker is running using a SystemD service,
-the Worker will detect that the `JOURNAL_STREAM`_ environment variable
-was set and use it to transmit structured data into `journald`_.
+  The circuit breaker will downgrade it's log level after 30 minutes.
 
 Publisher
 ---------
 
-The Publisher is responsible for publishing messages to a :ref:`message broker`.
+The Publisher is responsible for publishing messages to a :ref:`draft/celery-5-high-level-architecture:message broker`.
 
 It is responsible for publishing the message to the appropriate broker cluster
 according to the configuration provided to the publisher.
@@ -249,16 +258,16 @@ or a long running co-routine.
 It can also be run using a separate daemon which can serve all the processes
 publishing to the message brokers.
 
-Health Checks
-+++++++++++++
+Publisher Health Checks
++++++++++++++++++++++++
 
 The Publisher will perform health checks to ensure that the message broker
 the user is publishing to is available.
 
 If a health check fails a configured number of times, the relevant
-:ref:`Circuit Breaker` is tripped.
+:ref:`draft/celery-5-high-level-architecture:Circuit Breaker` is tripped.
 
-Each :ref:`message broker` Celery supports must provide an implementation for
+Each :ref:`draft/celery-5-high-level-architecture:message broker` Celery supports must provide an implementation for
 the default health checks the Publisher will use for verifying its
 availability for new messages.
 
@@ -267,12 +276,12 @@ These health checks allows the user to avoid publishing tasks if for example
 a 3rd party API endpoint is not available or slow, if the database
 the user stores the results in is available or any other check for that matter.
 
-Circuit Breaker
-+++++++++++++++
+Publisher Circuit Breakers
+++++++++++++++++++++++++++
 
-Each :ref:`health check <Health Checks>` has it's own Circuit Breaker.
+Each :ref:`health check <draft/celery-5-high-level-architecture:Health Checks>` has it's own Circuit Breaker.
 Once a circuit breaker is tripped, the messages are stored
-in the :ref:`messages backlog` until the health check recovers and the circuit
+in the :ref:`draft/celery-5-high-level-architecture:messages backlog` until the health check recovers and the circuit
 is once again closed.
 
 Messages Backlog
@@ -291,10 +300,10 @@ Publisher Daemon
 ++++++++++++++++
 
 In sufficiently large deployments, one server runs multiple workloads which
-may publish to a :ref:`message broker`.
+may publish to a :ref:`draft/celery-5-high-level-architecture:message broker`.
 
 Therefore, it is unnecessary to maintain a publisher for each process that
-publishes to a :ref:`message broker`.
+publishes to a :ref:`draft/celery-5-high-level-architecture:message broker`.
 
 In such cases, a Publisher Daemon can be used. The publishing processes will
 specify it as their target and communicate the messages to be published via
@@ -354,7 +363,7 @@ in order to avoid decreasing our email reputation.
 
 Tasks may define a global rate limit or a per worker rate limit.
 
-Whenever a task reaches it's rate limit, an event is sent to the :ref:`Router`
+Whenever a task reaches it's rate limit, an event is sent to the :ref:`draft/celery-5-high-level-architecture:Router`
 to notify that is should not consume or reject these tasks.
 The exact payload of the rate limiting event will be determined
 in another CEP.
@@ -367,26 +376,6 @@ Concurrency Limitations
 
 Autoscaler
 ~~~~~~~~~~
-
-Observability
-+++++++++++++
-
-Metrics
-~~~~~~~
-
-Log Messages
-~~~~~~~~~~~~
-
-Log messages will be structured.
-Structured logs provide context for our users which allows them to debug
-problems more easily.
-
-The Scheduler will be aware of it's execution platform and will format logs
-accordingly.
-
-For example, if the Scheduler is running using a SystemD service,
-the Scheduler will detect that the `JOURNAL_STREAM`_ environment variable
-was set and use it to transmit structured data into `journald`_.
 
 Router
 ------
@@ -406,35 +395,15 @@ Ingress Only Data Sources
 Ingress/Egress Data Sources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Observability
-+++++++++++++
-
-Metrics
-~~~~~~~
-
-Log Messages
-~~~~~~~~~~~~
-
-Log messages will be structured.
-Structured logs provide context for our users which allows them to debug
-problems more easily.
-
-The Router will be aware of it's execution platform and will format logs
-accordingly.
-
-For example, if the Router is running using a SystemD service,
-the Router will detect that the `JOURNAL_STREAM`_ environment variable
-was set and use it to transmit structured data into `journald`_.
-
 Controller
 ----------
 
 The Controller is responsible for managing the lifecycle of all other Celery
 components.
 
-It spawns the :ref:`Workers <Worker>`, :ref:`Routers <Router>`,
-:ref:`Schedulers <Scheduler>` and if configured and possible,
-the :ref:`Message Brokers <Message Broker>` as well.
+It spawns the :ref:`Workers <draft/celery-5-high-level-architecture:Worker>`, :ref:`Routers <draft/celery-5-high-level-architecture:Router>`,
+:ref:`Schedulers <draft/celery-5-high-level-architecture:Scheduler>` and if configured and possible,
+the :ref:`Message Brokers <draft/celery-5-high-level-architecture:Message Broker>` as well.
 
 By default, the Controller creates sub-processes for
 all the required components. This is suitable for small scale deployments
@@ -457,26 +426,6 @@ is fully operational.
   The Controller is meant to be run as a user service.
   If the Controller is run with root privileges, a log message with
   the warning level will be emitted.
-
-Observability
-+++++++++++++
-
-Metrics
-~~~~~~~
-
-Log Messages
-~~~~~~~~~~~~
-
-Log messages will be structured.
-Structured logs provide context for our users which allows them to debug
-problems more easily.
-
-The Controller will be aware of it's execution platform and will format logs
-accordingly.
-
-For example, if the Controller is running using a systemd service,
-the Controller will detect that the `JOURNAL_STREAM`_ environment variable
-was set and use it to transmit structured data into `journald`_.
 
 Motivation
 ==========

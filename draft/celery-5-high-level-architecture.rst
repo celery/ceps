@@ -23,8 +23,9 @@ When Celery was conceived, production environments were radically different from
 Nowadays most applications are (or should be):
 
 * Deployed to a cloud provider's computing resources.
-* Distributed, sometimes between data centers.
-* Failure Resilient and Fault Tolerant.
+* Distributed (sometimes between data centers).
+* Available or Consistent (We must pick one according to `CAP theorem`_).
+* Network Partition Tolerant.
 * Observable.
 * Built with scalability in mind.
 * Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm or any other scheduler.
@@ -121,13 +122,15 @@ Distributed Systems suffer from an inherent property:
   Any distributed system is unreliable.
 
   * The network may be unavailable or slow.
-  * Some or all of the servers might suffer from a hardware failure
+  * Some or all of the servers might suffer from a hardware failure.
   * A node in the system may arbitrarily crash
     due to lack of memory or a bug.
   * Any number of unaccounted failure modes.
 
 Therefore, Celery must be fault tolerant and gracefully degrade it's operation
 when failures occur.
+
+
 
 Circuit Breaker
 ~~~~~~~~~~~~~~~
@@ -495,6 +498,7 @@ CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed
 
 (All CEPs must include this exact copyright statement.)
 
+.. _CAP theorem: https://dzone.com/articles/understanding-the-cap-theorem
 .. _Enterprise Integration Patterns: https://www.enterpriseintegrationpatterns.com
 .. _Command Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html
 .. _Event Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html

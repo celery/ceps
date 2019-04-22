@@ -494,9 +494,7 @@ Copyright
 =========
 
 This document has been placed in the public domain per the Creative Commons
-CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed).
-
-(All CEPs must include this exact copyright statement.)
+CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/deed).
 
 .. _CAP theorem: https://dzone.com/articles/understanding-the-cap-theorem
 .. _Enterprise Integration Patterns: https://www.enterpriseintegrationpatterns.com

@@ -21,7 +21,7 @@ this should make it easy for you to conform your own CEPs to the format
 outlined below.
 
 Note: if you are reading this CEP via the web, you should first grab `the source
-of this CEP <https://raw.githubusercontent.com/celery/ceps/template.rst>`_ in
+of this CEP <https://raw.githubusercontent.com/celery/ceps/master/template.rst>`_ in
 order to complete the steps below.  **DO NOT USE THE HTML FILE AS YOUR
 TEMPLATE!**
 
@@ -35,9 +35,9 @@ see these resources:
 * `Quick reStructuredText`__, a users' quick reference.
 * `reStructuredText Markup Specification`__, the final authority.
 
-__ http://docutils.sourceforge.net/docs/rst/quickstart.html
-__ http://docutils.sourceforge.net/docs/rst/quickref.html
-__ http://docutils.sourceforge.net/spec/rst/reStructuredText.html
+__ http://docutils.sourceforge.net/docs/user/rst/quickstart.html
+__ http://docutils.sourceforge.net/docs/user/rst/quickref.html
+__ http://docutils.sourceforge.net/docs/ref/rst/restructuredtext.html
 
 Once you've made a copy of this template, remove this abstract, fill out the
 metadata above and the sections below, then submit the CEP. Follow the
@@ -99,6 +99,6 @@ Copyright
 =========
 
 This document has been placed in the public domain per the Creative Commons
-CC0 1.0 Universal license (http://creativecommons.org/publicdomain/zero/1.0/deed).
+CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/deed).
 
 (All CEPs must include this exact copyright statement.)

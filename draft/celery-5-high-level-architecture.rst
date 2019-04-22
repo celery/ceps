@@ -133,6 +133,39 @@ when failures occur.
 Retries
 ~~~~~~~
 
+In previous Celery versions tasks were not retried by default.
+
+This forces new adopters to carefully read our documentation to ensure
+the fault tolerance of their tasks.
+
+In addition, our retry policy was declared at the task level.
+When using :ref:`celery4:task-autoretry` Celery automatically retries tasks
+when specific exceptions are raised.
+
+However the same type of exception may hold a different meaning in different
+contexts.
+
+This created the following pattern:
+
+.. code-block:: python
+
+  from celery import task
+
+  def _calculate(a, b):
+    # Do something
+
+  @task(autoretry_for=(ValueError,))
+  def complex_calculation(a, b):
+    try:
+      validate_data(a, b)
+    except ValueError:
+      print("Complete failure!")
+      return
+
+    # May temporarily raise a ValueError due to some externally fetched
+    # data which is currently incorrect but will be updated later.
+    _calculate()
+
 Health Checks
 ~~~~~~~~~~~~~
 

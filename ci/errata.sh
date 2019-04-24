@@ -36,7 +36,7 @@ OS="Linux"
 # [TODO]: Specify the version of `vale` and `blocktest` to use.
 #
 # See `/content/` for configuration details.
-VALE="1.0.4"
+VALE="1.4.0"
 BLOCKTEST="0.1.1"
 
 # [TODO]: Specify the type of front matter you're using.
@@ -73,4 +73,3 @@ else
     #
     source "ci/accessibility/cmd.sh"
 fi
-

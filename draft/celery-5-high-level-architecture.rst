@@ -150,6 +150,7 @@ This created the following pattern:
 .. code-block:: python
 
   from celery import task
+  from data_validation_lib import validate_data
 
   def _calculate(a, b):
     # Do something
@@ -157,6 +158,7 @@ This created the following pattern:
   @task(autoretry_for=(ValueError,))
   def complex_calculation(a, b):
     try:
+      # Code that you don't control can raise a ValueError.
       validate_data(a, b)
     except ValueError:
       print("Complete failure!")
@@ -165,6 +167,112 @@ This created the following pattern:
     # May temporarily raise a ValueError due to some externally fetched
     # data which is currently incorrect but will be updated later.
     _calculate()
+
+There is an obvious way around this problem. We can ensure that `_calculate()`
+raises a custom exception.
+
+But we shouldn't force the users to use workarounds. Code should be ergonomic
+and idiomatic.
+
+Instead, we should allow users to declare sections as "poisonous" - tasks that
+if retried will surely fail if they fail at those sections.
+
+.. code-block:: python
+
+  from celery import task, poisonous
+  from data_validation_lib import validate_data
+
+  def _calculate(a, b):
+    # Do something
+
+  @task(autoretry_for=(ValueError,))
+  def complex_calculation(a, b):
+    with poisonous():
+      validate_data(a, b)
+
+    # May temporarily raise a ValueError due to some externally fetched
+    # data which is currently incorrect but will be updated later.
+    _calculate()
+
+Not all operations are equal. Some may be retried more than others.
+Some may need to be retried less often.
+
+Currently there are multiple ways to achieve this:
+
+You can separate them to different tasks with a different retry policy:
+
+.. code-block:: python
+
+  from celery import task
+
+  @task(retry_policy={
+    'max_retries': 3,
+    'interval_start': 0,
+    'interval_step': 0.2,
+    'interval_max': 0.2
+  })
+  def foo():
+    second_operation()
+
+  @task(retry_policy={
+    'max_retries': 10,
+    'interval_start': 0,
+    'interval_step': 5,
+    'interval_max': 120
+  })
+  def bar():
+    first_operation()
+    foo.delay()
+
+Or you can wrap each code section in a try..except clause and call
+:py:meth:`celery.Task.retry`.
+
+.. code-block:: python
+
+  @task(bind=True)
+  def foo(self):
+    try:
+      # first operation
+    except Exception:
+      self.retry(retry_policy={
+        'max_retries': 10,
+        'interval_start': 0,
+        'interval_step': 5,
+        'interval_max': 120
+      })
+
+    try:
+      first_operation()
+    except Exception:
+      self.retry(retry_policy={
+        'max_retries': 10,
+        'interval_start': 0,
+        'interval_step': 5,
+        'interval_max': 120
+      })
+
+    try:
+      second_operation()
+    except Exception:
+      self.retry(retry_policy={
+        'max_retries': 3,
+        'interval_start': 0,
+        'interval_step': 0.2,
+        'interval_max': 0.2
+      })
+
+Those solutions are unnecessarily verbose. Instead, we could use a with clause
+if all we want to do is retry.
+
+.. code-block:: python
+
+  @task
+  def foo():
+    with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
+      first_operation()
+
+    with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
+      second_operation()
 
 Health Checks
 ~~~~~~~~~~~~~

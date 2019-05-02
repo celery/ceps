@@ -39,17 +39,76 @@ As such, our next major version should represent a paradigm shift in the way we 
 Specification
 =============
 
+.. note::
+
+	 The code examples below are for illustration purposes only.
+
+   Unless explicitly specified, The API will be determined in other CEPs.
+
+Glossary
+--------
+
+.. glossary::
+
+  Message Broker
+    `Enterprise Integration Patterns`_ defines a `Message Broker`_ as an architectural
+    building block that can receive messages from
+    multiple destinations, determine the correct destination and route the message
+    to the correct channel.
+
+  Command Message
+    `Enterprise Integration Patterns`_ defines a `Command Message`_ as a
+    message which instructs a worker to execute a task.
+
+  Event Message
+    `Enterprise Integration Patterns`_ defines an `Event Message`_ as a
+    message which indicates that an event has occurred.
+
+  Document Message
+    `Enterprise Integration Patterns`_ defines an `Event Message`_ as a
+    message containing data from a data source.
+
+  Circuit Breaker
+    Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
+
+      | The basic idea behind the circuit breaker is very simple.
+      | You wrap a protected function call in a circuit breaker object, which monitors
+      | for failures.
+      | Once the failures reach a certain threshold, the circuit breaker trips,
+      | and all further calls to the circuit breaker return with an error,
+      | without the protected call being made at all.
+      | Usually you'll also want some kind of monitor alert if the circuit breaker
+      | trips.
+
+  CAP Theorem
+  Availability
+  Fault Tolerance
+  Failure Resilience
+  Consistency
+  Network Partition Tolerance
+  Observability
+  Structured Logging
+    Structured Logging is a method to make log messages easy to process
+    by machines.
+    A usual log message is a timestamp, level and a message string.
+    The context describing the logged event is embedded inside the message
+    string.
+    A structured log message store their context in a predetermined message
+    format which allows machines to parse them more easily.
+  JSON
+    JSON stands for JavaScript Object Notation, which is a way to format data so
+    that it can be transmitted from one place to another, most commonly between
+    a server and a Web application.
+  stdout
+    Stdout, also known as standard output, is the default file descriptor
+    where a process can write output.
+
 Message Types
 -------------
 
-`Enterprise Integration Patterns`_ defines multiple common message types:
-
-* `Command Message`_ - A message which instructs a worker to execute a task.
-* `Event Message`_ - A message which indicates that an event has occurred.
-* `Document Message`_ - A message containing data from a data source.
-
-In relation to Celery Command messages are the messages we publish whenever we delay a task.
-Document messages are the messages we get as a result.
+In relation to Celery :term:`Command messages <Command Message>`
+are the messages we publish whenever we delay a task.
+:term:`Document messages <Document Message>` are the messages we get as a result.
 
 .. code-block:: pycon
 
@@ -61,10 +120,9 @@ Document messages are the messages we get as a result.
   >>> result.get()  # Consume a Document message
   3
 
-Event messages are a new concept for Celery. They describe that a domain event
-occurred. Multiple tasks can be subscribed to an event.
-
-The API presented here is a draft to be determined by another CEP:
+:term:`Event messages <Event Message>` are a new concept for Celery.
+They describe that a domain event occurred.
+Multiple tasks can be subscribed to an event.
 
 .. code-block:: pycon
 
@@ -90,14 +148,6 @@ The API presented here is a draft to be determined by another CEP:
 These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this document
 and in Celery 5's codebase as well.
-
-Message Broker
---------------
-
-`Enterprise Integration Patterns`_ defines a `Message Broker`_ as an architectural
-building block that can receive messages from
-multiple destinations, determine the correct destination and route the message
-to the correct channel.
 
 Failure Resilience and Fault Tolerance
 --------------------------------------
@@ -225,7 +275,7 @@ You can separate them to different tasks with a different retry policy:
     foo.delay()
 
 Or you can wrap each code section in a try..except clause and call
-:py:meth:`celery.Task.retry`.
+:py:meth:`celery.app.task.Task.retry`.
 
 .. code-block:: python
 
@@ -280,24 +330,13 @@ Health Checks
 Circuit Breaker
 ~~~~~~~~~~~~~~~
 
-Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
-
-  | The basic idea behind the circuit breaker is very simple.
-  | You wrap a protected function call in a circuit breaker object, which monitors
-  | for failures.
-  | Once the failures reach a certain threshold, the circuit breaker trips,
-  | and all further calls to the circuit breaker return with an error,
-  | without the protected call being made at all.
-  | Usually you'll also want some kind of monitor alert if the circuit breaker
-  | trips.
-
 Failure Resilience
 ++++++++++++++++++
 
 Observability
 -------------
 
-One of Celery 5's goals is to be observable.
+One of Celery 5's goals is to be :term:`observable <Observability>`.
 
 Each Celery component will record statistics, provide trace points for
 application monitoring tools and distributed tracing tools and emit log messages
@@ -306,20 +345,32 @@ when appropriate.
 Metrics
 +++++++
 
-Log Messages
+Trace Points
 ++++++++++++
 
-Log messages will be structured.
-Structured logs provide context for our users which allows them to debug
-problems more easily.
+Logging
++++++++
 
-Each Celery component will be aware of it's execution platform and will format
-it's logs accordingly.
+All log messages must be structured.
+:term:`Structured logs <Structured Logging>` provide context for our users
+which allows them to debug problems more easily and aids the developers
+to resolve bugs in Celery.
+
+The structure of a log message is determined whenever a component
+is initialized.
+
+During initialization, an attempt will be made to detect how the component
+lifecycle is managed.
+If all attempts are unsuccessful, the logs will be formatted using
+:term:`JSON` and will be printed to stdout.
+
+Celery will provide an extension point for detection of different
+runtimes.
 
 .. admonition:: Example
 
   If a component's lifecycle is managed by a SystemD service,
-  it will detect that the `JOURNAL_STREAM`_ environment variable
+  Celery will detect that the `JOURNAL_STREAM`_ environment variable
   is set when the process starts and use it's value to transmit structured
   data into `journald`_.
 
@@ -388,7 +439,7 @@ The user will configure the following properties of the Circuit Breaker:
 Publisher
 ---------
 
-The Publisher is responsible for publishing messages to a :ref:`draft/celery-5-high-level-architecture:message broker`.
+The Publisher is responsible for publishing messages to a :term:`Message Broker`.
 
 It is responsible for publishing the message to the appropriate broker cluster
 according to the configuration provided to the publisher.
@@ -406,9 +457,9 @@ The Publisher will perform health checks to ensure that the message broker
 the user is publishing to is available.
 
 If a health check fails a configured number of times, the relevant
-:ref:`draft/celery-5-high-level-architecture:Circuit Breaker` is tripped.
+:term:`Circuit Breaker` is tripped.
 
-Each :ref:`draft/celery-5-high-level-architecture:message broker` Celery supports must provide an implementation for
+Each :term:`Message Broker` Celery supports must provide an implementation for
 the default health checks the Publisher will use for verifying its
 availability for new messages.
 
@@ -441,10 +492,10 @@ Publisher Daemon
 ++++++++++++++++
 
 In sufficiently large deployments, one server runs multiple workloads which
-may publish to a :ref:`draft/celery-5-high-level-architecture:message broker`.
+may publish to a :term:`Message Broker`.
 
 Therefore, it is unnecessary to maintain a publisher for each process that
-publishes to a :ref:`draft/celery-5-high-level-architecture:message broker`.
+publishes to a :term:`Message Broker`.
 
 In such cases, a Publisher Daemon can be used. The publishing processes will
 specify it as their target and communicate the messages to be published via
@@ -544,7 +595,7 @@ components.
 
 It spawns the :ref:`Workers <draft/celery-5-high-level-architecture:Worker>`, :ref:`Routers <draft/celery-5-high-level-architecture:Router>`,
 :ref:`Schedulers <draft/celery-5-high-level-architecture:Scheduler>` and if configured and possible,
-the :ref:`Message Brokers <draft/celery-5-high-level-architecture:Message Broker>` as well.
+the :term:`Message Brokers <Message Broker>` as well.
 
 By default, the Controller creates sub-processes for
 all the required components. This is suitable for small scale deployments

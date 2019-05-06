@@ -83,10 +83,63 @@ Glossary
   CAP Theorem
   Availability
   Fault Tolerance
-  Failure Resilience
+  Network Resilience
+    According to Wikipedia `Network Resilience`_ is:
+
+    | In computer networking: resilience is the ability to provide and maintain
+    | an acceptable level of service in the face of faults and challenges to
+    | normal operation.”
+    | Threats and challenges for services can range from simple misconfiguration
+    | over large scale natural disasters to targeted attacks.
+    | As such, network resilience touches a very wide range of topics.
+    | In order to increase the resilience of a given communication network,
+    | the probable challenges and risks have to be identified
+    | and appropriate resilience metrics have to be defined
+    | for the service to be protected.
   Consistency
   Network Partition Tolerance
+  Monitoring
+    According to `fastly`_ monitoring is:
+
+    | The activity of observing the state of a system over time.
+    | It uses instrumentation for problem detection, resolution,
+    | and continuous improvement.
+    | Monitoring alerts are reactive–they tell you when a known issue has
+    | already occurred
+    | (i.e. maybe your available memory is too low or you need more compute).
+    | Monitoring provides automated checks that you can execute against a
+    | distributed system to make sure that none of the things you predicted
+    | signify any trouble.
+    | While monitoring these known quantities is important,
+    | the practice also has limitations, including the fact that you are only
+    | looking for known issues. Which begs an important question,
+    | “what about the problems that you didn’t predict?”
   Observability
+    According to Wikipedia in the context of control theory `Observability`_ is:
+
+    | In control theory, observability is a measure of how well internal states
+    | of a system can be inferred from knowledge of its external outputs.
+
+    In the context of distributed systems observability is a super-set of
+    :term:`monitoring`.
+
+    According to `fastly`_ the three pillars of observability are:
+
+    | Logs: Logs are a verbose representation of events that have happened.
+    | Logs tell a linear story about an event using string processing
+    | and regular expressions.
+    | A common challenge with logs is that if you haven’t properly indexed
+    | something, it will be difficult to find due to the sheer volume of
+    | log data.
+    | Traces: A trace captures a user’s journey through your application.
+    | Traces provide end-to-end visibility and are useful when you need to
+    | identify which components cause system errors, find performance
+    | bottlenecks, or monitor flow through modules.
+    | Metrics: Metrics can be either a point in time or monitored over
+    | intervals.
+    | These data points could be counters, gauges, etc.
+    | They typically represent data over intervals, but sometimes sacrifice
+    | details of an event in order to present data that is easier to assimilate.
   Structured Logging
     Structured Logging is a method to make log messages easy to process
     by machines.
@@ -149,10 +202,10 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this document
 and in Celery 5's codebase as well.
 
-Failure Resilience and Fault Tolerance
+Network Resilience and Fault Tolerance
 --------------------------------------
 
-Celery 5 aims to be failure resilient and fault tolerant.
+Celery 5 aims to be network failure resilient and fault tolerant.
 As an architectural guideline Celery must retry operations **by default**
 and must avoid doing so **indefinitely and without proper limits**.
 
@@ -648,3 +701,6 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _JOURNAL_STREAM: https://www.freedesktop.org/software/systemd/man/systemd.exec.html#%24JOURNAL_STREAM
 .. _journald: https://www.freedesktop.org/software/systemd/man/systemd-journald.service.html
 .. _sd_notify: https://www.freedesktop.org/software/systemd/man/sd_notify.html
+.. _Network Resilience: https://en.wikipedia.org/wiki/Resilience_(network)
+.. _Observability: https://en.wikipedia.org/wiki/Observability
+.. _fastly: https://www.fastly.com/blog/monitoring-vs-observability

@@ -81,8 +81,14 @@ Glossary
       | trips.
 
   CAP Theorem
+    TODO
+
   Availability
+    TODO
+
   Fault Tolerance
+    TODO
+
   Network Resilience
     According to Wikipedia `Network Resilience`_ is:
 
@@ -96,8 +102,13 @@ Glossary
     | the probable challenges and risks have to be identified
     | and appropriate resilience metrics have to be defined
     | for the service to be protected.
+
   Consistency
+    TODO
+
   Network Partition Tolerance
+    TODO
+
   Monitoring
     According to `fastly`_ monitoring is:
 
@@ -114,6 +125,7 @@ Glossary
     | the practice also has limitations, including the fact that you are only
     | looking for known issues. Which begs an important question,
     | “what about the problems that you didn’t predict?”
+
   Observability
     According to Wikipedia in the context of control theory `Observability`_ is:
 
@@ -140,6 +152,7 @@ Glossary
     | These data points could be counters, gauges, etc.
     | They typically represent data over intervals, but sometimes sacrifice
     | details of an event in order to present data that is easier to assimilate.
+
   Structured Logging
     Structured Logging is a method to make log messages easy to process
     by machines.
@@ -148,10 +161,12 @@ Glossary
     string.
     A structured log message store their context in a predetermined message
     format which allows machines to parse them more easily.
+
   JSON
     JSON stands for JavaScript Object Notation, which is a way to format data so
     that it can be transmitted from one place to another, most commonly between
     a server and a Web application.
+
   stdout
     Stdout, also known as standard output, is the default file descriptor
     where a process can write output.

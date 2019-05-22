@@ -413,7 +413,7 @@ Health Checks
 Circuit Breaker
 ~~~~~~~~~~~~~~~
 
-Failure Resilience
+Network Resilience
 ++++++++++++++++++
 
 Observability

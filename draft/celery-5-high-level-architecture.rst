@@ -410,6 +410,26 @@ in the same worker or abandoning the task entirely.
 Health Checks
 ~~~~~~~~~~~~~
 
+Health Checks are :term:`Command Messages <Command Message>` which are executed
+periodically in each worker.
+The :ref:`draft/celery-5-high-level-architecture:Scheduler` is responsible
+for scheduling the health checks for execution in each worker.
+
+Celery provides many types of health checks in order to verify that it can
+operate without any issues.
+
+Users may implement their own health checks in addition to the built-in health
+checks.
+
+Some health checks are specific to the worker they are executing on.
+Therefore, their state is stored in-memory in the worker.
+
+Other health checks are global to all or a group of workers.
+As such, their state is stored externally.
+
+If the state storage for health checks is not provided, these health checks
+are disabled.
+
 Circuit Breaker
 ~~~~~~~~~~~~~~~
 

@@ -214,8 +214,8 @@ Multiple tasks can be subscribed to an event.
   >>> UserRegistered.delay(user_id=1, email='foo@bar.com')  # Calls both send_welcome_email and notify_account_manager with the provided arguments.
 
 These architectural building blocks will aid us in creating a better messaging
-system. To encourage `ubiquitous language`_, we will be using them in this document
-and in Celery 5's codebase as well.
+system. To encourage `ubiquitous language`_, we will be using them in this
+document and in Celery 5's codebase as well.
 
 Network Resilience and Fault Tolerance
 --------------------------------------
@@ -247,6 +247,15 @@ Distributed Systems suffer from an inherent property:
 
 Therefore, Celery must be fault tolerant and gracefully degrade it's operation
 when failures occur.
+
+Graceful Degradation
+~~~~~~~~~~~~~~~~~~~~
+
+Features which are less mission-critical may fail at any time, provided that
+a warning is logged.
+
+This document will highlight such features and describe what happens when
+they fail for any reason.
 
 Retries
 ~~~~~~~
@@ -392,6 +401,12 @@ if all we want to do is retry.
     with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
       second_operation()
 
+By default messages which cannot be re-published will be stored
+in the :ref:`draft/celery-5-high-level-architecture:messages backlog`.
+
+Implementers may provide other fallbacks such as executing the retried task
+in the same worker or abandoning the task entirely.
+
 Health Checks
 ~~~~~~~~~~~~~
 
@@ -441,6 +456,12 @@ runtimes.
   Celery will detect that the `JOURNAL_STREAM`_ environment variable
   is set when the process starts and use it's value to transmit structured
   data into `journald`_.
+
+Whenever Celery fails to log a message for any reason it publishes a command
+to the worker's :ref:`draft/celery-5-high-level-architecture:Inbox Queue`
+in order to log the message again.
+As usual messages which fail to be published are stored in the
+:ref:`draft/celery-5-high-level-architecture:messages backlog`.
 
 Worker
 ------
@@ -504,6 +525,18 @@ The user will configure the following properties of the Circuit Breaker:
 
   The circuit breaker will downgrade it's log level after 30 minutes.
 
+Inbox Queue
++++++++++++
+
+Each worker declares an inbox queue in the :term:`Message Broker`.
+
+Publishers may publish messages to that queue in order to execute tasks on a
+specific worker.
+
+Celery uses the Inbox Queue to defer execution of the worker's internal tasks.
+
+While disabling the inbox queue is possible, some functionality will be lost.
+
 Publisher
 ---------
 
@@ -555,6 +588,13 @@ are kept inside the queue.
 
 By default, an in-memory queue will be used. The user may provide another
 implementation which stores the messages on-disk or in a central database.
+
+Implementers should take into account what happens whenever writing to the
+messages backlog fails.
+
+The default fallback mechanism will append the messages into an in-memory queue.
+These messages will be published first in order to avoid message loss in case
+the publisher goes down for any reason.
 
 Publisher Daemon
 ++++++++++++++++
@@ -623,8 +663,10 @@ in order to avoid decreasing our email reputation.
 
 Tasks may define a global rate limit or a per worker rate limit.
 
-Whenever a task reaches it's rate limit, an event is sent to the :ref:`draft/celery-5-high-level-architecture:Router`
-to notify that is should not consume or reject these tasks.
+Whenever a task reaches it's rate limit, an event is published
+to the :ref:`draft/celery-5-high-level-architecture:Router`'s
+:ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
+The event notifies the Router that it should not consume or reject these tasks.
 The exact payload of the rate limiting event will be determined
 in another CEP.
 

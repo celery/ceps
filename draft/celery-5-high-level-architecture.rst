@@ -12,7 +12,7 @@ CEP XXXX: Celery 5 High Level Architecture
 :Last-Modified: 2019-04-08
 
 .. contents:: Table of Contents
-   :depth: 3
+   :depth: 4
    :local:
 
 Abstract
@@ -410,10 +410,45 @@ in the same worker or abandoning the task entirely.
 Health Checks
 ~~~~~~~~~~~~~
 
-Health Checks are :term:`Command Messages <Command Message>` which are executed
-periodically in each worker.
+Health Checks are used in Celery to verify that a worker is able to
+successfully execute a :ref:`task <draft/celery-5-high-level-architecture:Tasks>`
+or a :ref:`service <draft/celery-5-high-level-architecture:Services>`.
+
 The :ref:`draft/celery-5-high-level-architecture:Scheduler` is responsible
-for scheduling the health checks for execution in each worker.
+for scheduling the health checks for execution in each worker after
+each time the configured period of time lapses.
+
+Whenever a health check should be executed the
+:ref:`draft/celery-5-high-level-architecture:Scheduler` instructs the
+:ref:`draft/celery-5-high-level-architecture:Publisher` to send the
+`<health check name>_expired` :term:`Event Message` to each worker's
+:ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
+
+Workers which have tasks subscribed to the event will
+execute all the subscribed tasks in order to determine the state of the
+health check.
+
+Health Checks can handle :term:`Document Messages <Document Message>` as input
+from :ref:`draft/celery-5-high-level-architecture:Ingress Only Data Sources`.
+
+This is useful when you want to respond to an alert from a monitoring system
+or when you want to verify that all incoming data from said source is
+valid at all times before executing the task.
+
+In addition to tasks, Health Checks can also use
+:ref:`draft/celery-5-high-level-architecture:Services` in order to track
+changes in the environment it is running on.
+
+.. admonition:: Example
+
+  We have a task which requires 8GB of memory to complete.
+  The worker runs a service which constantly monitors the system's available
+  memory.
+  If there is not enough memory it changes the task's health check to the
+  **Unhealthy** state.
+
+If a task or a service that is part of a health check fails unexpectedly it
+is ignored and an error message is logged.
 
 Celery provides many types of health checks in order to verify that it can
 operate without any issues.
@@ -430,8 +465,87 @@ As such, their state is stored externally.
 If the state storage for health checks is not provided, these health checks
 are disabled.
 
-Circuit Breaker
-~~~~~~~~~~~~~~~
+Health Checks can be associated with tasks in order to ensure that they are
+likely to succeed. Multiple Health Check failures may trigger
+a :term:`Circuit Breaker` which will prevent the task from running for a period
+of time or automatically mark it as failed.
+
+Each Health Check declares its possible states.
+Sometimes it makes sense to try to execute a task anyway even if the
+health check occasionally fails.
+
+.. admonition:: Example
+
+  A health check that verifies whether we can send a HTTP request to an endpoint
+  has multiple states.
+
+  The health check performs an
+  `OPTIONS <https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS>`_
+  HTTP request to that endpoint and expects it to respond within the specified
+  timeout.
+
+  The health check is in a **Healthy** state if all the following conditions are
+  met:
+
+  * The DNS server is responding within the specified time limit and is
+    resolving the address correctly.
+  * The TLS certificates are valid and the connection is secure.
+  * The Intrusion Detection System reports that the network is secure.
+  * The HTTP method we're about to use is listed in the OPTIONS response's
+    `ALLOW <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Allow>`_
+    header.
+  * The content type we're about to format the request in is listed in the
+    OPTIONS response's
+    `ACCEPT <https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept>`_
+    header.
+  * The OPTIONS request responds within the specified time limits.
+  * The OPTIONS request responds with
+    `200 OK <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/200>`_
+    status.
+
+  In addition, the actual request performed in the task must also stand in the
+  aforementioned conditions. Otherwise, the health check will change it's state.
+
+  The health check can be in an **Insecure** state if one or more of the
+  following conditions are met:
+
+  * The TLS certificates are invalid for any reason.
+  * The Intrusion Detection System has reported that the network is compromised
+    for any reason.
+
+  It is up for the user to configure the :term:`Circuit Breaker` to prevent
+  insecure requests from being executed.
+
+  The health check can be in an **Degraded** state if one or more of the
+  following conditions are met:
+
+  * The request does not reply with a 2xx HTTP status.
+  * The request responds slowly and almost reaches it's time limits.
+
+  It is up for the user to configure the :term:`Circuit Breaker` to prevent
+  requests from being executed after multiple attempts or not all.
+
+  The health check can be in an **Unhealthy** state if one or more of the
+  following conditions are met:
+
+  * The request responds with a 500 HTTP status.
+  * The request's response has not been received within the specified time
+    limits.
+
+  It is up for the user to configure the :term:`Circuit Breaker` to prevent
+  requests from being executed if there is an issue with the endpoint.
+
+  The health check can be in an **Permanently Unavailable** state if one or more
+  of the following conditions are met:
+
+  * The request responds with a
+    `404 Not Found <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404>`_
+    HTTP status.
+
+Circuit Breaking
+~~~~~~~~~~~~~~~~
+
+Celery 5 introduces the concept of :term:`Circuit Breaker` into the framework.
 
 Network Resilience
 ++++++++++++++++++
@@ -485,6 +599,12 @@ As usual messages which fail to be published are stored in the
 
 Worker
 ------
+
+Services
+++++++++
+
+Tasks
++++++
 
 Protocol
 ++++++++

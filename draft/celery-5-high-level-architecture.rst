@@ -541,6 +541,8 @@ health check occasionally fails.
   * The request responds with a
     `404 Not Found <https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404>`_
     HTTP status.
+  * The HTTP method we're about to use is not allowed.
+  * The content type we're about to use is not allowed.
 
 Circuit Breaking
 ~~~~~~~~~~~~~~~~

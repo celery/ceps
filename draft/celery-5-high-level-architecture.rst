@@ -240,6 +240,11 @@ provided extension point.
 Trace Points
 ++++++++++++
 
+Celery provides trace points for application monitoring tools and distributed
+tracing tools.
+
+This allows our users to spot and debug performance issues.
+
 Logging
 +++++++
 

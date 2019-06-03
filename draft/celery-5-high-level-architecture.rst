@@ -658,6 +658,10 @@ The user will configure the following properties of the Circuit Breaker:
 Network Resilience
 ++++++++++++++++++
 
+Network Connections may fail at any time.
+In order to be network resilient we must use retries and circuit breakers on
+all outgoing and incoming connections.
+
 Worker
 ------
 

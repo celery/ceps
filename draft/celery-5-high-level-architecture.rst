@@ -549,6 +549,52 @@ Circuit Breaking
 
 Celery 5 introduces the concept of :term:`Circuit Breaker` into the framework.
 
+A Circuit Breaker prevents a :ref:`task <draft/celery-5-high-level-architecture:Tasks>`
+or a :ref:`service <draft/celery-5-high-level-architecture:Services>`
+from executing.
+
+Each task or a service has a Circuit Breaker which the user can associate
+health checks with.
+
+In addition, if the task or the service unexpectedly fails, the user
+can configure the Circuit Breaker to trip after a configured number of times.
+The default value is 3 times.
+
+Whenever a Circuit Breaker trips, the worker will emit a warning log message.
+
+After a configured period of time the circuit is opened again and tasks may
+execute. The default period of time is 30 seconds with no linear or exponential
+growth.
+
+The user will configure the following properties of the Circuit Breaker:
+
+* How many times the health checks may fail before
+  the circuit breaker trips.
+* How many unexpected failures the task or service tolerates before tripping
+  the Circuit Breaker.
+* The period of time after which the circuit is yet
+  again closed. That time period may grow linearly or exponentially.
+* How many circuit breaker trips during a period of time should cause the worker
+  to produce an error log message instead of a warning log message.
+* The period of time after which the circuit breaker downgrades
+  it's log level back to warning.
+
+.. admonition:: Example
+
+  We allow 2 **Unhealthy** health checks
+  and/or 10 **Degraded** health checks in a period of 10 seconds.
+
+  If we cross that threshold, the circuit breaker trips.
+
+  The circuit will be closed again after 30 seconds. Afterwards, the task can
+  be executed again.
+
+  If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
+  all circuit breaker trips will emit an error log message instead of a warning.
+
+  The circuit breaker will downgrade it's log level after 30 minutes.
+
+
 Network Resilience
 ++++++++++++++++++
 
@@ -636,36 +682,6 @@ The API for task health checks will be determined in another CEP.
 
 Worker Circuit Breakers
 +++++++++++++++++++++++
-
-Each task has it's own Circuit Breaker.
-
-Whenever a circuit breaker trips, the worker will emit a warning log message.
-
-The user will configure the following properties of the Circuit Breaker:
-
-* How many times the health checks may fail before
-  the circuit breaker trips.
-* The period of time after which the circuit is yet
-  again closed. That time period may grow linearly or exponentially.
-* How many circuit breaker trips during a period of time should cause the worker
-  to produce an error log message instead of a warning log message.
-* The period of time after which the circuit breaker downgrades
-  it's log level back to warning.
-
-.. admonition:: Example
-
-  We allow 2 **Unhealthy** health checks
-  and/or 10 **Degraded** health checks in a period of 10 seconds.
-
-  If we cross that threshold, the circuit breaker trips.
-
-  The circuit will be closed again after 30 seconds. Afterwards, the task can
-  be executed again.
-
-  If 3 consequent circuit breaker trips occurred during a period of 5 minutes,
-  all circuit breaker trips will emit an error log message instead of a warning.
-
-  The circuit breaker will downgrade it's log level after 30 minutes.
 
 Inbox Queue
 +++++++++++

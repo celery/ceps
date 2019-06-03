@@ -217,6 +217,61 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this
 document and in Celery 5's codebase as well.
 
+Observability
+-------------
+
+One of Celery 5's goals is to be :term:`observable <Observability>`.
+
+Each Celery component will record statistics, provide trace points for
+application monitoring tools and distributed tracing tools and emit log messages
+when appropriate.
+
+Metrics
++++++++
+
+Celery stores and publishes metrics which allows our users to debug their
+applications more easily and spot problems.
+
+By default each worker will publish the metrics to a dedicated queue.
+
+Other methods such as publishing them to StasD is also possible using the
+provided extension point.
+
+Trace Points
+++++++++++++
+
+Logging
++++++++
+
+All log messages must be structured.
+:term:`Structured logs <Structured Logging>` provide context for our users
+which allows them to debug problems more easily and aids the developers
+to resolve bugs in Celery.
+
+The structure of a log message is determined whenever a component
+is initialized.
+
+During initialization, an attempt will be made to detect how the component
+lifecycle is managed.
+If all attempts are unsuccessful, the logs will be formatted using
+:term:`JSON` and will be printed to stdout.
+
+Celery will provide an extension point for detection of different
+runtimes.
+
+.. admonition:: Example
+
+  If a component's lifecycle is managed by a SystemD service,
+  Celery will detect that the `JOURNAL_STREAM`_ environment variable
+  is set when the process starts and use it's value to transmit structured
+  data into `journald`_.
+
+Whenever Celery fails to log a message for any reason it publishes a command
+to the worker's :ref:`draft/celery-5-high-level-architecture:Inbox Queue`
+in order to log the message again.
+As usual messages which fail to be published are stored in the
+:ref:`draft/celery-5-high-level-architecture:messages backlog`.
+
 Network Resilience and Fault Tolerance
 --------------------------------------
 
@@ -597,61 +652,6 @@ The user will configure the following properties of the Circuit Breaker:
 
 Network Resilience
 ++++++++++++++++++
-
-Observability
--------------
-
-One of Celery 5's goals is to be :term:`observable <Observability>`.
-
-Each Celery component will record statistics, provide trace points for
-application monitoring tools and distributed tracing tools and emit log messages
-when appropriate.
-
-Metrics
-+++++++
-
-Celery stores and publishes metrics which allows our users to debug their
-applications more easily and spot problems.
-
-By default each worker will publish the metrics to a dedicated queue.
-
-Other methods such as publishing them to StasD is also possible using the
-provided extension point. 
-
-Trace Points
-++++++++++++
-
-Logging
-+++++++
-
-All log messages must be structured.
-:term:`Structured logs <Structured Logging>` provide context for our users
-which allows them to debug problems more easily and aids the developers
-to resolve bugs in Celery.
-
-The structure of a log message is determined whenever a component
-is initialized.
-
-During initialization, an attempt will be made to detect how the component
-lifecycle is managed.
-If all attempts are unsuccessful, the logs will be formatted using
-:term:`JSON` and will be printed to stdout.
-
-Celery will provide an extension point for detection of different
-runtimes.
-
-.. admonition:: Example
-
-  If a component's lifecycle is managed by a SystemD service,
-  Celery will detect that the `JOURNAL_STREAM`_ environment variable
-  is set when the process starts and use it's value to transmit structured
-  data into `journald`_.
-
-Whenever Celery fails to log a message for any reason it publishes a command
-to the worker's :ref:`draft/celery-5-high-level-architecture:Inbox Queue`
-in order to log the message again.
-As usual messages which fail to be published are stored in the
-:ref:`draft/celery-5-high-level-architecture:messages backlog`.
 
 Worker
 ------

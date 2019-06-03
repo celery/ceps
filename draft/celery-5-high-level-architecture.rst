@@ -668,8 +668,24 @@ Worker
 Services
 ++++++++
 
+Services are long running tasks which are used by Celery to perform its internal
+operations.
+
+Some services publish messages to brokers, others consume messages from them.
+Other services are used to calculate optimal scheduling of tasks, routing,
+logging and even executing tasks.
+
+Users may create their own services as well.
+
 Tasks
 +++++
+
+Tasks are short running, have a defined purpose and are triggered in response
+to messages.
+
+Celery declares some tasks for internal usage.
+
+Users will create their own tasks for their own use.
 
 Protocol
 ++++++++
@@ -679,23 +695,6 @@ Introduction to AMQP 1.0 Terminology
 
 Worker Health Checks
 ++++++++++++++++++++
-
-The Worker will perform health checks to ensure that it can execute
-a task without errors.
-
-A task may have more than one health check. However, that does not necessarily
-means that if any of the health checks fail a configured number of times
-it will trip a Circuit Breaker.
-
-Task health checks have the following states:
-
-* **Healthy** - The task will be executed without errors.
-* **Degraded** - The task may fail, in which case it will be retried later.
-* **Unhealthy** - The task will surely fail and thus is rejected.
-
-A user can associate a health check with multiple Circuit Breakers.
-
-The API for task health checks will be determined in another CEP.
 
 Worker Circuit Breakers
 +++++++++++++++++++++++

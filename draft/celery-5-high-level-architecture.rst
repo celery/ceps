@@ -610,6 +610,14 @@ when appropriate.
 Metrics
 +++++++
 
+Celery stores and publishes metrics which allows our users to debug their
+applications more easily and spot problems.
+
+By default each worker will publish the metrics to a dedicated queue.
+
+Other methods such as publishing them to StasD is also possible using the
+provided extension point. 
+
 Trace Points
 ++++++++++++
 

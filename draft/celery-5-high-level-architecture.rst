@@ -665,6 +665,8 @@ all outgoing and incoming connections.
 Worker
 ------
 
+The Worker is the most fundamental architectural component in Celery.
+
 Services
 ++++++++
 
@@ -686,6 +688,45 @@ to messages.
 Celery declares some tasks for internal usage.
 
 Users will create their own tasks for their own use.
+
+Internal Tasks
+~~~~~~~~~~~~~~
+
+~~~~~~~~~~~~~~~~~~~
+RetryFailedBootstep
+~~~~~~~~~~~~~~~~~~~
+
+This task responds to a :term:`Command Message` which instructs the worker
+to retry an optional
+:ref:`Boot Step <draft/celery-5-high-level-architecture:Boot Steps>`
+which has failed during the worker's initialization procedure.
+
+The Boot Step's execution will be retried a configured amount of times
+before giving up.
+
+By default this task's
+:ref:`Circuit Breaker <draft/celery-5-high-level-architecture:Circuit Breaking>`
+is configured to never prevent or automatically fail the execution of this task.
+
+Boot Steps
+++++++++++
+
+During the Worker's initialization procedure Boot Steps are executed to prepare
+it for execution of tasks.
+
+Some Boot Steps are responsible for starting all the
+:ref:`services <draft/celery-5-high-level-architecture:Services>` required for
+the worker to function correctly.
+Others may publish a :ref:`task <draft/celery-5-high-level-architecture:Tasks>`
+for execution to the worker's
+:ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
+
+Some Boot Steps are mandatory and thus if they fail,
+the worker refuses to start.
+Others are optional and their execution will be deferred to the
+:ref:`draft/celery-5-high-level-architecture:RetryFailedBootstep` task.
+
+Users may create and use their own Boot Steps if they wish to do so.
 
 Protocol
 ++++++++

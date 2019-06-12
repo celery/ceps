@@ -667,17 +667,48 @@ Worker
 
 The Worker is the most fundamental architectural component in Celery.
 
+Internal Task Queue
++++++++++++++++++++
+
+The internal task queue is an in-memory priority queue which the worker uses
+to queue tasks for execution.
+
+The queue must be thread-safe and coroutine-safe.
+
+Internal Results Queue
+++++++++++++++++++++++
+
+The internal results queue is an in-memory priority queue which the worker uses
+to report the result of tasks back to the
+:ref:`draft/celery-5-high-level-architecture:Router`.
+
+The queue must be thread-safe and coroutine-safe.
+
 Services
 ++++++++
 
-Services are long running tasks which are used by Celery to perform its internal
-operations.
+Services are stateful, long running tasks which are used by Celery to perform
+its internal operations.
 
 Some services publish messages to brokers, others consume messages from them.
 Other services are used to calculate optimal scheduling of tasks, routing,
 logging and even executing tasks.
 
 Users may create their own services as well.
+
+Internal Services
++++++++++++++++++
+
+TaskExecution
+~~~~~~~~~~~~~
+
+The `TaskExecution` service is responsible for executing all Celery
+:ref:`tasks <draft/celery-5-high-level-architecture:Tasks>`.
+
+It consumes tasks from the
+:ref:`draft/celery-5-high-level-architecture:Internal Task Queue`,
+executes them and enqueues the results into the
+:ref:`draft/celery-5-high-level-architecture:Internal Results Queue`.
 
 Tasks
 +++++
@@ -690,9 +721,8 @@ Celery declares some tasks for internal usage.
 Users will create their own tasks for their own use.
 
 Internal Tasks
-~~~~~~~~~~~~~~
+++++++++++++++
 
-~~~~~~~~~~~~~~~~~~~
 RetryFailedBootstep
 ~~~~~~~~~~~~~~~~~~~
 

@@ -355,11 +355,11 @@ This created the following pattern:
     # data which is currently incorrect but will be updated later.
     _calculate()
 
-There is an obvious way around this problem. We can ensure that `_calculate()`
+An obvious way around this problem is to ensure that `_calculate()`
 raises a custom exception.
 
-But we shouldn't force the users to use workarounds. Code should be ergonomic
-and idiomatic.
+But we shouldn't force the users to use workarounds. Our code should be
+ergonomic and idiomatic.
 
 Instead, we should allow users to declare sections as "poisonous" - tasks that
 if retried will surely fail if they fail at those sections.

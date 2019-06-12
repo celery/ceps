@@ -723,6 +723,14 @@ Users will create their own tasks for their own use.
 Internal Tasks
 ++++++++++++++
 
+SystemDNotify
+~~~~~~~~~~~~~
+
+This task reports the status of the worker to the SystemD service which is
+running it.
+
+It uses the `sd_notify`_ protocol to do so.
+
 RetryFailedBootstep
 ~~~~~~~~~~~~~~~~~~~
 

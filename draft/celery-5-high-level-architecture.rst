@@ -710,6 +710,13 @@ It consumes tasks from the
 executes them and enqueues the results into the
 :ref:`draft/celery-5-high-level-architecture:Internal Results Queue`.
 
+The service supervises how many tasks are run concurrently and limits the
+number of concurrent tasks to the configured amount.
+
+The service also attempts to saturate all of the available resources by
+scheduling as many as :ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`
+and :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks` as possible.
+
 Tasks
 +++++
 
@@ -719,6 +726,34 @@ to messages.
 Celery declares some tasks for internal usage.
 
 Users will create their own tasks for their own use.
+
+I/O Bound Tasks
+~~~~~~~~~~~~~~~
+
+I/O bound tasks are tasks which mainly perform a network operation or
+a disk operation.
+
+I/O bound tasks are specifically marked as such using Python's `async def`
+notation for defining awaitable functions. They will run in a Python coroutine.
+
+Due to that, any I/O operation in that task must be asynchronous in order to
+avoid blocking the event loop.
+
+CPU Bound Tasks
+~~~~~~~~~~~~~~~
+
+CPU bound tasks are tasks which mainly perform a calculation of some sort such
+as calculating an average, hashing, serialization or deserialization,
+compression or decompression, encryption or decryption etc.
+In some cases where no asynchronous code for the I/O operation is available
+CPU bound tasks are also an appropriate choice as they will not block
+the event loop for the duration of the task.
+
+Performing operations which release the `GIL`_ is recommended to avoid
+throttling the concurrency of the worker.
+
+CPU bound tasks are specifically marked as such using Python's
+`def` notation for defining functions. They will run in a Python thread.
 
 Internal Tasks
 ++++++++++++++
@@ -1014,3 +1049,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Network Resilience: https://en.wikipedia.org/wiki/Resilience_(network)
 .. _Observability: https://en.wikipedia.org/wiki/Observability
 .. _fastly: https://www.fastly.com/blog/monitoring-vs-observability
+.. _GIL: https://realpython.com/python-gil/

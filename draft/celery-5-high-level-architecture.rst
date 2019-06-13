@@ -999,8 +999,11 @@ By default, the Controller creates sub-processes for
 all the required components. This is suitable for small scale deployments
 or for deployments where SystemD is unavailable.
 
+Foreman
++++++++
+
 SystemD Integration
-+++++++++++++++++++
+~~~~~~~~~~~~~~~~~~~
 
 Unless it is explicitly overridden by the configuration, whenever the Controller
 is run as a SystemD service, it will use SystemD to spawn all other Celery

@@ -45,6 +45,10 @@ Specification
 
    Unless explicitly specified, The API will be determined in other CEPs.
 
+.. figure:: celery-5-architecture-figure01.png
+
+  High Level Architecture Diagram
+
 Glossary
 --------
 

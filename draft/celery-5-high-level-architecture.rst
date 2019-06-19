@@ -671,6 +671,23 @@ Worker
 
 The Worker is the most fundamental architectural component in Celery.
 
+Event Loop
+++++++++++
+
+In Celery 4 we have implemented our own custom Event Loop.
+It is a cause for many bugs and issues in Celery.
+
+In addition, some I/O operations are still blocking the event loop since
+the clients we use do not allow non-blocking operations.
+
+The most important feature of Celery 5 is to replace the custom Event Loop
+with `Trio`_.
+
+We selected it because of it's
+`design <https://trio.readthedocs.io/en/latest/design.html>`,
+`interoperability with asyncio <https://github.com/python-trio/trio-asyncio>`
+and it's many features.
+
 Internal Task Queue
 +++++++++++++++++++
 
@@ -1073,3 +1090,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Observability: https://en.wikipedia.org/wiki/Observability
 .. _fastly: https://www.fastly.com/blog/monitoring-vs-observability
 .. _GIL: https://realpython.com/python-gil/
+.. _Trio: https://trio.readthedocs.io/en/latest/

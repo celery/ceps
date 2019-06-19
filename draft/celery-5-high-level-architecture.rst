@@ -703,6 +703,14 @@ Users may create their own services as well.
 Internal Services
 +++++++++++++++++
 
+Celery defines internal services to ensure it's operation and to provide
+support for it's features.
+
+The exact API for each service will be determined in another CEP.
+
+This list of internal services is not final.
+Other internal services may be defined in other CEPs.
+
 TaskExecution
 ~~~~~~~~~~~~~
 
@@ -761,6 +769,14 @@ CPU bound tasks are specifically marked as such using Python's
 
 Internal Tasks
 ++++++++++++++
+
+Celery defines internal tasks to ensure it's operation and to provide
+support for it's features.
+
+The exact API for each task will be determined in another CEP.
+
+This list of internal tasks is not final.
+Other internal tasks may be defined in other CEPs.
 
 SystemDNotify
 ~~~~~~~~~~~~~

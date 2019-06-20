@@ -1,7 +1,10 @@
 AMQP
 argparse
+async
+asyncio
 Autoscaler
 autoscaling
+awaitable
 barebones
 ceps
 coroutine

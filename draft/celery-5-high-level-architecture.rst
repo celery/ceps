@@ -41,9 +41,9 @@ Specification
 
 .. note::
 
-	 The code examples below are for illustration purposes only.
+  The code examples below are for illustration purposes only.
 
-   Unless explicitly specified, The API will be determined in other CEPs.
+  Unless explicitly specified, The API will be determined in other CEPs.
 
 .. figure:: celery-5-architecture-figure01.png
 
@@ -69,7 +69,7 @@ Glossary
     message which indicates that an event has occurred.
 
   Document Message
-    `Enterprise Integration Patterns`_ defines an `Event Message`_ as a
+    `Enterprise Integration Patterns`_ defines an `Document Message`_ as a
     message containing data from a data source.
 
   Circuit Breaker
@@ -238,7 +238,7 @@ applications more easily and spot problems.
 
 By default each worker will publish the metrics to a dedicated queue.
 
-Other methods such as publishing them to StasD is also possible using the
+Other methods such as publishing them to StatsD is also possible using the
 provided extension point.
 
 Trace Points

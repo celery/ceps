@@ -20,6 +20,7 @@ png
 Pre
 repo
 runtimes
+StatsD
 stdout
 systemd
 SystemD

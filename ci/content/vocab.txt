@@ -9,6 +9,7 @@ barebones
 ceps
 coroutine
 coroutines
+deserialization
 dev
 devs
 dsl
@@ -25,5 +26,5 @@ repo
 runtimes
 StatsD
 stdout
-systemd
 SystemD
+systemd

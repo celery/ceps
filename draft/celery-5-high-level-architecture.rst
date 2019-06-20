@@ -765,8 +765,8 @@ The most important feature of Celery 5 is to replace the custom Event Loop
 with `Trio`_.
 
 We selected it because of it's
-`design <https://trio.readthedocs.io/en/latest/design.html>`,
-`interoperability with asyncio <https://github.com/python-trio/trio-asyncio>`
+`design <https://trio.readthedocs.io/en/latest/design.html>`_,
+`interoperability with asyncio <https://github.com/python-trio/trio-asyncio>`_
 and it's many features.
 
 Internal Task Queue

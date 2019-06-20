@@ -729,13 +729,13 @@ in its documentation as well:
   problematic behaviors that make handling arbitrary command line interfaces
   hard:
 
-  *   argparse has built-in magic behavior to guess if something is an
+  * argparse has built-in magic behavior to guess if something is an
     argument or an option.  This becomes a problem when dealing with
     incomplete command lines as it's not possible to know without having a
     full understanding of the command line how the parser is going to
     behave.  This goes against Click's ambitions of dispatching to
     subparsers.
-  *   argparse currently does not support disabling of interspersed
+  * argparse currently does not support disabling of interspersed
     arguments.  Without this feature it's not possible to safely implement
     Click's nested parsing nature.
 

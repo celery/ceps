@@ -16,5 +16,6 @@ install:
 script:
 - bash ci/errata.sh pre ./ content/
 - rm -rf content/
+- mkdir _static/
 - make html linkcheck -j2
 - bash ci/errata.sh post _build/html || true

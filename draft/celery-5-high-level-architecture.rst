@@ -666,6 +666,87 @@ Network Connections may fail at any time.
 In order to be network resilient we must use retries and circuit breakers on
 all outgoing and incoming connections.
 
+Command Line Interface
+----------------------
+
+Our command line interface is the user interface to all of Celery's
+functionality. It is crucial for us to provide an excellent user experience.
+
+Currently Celery uses :mod:`argparse` with a few custom hacks and workarounds for
+things which are not possible to do with :mod:`argparse`.
+This created some bugs in the past.
+
+Celery 5 will use `Click`_, a modern Python library for creating command line
+programs.
+
+Click's documentation `explains <https://click.palletsprojects.com/en/7.x/why>`_
+why it is a good fit for us:
+
+  There are so many libraries out there for writing command line utilities;
+  why does Click exist?
+
+  This question is easy to answer: because there is not a single command
+  line utility for Python out there which ticks the following boxes:
+
+  *   is lazily composable without restrictions
+  *   supports implementation of Unix/POSIX command line conventions
+  *   supports loading values from environment variables out of the box
+  *   supports for prompting of custom values
+  *   is fully nestable and composable
+  *   works the same in Python 2 and 3
+  *   supports file handling out of the box
+  *   comes with useful common helpers (getting terminal dimensions,
+      ANSI colors, fetching direct keyboard input, screen clearing,
+      finding config paths, launching apps and editors, etc.)
+
+  There are many alternatives to Click and you can have a look at them if
+  you enjoy them better.  The obvious ones are ``optparse`` and ``argparse``
+  from the standard library.
+
+  Click actually implements its own parsing of arguments and does not use
+  ``optparse`` or ``argparse`` following the ``optparse`` parsing behavior.
+  The reason it's not based on ``argparse`` is that ``argparse`` does not
+  allow proper nesting of commands by design and has some deficiencies when
+  it comes to POSIX compliant argument handling.
+
+  Click is designed to be fun to work with and at the same time not stand in
+  your way.  It's not overly flexible either.  Currently, for instance, it
+  does not allow you to customize the help pages too much. This is intentional
+  because Click is designed to allow you to nest command line utilities.  The
+  idea is that you can have a system that works together with another system by
+  tacking two Click instances together and they will continue working as they
+  should.
+
+  Too much customizability would break this promise.
+
+Click describes it's
+`advantages over argparse <https://click.palletsprojects.com/en/7.x/why/#why-not-argparse>`_
+in its documentation as well:
+
+  Click is internally based on optparse instead of argparse.  This however
+  is an implementation detail that a user does not have to be concerned
+  with.  The reason however Click is not using argparse is that it has some
+  problematic behaviors that make handling arbitrary command line interfaces
+  hard:
+
+  *   argparse has built-in magic behavior to guess if something is an
+    argument or an option.  This becomes a problem when dealing with
+    incomplete command lines as it's not possible to know without having a
+    full understanding of the command line how the parser is going to
+    behave.  This goes against Click's ambitions of dispatching to
+    subparsers.
+  *   argparse currently does not support disabling of interspersed
+    arguments.  Without this feature it's not possible to safely implement
+    Click's nested parsing nature.
+
+In contrast to :mod:`argparse`, the `Click community <https://github.com/click-contrib>`_
+provides many extensions we can use to create a better user experience
+for our users.
+
+Click supports calling `async` methods and functions
+using the `trio-click <https://github.com/click-contrib/trio-click>`_ extension
+which is likely to be important for us in the future.
+
 Worker
 ------
 
@@ -1091,3 +1172,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _fastly: https://www.fastly.com/blog/monitoring-vs-observability
 .. _GIL: https://realpython.com/python-gil/
 .. _Trio: https://trio.readthedocs.io/en/latest/
+.. _Click: https://click.palletsprojects.com/en/7.x/

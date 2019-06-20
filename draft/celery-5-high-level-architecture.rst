@@ -769,6 +769,24 @@ We selected it because of it's
 `interoperability with asyncio <https://github.com/python-trio/trio-asyncio>`_
 and it's many features.
 
+Trio provides a context manager which limits the concurrency of coroutines
+and/or threads. This saves us from further bookkeeping when a Worker executes
+:ref:`draft/celery-5-high-level-architecture:Tasks`.
+
+Trio allows coroutines to report their status. This is especially useful
+when we want to block the execution of other coroutines until initialization
+of the coroutine completes. We require this feature for implementing
+:ref:`draft/celery-5-high-level-architecture:Bootsteps`.
+
+Trio also provides a feature called cancellation scopes which allows us to
+cancel a coroutine or multiple coroutines at once.
+This allows us to abort :ref:`draft/celery-5-high-level-architecture:Tasks`
+and handle the aborted tasks in an idiomatic fashion.
+
+All of those features save us from writing a lot of code. If we were to select
+asyncio as our Event Loop, we'd have to implement most of those features
+ourselves.
+
 Internal Task Queue
 +++++++++++++++++++
 

@@ -776,7 +776,7 @@ and/or threads. This saves us from further bookkeeping when a Worker executes
 Trio allows coroutines to report their status. This is especially useful
 when we want to block the execution of other coroutines until initialization
 of the coroutine completes. We require this feature for implementing
-:ref:`draft/celery-5-high-level-architecture:Bootsteps`.
+:ref:`draft/celery-5-high-level-architecture:Boot Steps`.
 
 Trio also provides a feature called cancellation scopes which allows us to
 cancel a coroutine or multiple coroutines at once.

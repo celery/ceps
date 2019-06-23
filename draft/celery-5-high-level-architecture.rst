@@ -919,8 +919,8 @@ The exact API for each task will be determined in another CEP.
 This list of internal tasks is not final.
 Other internal tasks may be defined in other CEPs.
 
-SystemDNotify
-~~~~~~~~~~~~~
+SystemD Notify
+~~~~~~~~~~~~~~
 
 This task reports the status of the worker to the SystemD service which is
 running it.
@@ -1177,8 +1177,16 @@ The event notifies the Router that it should not consume or reject these tasks.
 The exact payload of the rate limiting event will be determined
 in another CEP.
 
-Beat
-~~~~
+Periodic Tasks
+~~~~~~~~~~~~~~
+
+Previously, Celery used it's in-house periodic tasks scheduler which was the
+source of many bugs.
+
+In Celery 5 we will use the `APScheduler <https://github.com/agronholm/apscheduler>`_.
+
+APScheduler has proved itself in production, is flexible and customizable and
+will provide trio support in 4.0, it's next major version.
 
 Concurrency Limitations
 ~~~~~~~~~~~~~~~~~~~~~~~

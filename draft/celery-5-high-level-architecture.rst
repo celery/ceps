@@ -851,6 +851,17 @@ The service also attempts to saturate all of the available resources by
 scheduling as many as :ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`
 and :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks` as possible.
 
+
+Consumer
+~~~~~~~~
+
+The ``Consumer`` service consumes :term:`messages <Message>` from one or many
+:ref:`Routers <draft/celery-5-high-level-architecture:Router>` or
+:term:`Message Brokers <Message Broker>`.
+
+The service enqueues the consumed :term:`messages <Message>`
+into the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`.
+
 Tasks
 +++++
 

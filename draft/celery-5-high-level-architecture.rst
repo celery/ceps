@@ -935,8 +935,8 @@ running it.
 
 It uses the `sd_notify`_ protocol to do so.
 
-Retry Failed Bootstep
-~~~~~~~~~~~~~~~~~~~~~
+Retry Failed Boot Step
+~~~~~~~~~~~~~~~~~~~~~~
 
 This task responds to a :term:`Command Message` which instructs the worker
 to retry an optional
@@ -966,7 +966,7 @@ for execution to the worker's
 Some Boot Steps are mandatory and thus if they fail,
 the worker refuses to start.
 Others are optional and their execution will be deferred to the
-:ref:`draft/celery-5-high-level-architecture:Retry Failed Bootstep` task.
+:ref:`draft/celery-5-high-level-architecture:Retry Failed Boot Step` task.
 
 Users may create and use their own Boot Steps if they wish to do so.
 

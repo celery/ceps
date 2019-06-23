@@ -977,6 +977,9 @@ execute tasks on a specific worker.
 Celery uses the Inbox Queue to schedule the execution of the worker's internal
 tasks.
 
+:term:`Messages <Message>` published to the inbox queue must be
+cryptographically signed.
+
 While disabling the inbox queue is possible, some functionality will be lost.
 
 Publisher

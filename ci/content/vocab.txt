@@ -9,6 +9,7 @@ barebones
 ceps
 coroutine
 coroutines
+cryptographically
 deserialization
 dev
 devs

@@ -56,21 +56,26 @@ Glossary
 
   Message Broker
     `Enterprise Integration Patterns`_ defines a `Message Broker`_ as an architectural
-    building block that can receive messages from
+    building block that can receive :term:`messages <Message>` from
     multiple destinations, determine the correct destination and route the message
     to the correct channel.
 
+  Message
+
+    `Enterprise Integration Patterns`_ defines a `Message`_ as  data record that
+    the messaging system can transmit through a message channel.
+
   Command Message
     `Enterprise Integration Patterns`_ defines a `Command Message`_ as a
-    message which instructs a worker to execute a task.
+    :term:`Message` which instructs a worker to execute a task.
 
   Event Message
     `Enterprise Integration Patterns`_ defines an `Event Message`_ as a
-    message which indicates that an event has occurred.
+    :term:`Message` which indicates that an event has occurred.
 
   Document Message
     `Enterprise Integration Patterns`_ defines an `Document Message`_ as a
-    message containing data from a data source.
+    :term:`Message` containing data from a data source.
 
   Circuit Breaker
     Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
@@ -116,46 +121,46 @@ Glossary
   Monitoring
     According to `fastly`_ monitoring is:
 
-    | The activity of observing the state of a system over time.
-    | It uses instrumentation for problem detection, resolution,
-    | and continuous improvement.
-    | Monitoring alerts are reactive–they tell you when a known issue has
-    | already occurred
-    | (i.e. maybe your available memory is too low or you need more compute).
-    | Monitoring provides automated checks that you can execute against a
-    | distributed system to make sure that none of the things you predicted
-    | signify any trouble.
-    | While monitoring these known quantities is important,
-    | the practice also has limitations, including the fact that you are only
-    | looking for known issues. Which begs an important question,
-    | “what about the problems that you didn’t predict?”
+      The activity of observing the state of a system over time.
+      It uses instrumentation for problem detection, resolution,
+      and continuous improvement.
+      Monitoring alerts are reactive–they tell you when a known issue has
+      already occurred
+      (i.e. maybe your available memory is too low or you need more compute).
+      Monitoring provides automated checks that you can execute against a
+      distributed system to make sure that none of the things you predicted
+      signify any trouble.
+      While monitoring these known quantities is important,
+      the practice also has limitations, including the fact that you are only
+      looking for known issues. Which begs an important question,
+      “what about the problems that you didn’t predict?”
 
   Observability
     According to Wikipedia in the context of control theory `Observability`_ is:
 
-    | In control theory, observability is a measure of how well internal states
-    | of a system can be inferred from knowledge of its external outputs.
+      In control theory, observability is a measure of how well internal states
+      of a system can be inferred from knowledge of its external outputs.
 
     In the context of distributed systems observability is a super-set of
     :term:`monitoring`.
 
     According to `fastly`_ the three pillars of observability are:
 
-    | Logs: Logs are a verbose representation of events that have happened.
-    | Logs tell a linear story about an event using string processing
-    | and regular expressions.
-    | A common challenge with logs is that if you haven’t properly indexed
-    | something, it will be difficult to find due to the sheer volume of
-    | log data.
-    | Traces: A trace captures a user’s journey through your application.
-    | Traces provide end-to-end visibility and are useful when you need to
-    | identify which components cause system errors, find performance
-    | bottlenecks, or monitor flow through modules.
-    | Metrics: Metrics can be either a point in time or monitored over
-    | intervals.
-    | These data points could be counters, gauges, etc.
-    | They typically represent data over intervals, but sometimes sacrifice
-    | details of an event in order to present data that is easier to assimilate.
+      Logs: Logs are a verbose representation of events that have happened.
+      Logs tell a linear story about an event using string processing
+      and regular expressions.
+      A common challenge with logs is that if you haven’t properly indexed
+      something, it will be difficult to find due to the sheer volume of
+      log data.
+      Traces: A trace captures a user’s journey through your application.
+      Traces provide end-to-end visibility and are useful when you need to
+      identify which components cause system errors, find performance
+      bottlenecks, or monitor flow through modules.
+      Metrics: Metrics can be either a point in time or monitored over
+      intervals.
+      These data points could be counters, gauges, etc.
+      They typically represent data over intervals, but sometimes sacrifice
+      details of an event in order to present data that is easier to assimilate.
 
   Structured Logging
     Structured Logging is a method to make log messages easy to process
@@ -688,16 +693,16 @@ why it is a good fit for us:
   This question is easy to answer: because there is not a single command
   line utility for Python out there which ticks the following boxes:
 
-  *   is lazily composable without restrictions
-  *   supports implementation of Unix/POSIX command line conventions
-  *   supports loading values from environment variables out of the box
-  *   supports for prompting of custom values
-  *   is fully nestable and composable
-  *   works the same in Python 2 and 3
-  *   supports file handling out of the box
-  *   comes with useful common helpers (getting terminal dimensions,
-      ANSI colors, fetching direct keyboard input, screen clearing,
-      finding config paths, launching apps and editors, etc.)
+  * is lazily composable without restrictions
+  * supports implementation of Unix/POSIX command line conventions
+  * supports loading values from environment variables out of the box
+  * supports for prompting of custom values
+  * is fully nestable and composable
+  * works the same in Python 2 and 3
+  * supports file handling out of the box
+  * comes with useful common helpers (getting terminal dimensions,
+    ANSI colors, fetching direct keyboard input, screen clearing,
+    finding config paths, launching apps and editors, etc.)
 
   There are many alternatives to Click and you can have a look at them if
   you enjoy them better.  The obvious ones are ``optparse`` and ``argparse``
@@ -810,7 +815,8 @@ Services
 Services are stateful, long running tasks which are used by Celery to perform
 its internal operations.
 
-Some services publish messages to brokers, others consume messages from them.
+Some services publish :term:`messages <Message>` to brokers,
+others consume :term:`messages <Message>` from them.
 Other services are used to calculate optimal scheduling of tasks, routing,
 logging and even executing tasks.
 
@@ -830,7 +836,7 @@ Other internal services may be defined in other CEPs.
 TaskExecution
 ~~~~~~~~~~~~~
 
-The `TaskExecution` service is responsible for executing all Celery
+The ``TaskExecution`` service is responsible for executing all Celery
 :ref:`tasks <draft/celery-5-high-level-architecture:Tasks>`.
 
 It consumes tasks from the
@@ -954,19 +960,21 @@ Inbox Queue
 
 Each worker declares an inbox queue in the :term:`Message Broker`.
 
-Publishers may publish messages to that queue in order to execute tasks on a
-specific worker.
+Publishers may publish :term:`messages <Message>` to that queue in order to
+execute tasks on a specific worker.
 
-Celery uses the Inbox Queue to defer execution of the worker's internal tasks.
+Celery uses the Inbox Queue to schedule the execution of the worker's internal
+tasks.
 
 While disabling the inbox queue is possible, some functionality will be lost.
 
 Publisher
 ---------
 
-The Publisher is responsible for publishing messages to a :term:`Message Broker`.
+The Publisher is responsible for publishing :term:`messages <Message>`
+to a :term:`Message Broker`.
 
-It is responsible for publishing the message to the appropriate broker cluster
+It is responsible for publishing the :term:`Message` to the appropriate broker cluster
 according to the configuration provided to the publisher.
 
 The publisher must be able to run in-process inside a long-running thread
@@ -978,15 +986,15 @@ publishing to the message brokers.
 Publisher Health Checks
 +++++++++++++++++++++++
 
-The Publisher will perform health checks to ensure that the message broker
-the user is publishing to is available.
+The Publisher will perform health checks to ensure that
+the :term:`Message Broker` the user is publishing to is available.
 
 If a health check fails a configured number of times, the relevant
 :term:`Circuit Breaker` is tripped.
 
 Each :term:`Message Broker` Celery supports must provide an implementation for
 the default health checks the Publisher will use for verifying its
-availability for new messages.
+availability for new :term:`messages <Message>`.
 
 Further health checks can be defined by the user.
 These health checks allows the user to avoid publishing tasks if for example
@@ -996,29 +1004,32 @@ the user stores the results in is available or any other check for that matter.
 Publisher Circuit Breakers
 ++++++++++++++++++++++++++
 
-Each :ref:`health check <draft/celery-5-high-level-architecture:Health Checks>` has it's own Circuit Breaker.
-Once a circuit breaker is tripped, the messages are stored
-in the :ref:`draft/celery-5-high-level-architecture:messages backlog` until the health check recovers and the circuit
-is once again closed.
+Each :ref:`health check <draft/celery-5-high-level-architecture:Health Checks>`
+has it's own Circuit Breaker.
+Once a circuit breaker is tripped, the :term:`messages <Message>` are stored
+in the :ref:`draft/celery-5-high-level-architecture:messages backlog` until
+the health check recovers and the circuit is once again closed.
 
 Messages Backlog
 ++++++++++++++++
 
-The messages backlog is a temporary queue of messages yet to be published to
-the appropriate broker cluster.
+The messages backlog is a temporary queue of :term:`messages <Message>`
+yet to be published to the appropriate broker cluster.
 
-In the event where messages cannot be published for any reason, the messages
-are kept inside the queue.
+In the event where :term:`messages <Message>` cannot be published
+for any reason, the :term:`messages <Message>` are kept inside the queue.
 
 By default, an in-memory queue will be used. The user may provide another
-implementation which stores the messages on-disk or in a central database.
+implementation which stores the :term:`messages <Message>` on-disk
+or in a central database.
 
 Implementers should take into account what happens whenever writing to the
 messages backlog fails.
 
-The default fallback mechanism will append the messages into an in-memory queue.
-These messages will be published first in order to avoid message loss in case
-the publisher goes down for any reason.
+The default fallback mechanism will append the :term:`messages <Message>` into
+an in-memory queue.
+These :term:`messages <Message>` will be published first in order to avoid
+:term:`Message` loss in case the publisher goes down for any reason.
 
 Publisher Daemon
 ++++++++++++++++
@@ -1030,8 +1041,8 @@ Therefore, it is unnecessary to maintain a publisher for each process that
 publishes to a :term:`Message Broker`.
 
 In such cases, a Publisher Daemon can be used. The publishing processes will
-specify it as their target and communicate the messages to be published via
-a socket.
+specify it as their target and communicate the :term:`messages <Message>`
+to be published via a socket.
 
 If a disk based queue is used, the user may configure Celery to write to it
 directly, provided that the queue can perform inserts and deletes concurrently.
@@ -1039,11 +1050,12 @@ directly, provided that the queue can perform inserts and deletes concurrently.
 Router
 ------
 
-The Router is responsible for managing the connection to a message broker and
-consuming messages from the broker.
+The Router is responsible for managing the connection to a :term:`message broker`
+and consuming :term:`messages <Message>` from the :term:`message broker`.
 
-The Router can maintain a connection to a cluster of message brokers or even
-clusters of message brokers.
+The Router can maintain a connection to a cluster of
+:term:`message brokers <message broker>` or even clusters of
+:term:`message brokers <message broker>`.
 
 Data Source
 +++++++++++
@@ -1092,36 +1104,32 @@ is fully operational.
 Scheduler
 +++++++++
 
-The scheduler is responsible for managing the scheduling of tasks for execution.
-
-The scheduler is implemented as a worker which listens to messages directly
-from other Celery components instead of using a broker.
+The scheduler is responsible for managing the scheduling of tasks for execution
+on a cluster of workers.
 
 The scheduler calculates the amount of tasks to be executed in any given time
 in order to make cluster wide decisions when autoscaling workers or increasing
 concurrency for an existing worker.
-To do so it communicates with the Controller.
 
 The scheduler is aware when tasks should no longer be executed due to manual
-intervention or a circuit breaker trip. To do so, it orders the router to avoid
-consuming the task or rejecting it.
-To do so it communicates with the Router.
+intervention or a circuit breaker trip. To do so, it commands the router to
+avoid consuming the task or rejecting it.
 
 Suspend/Resume Tasks
 ~~~~~~~~~~~~~~~~~~~~
 
-Whenever a Circuit Breaker trips, the Router must issue an event
-to the scheduler. The exact payload of the suspension event will be determined
-in another CEP.
+Whenever a Circuit Breaker trips, the :ref:`draft/celery-5-high-level-architecture:Router`
+must issue an event to the Scheduler.
+The exact payload of the suspension event will be determined in another CEP.
 
-This will notify the scheduler that it no longer has to take this task into
+This will notify the Scheduler that it no longer has to take this task into
 account when calculating the Celery workers cluster capacity.
 
-The user may elect to send this event directly to the scheduler if suspension
+The user may elect to send this event directly to the Scheduler if suspension
 of execution is required (E.g. The task interacts with a database which is
 going under expected maintenance).
 
-Once scheduling can be resumed, the Router another event to the scheduler.
+Once scheduling can be resumed, the Scheduler sends another event to the :ref:`draft/celery-5-high-level-architecture:Router`.
 The exact payload of the resumption event will be determined in another CEP.
 
 Task Prioritization
@@ -1133,15 +1141,15 @@ Resource Saturation
 Rate Limiting
 ~~~~~~~~~~~~~
 
-A user may impose a rate limit on the execution of a task.
+A user may impose a rate limit on the execution of a :ref:`task <draft/celery-5-high-level-architecture:Tasks>`.
 
-For example, we only want to run 200 `send_welcome_email()` tasks per minute
-in order to avoid decreasing our email reputation.
+For example, we only want to run 200 `send_welcome_email()` :ref:`draft/celery-5-high-level-architecture:Tasks`
+per minute in order to avoid decreasing our email reputation.
 
-Tasks may define a global rate limit or a per worker rate limit.
+:ref:`draft/celery-5-high-level-architecture:Tasks` may define a global rate limit or a per worker rate limit.
 
-Whenever a task reaches it's rate limit, an event is published
-to the :ref:`draft/celery-5-high-level-architecture:Router`'s
+Whenever a :ref:`task <draft/celery-5-high-level-architecture:Tasks>` reaches
+it's rate limit, an event is published to the :ref:`draft/celery-5-high-level-architecture:Router`'s
 :ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
 The event notifies the Router that it should not consume or reject these tasks.
 The exact payload of the rate limiting event will be determined
@@ -1176,6 +1184,7 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 
 .. _CAP theorem: https://dzone.com/articles/understanding-the-cap-theorem
 .. _Enterprise Integration Patterns: https://www.enterpriseintegrationpatterns.com
+.. _Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/Message.html
 .. _Command Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html
 .. _Event Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html
 .. _Document Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/DocumentMessage.html

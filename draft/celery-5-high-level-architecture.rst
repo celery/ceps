@@ -1036,73 +1036,6 @@ a socket.
 If a disk based queue is used, the user may configure Celery to write to it
 directly, provided that the queue can perform inserts and deletes concurrently.
 
-Scheduler
----------
-
-The scheduler is responsible for managing the scheduling of tasks for execution.
-
-The scheduler is implemented as a worker which listens to messages directly
-from other Celery components instead of using a broker.
-
-The scheduler calculates the amount of tasks to be executed in any given time
-in order to make cluster wide decisions when autoscaling workers or increasing
-concurrency for an existing worker.
-To do so it communicates with the Controller.
-
-The scheduler is aware when tasks should no longer be executed due to manual
-intervention or a circuit breaker trip. To do so, it orders the router to avoid
-consuming the task or rejecting it.
-To do so it communicates with the Router.
-
-Suspend/Resume Tasks
-++++++++++++++++++++
-
-Whenever a Circuit Breaker trips, the Router must issue an event
-to the scheduler. The exact payload of the suspension event will be determined
-in another CEP.
-
-This will notify the scheduler that it no longer has to take this task into
-account when calculating the Celery workers cluster capacity.
-
-The user may elect to send this event directly to the scheduler if suspension
-of execution is required (E.g. The task interacts with a database which is
-going under expected maintenance).
-
-Once scheduling can be resumed, the Router another event to the scheduler.
-The exact payload of the resumption event will be determined in another CEP.
-
-Task Prioritization
-+++++++++++++++++++
-
-Resource Saturation
-~~~~~~~~~~~~~~~~~~~
-
-Rate Limiting
-+++++++++++++
-
-A user may impose a rate limit on the execution of a task.
-
-For example, we only want to run 200 `send_welcome_email()` tasks per minute
-in order to avoid decreasing our email reputation.
-
-Tasks may define a global rate limit or a per worker rate limit.
-
-Whenever a task reaches it's rate limit, an event is published
-to the :ref:`draft/celery-5-high-level-architecture:Router`'s
-:ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
-The event notifies the Router that it should not consume or reject these tasks.
-The exact payload of the rate limiting event will be determined
-in another CEP.
-
-Beat
-++++
-
-Concurrency Limitations
-+++++++++++++++++++++++
-
-Autoscaler
-~~~~~~~~~~
-
 Router
 ------
 
@@ -1155,6 +1088,73 @@ is fully operational.
   The Controller is meant to be run as a user service.
   If the Controller is run with root privileges, a log message with
   the warning level will be emitted.
+
+Scheduler
++++++++++
+
+The scheduler is responsible for managing the scheduling of tasks for execution.
+
+The scheduler is implemented as a worker which listens to messages directly
+from other Celery components instead of using a broker.
+
+The scheduler calculates the amount of tasks to be executed in any given time
+in order to make cluster wide decisions when autoscaling workers or increasing
+concurrency for an existing worker.
+To do so it communicates with the Controller.
+
+The scheduler is aware when tasks should no longer be executed due to manual
+intervention or a circuit breaker trip. To do so, it orders the router to avoid
+consuming the task or rejecting it.
+To do so it communicates with the Router.
+
+Suspend/Resume Tasks
+~~~~~~~~~~~~~~~~~~~~
+
+Whenever a Circuit Breaker trips, the Router must issue an event
+to the scheduler. The exact payload of the suspension event will be determined
+in another CEP.
+
+This will notify the scheduler that it no longer has to take this task into
+account when calculating the Celery workers cluster capacity.
+
+The user may elect to send this event directly to the scheduler if suspension
+of execution is required (E.g. The task interacts with a database which is
+going under expected maintenance).
+
+Once scheduling can be resumed, the Router another event to the scheduler.
+The exact payload of the resumption event will be determined in another CEP.
+
+Task Prioritization
+~~~~~~~~~~~~~~~~~~~
+
+Resource Saturation
+~~~~~~~~~~~~~~~~~~~
+
+Rate Limiting
+~~~~~~~~~~~~~
+
+A user may impose a rate limit on the execution of a task.
+
+For example, we only want to run 200 `send_welcome_email()` tasks per minute
+in order to avoid decreasing our email reputation.
+
+Tasks may define a global rate limit or a per worker rate limit.
+
+Whenever a task reaches it's rate limit, an event is published
+to the :ref:`draft/celery-5-high-level-architecture:Router`'s
+:ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
+The event notifies the Router that it should not consume or reject these tasks.
+The exact payload of the rate limiting event will be determined
+in another CEP.
+
+Beat
+~~~~
+
+Concurrency Limitations
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Autoscaler
+~~~~~~~~~~
 
 Motivation
 ==========

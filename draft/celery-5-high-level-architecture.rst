@@ -862,6 +862,14 @@ The ``Consumer`` service consumes :term:`messages <Message>` from one or many
 The service enqueues the consumed :term:`messages <Message>`
 into the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`.
 
+Result Publisher
+~~~~~~~~~~~~~~~~
+
+The ``Result Publisher`` service consumes results from the
+:ref:`draft/celery-5-high-level-architecture:Internal Results Queue` and
+publishes them to the :ref:`draft/celery-5-high-level-architecture:Router`'s
+:ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
+
 Tasks
 +++++
 

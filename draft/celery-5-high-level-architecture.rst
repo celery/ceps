@@ -286,6 +286,14 @@ in order to log the message again.
 As usual messages which fail to be published are stored in the
 :ref:`draft/celery-5-high-level-architecture:messages backlog`.
 
+In past versions of Celery we've used the standard logging module.
+Unfortunately it does not meet the aforementioned requirements.
+
+`Eliot <https://github.com/itamarst/eliot>`_ is a logging library which provides
+structure and context to logs, even across coroutines, threads and processes.
+
+It is also able to emit logs to `journald`_ and has native trio integration.
+
 Network Resilience and Fault Tolerance
 --------------------------------------
 

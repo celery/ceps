@@ -833,10 +833,10 @@ The exact API for each service will be determined in another CEP.
 This list of internal services is not final.
 Other internal services may be defined in other CEPs.
 
-TaskExecution
-~~~~~~~~~~~~~
+Task Execution
+~~~~~~~~~~~~~~
 
-The ``TaskExecution`` service is responsible for executing all Celery
+The ``Task Execution`` service is responsible for executing all Celery
 :ref:`tasks <draft/celery-5-high-level-architecture:Tasks>`.
 
 It consumes tasks from the
@@ -919,8 +919,8 @@ running it.
 
 It uses the `sd_notify`_ protocol to do so.
 
-RetryFailedBootstep
-~~~~~~~~~~~~~~~~~~~
+Retry Failed Bootstep
+~~~~~~~~~~~~~~~~~~~~~
 
 This task responds to a :term:`Command Message` which instructs the worker
 to retry an optional
@@ -950,7 +950,7 @@ for execution to the worker's
 Some Boot Steps are mandatory and thus if they fail,
 the worker refuses to start.
 Others are optional and their execution will be deferred to the
-:ref:`draft/celery-5-high-level-architecture:RetryFailedBootstep` task.
+:ref:`draft/celery-5-high-level-architecture:Retry Failed Bootstep` task.
 
 Users may create and use their own Boot Steps if they wish to do so.
 

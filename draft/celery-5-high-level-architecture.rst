@@ -226,6 +226,9 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this
 document and in Celery 5's codebase as well.
 
+Workflows
+----------
+
 Observability
 -------------
 
@@ -1174,16 +1177,21 @@ Controller
 The Controller is responsible for managing the lifecycle of all other Celery
 components.
 
-It spawns the :ref:`Workers <draft/celery-5-high-level-architecture:Worker>`, :ref:`Routers <draft/celery-5-high-level-architecture:Router>`,
-:ref:`Schedulers <draft/celery-5-high-level-architecture:Scheduler>` and if configured and possible,
-the :term:`Message Brokers <Message Broker>` as well.
-
-By default, the Controller creates sub-processes for
-all the required components. This is suitable for small scale deployments
-or for deployments where SystemD is unavailable.
+It spawns the :ref:`Workers <draft/celery-5-high-level-architecture:Worker>`,
+:ref:`Routers <draft/celery-5-high-level-architecture:Router>`,
+:ref:`Schedulers <draft/celery-5-high-level-architecture:Scheduler>`
+and if configured and possible, the :term:`Message Brokers <Message Broker>`
+as well.
 
 Foreman
 +++++++
+
+By default, the Foreman service creates sub-processes for
+all the required components. This is suitable for small scale deployments
+or for deployments where SystemD is unavailable.
+
+During development if explicitly specified, the Foremen will start all of
+Celery's services in the same process.
 
 SystemD Integration
 ~~~~~~~~~~~~~~~~~~~

@@ -322,7 +322,7 @@ Distributed Systems suffer from an inherent property:
     due to lack of memory or a bug.
   * Any number of unaccounted failure modes.
 
-Therefore, Celery must be fault tolerant and gracefully degrade it's operation
+Therefore, Celery must be fault tolerant and gracefully degrade its' operation
 when failures occur.
 
 Graceful Degradation

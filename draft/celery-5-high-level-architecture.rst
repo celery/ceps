@@ -818,7 +818,9 @@ Configuration
 In previous versions of Celery we had the option to load the configuration from
 a Python module.
 
-Cloud Native applications often use Etcd, Consul or Kubernetes Config Maps
+Cloud Native applications often use `Etcd <https://etcd.io/>`_,
+`Consul <https://www.consul.io/>`_
+or `Kubernetes Config Maps <https://cloud.google.com/kubernetes-engine/docs/concepts/configmap>`_ (among others)
 to store configuration and adjust it when needed.
 
 Celery 5 introduces the concept of configuration backends.
@@ -827,7 +829,8 @@ These backends allow you to load the Worker's configuration from any source.
 The default configuration backend loads the configuration from a Python module.
 
 Users may create their own configuration backends to load configuration from
-YAML files, TOML files or a database.
+a `YAML <https://yaml.org/>`_ file, a `TOML <https://github.com/toml-lang/toml>`_ file
+or a database.
 
 Once the configuration has changed, the Worker stops consuming tasks,
 waits for all other tasks to finish and reloads the configuration.

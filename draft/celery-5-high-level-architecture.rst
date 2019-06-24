@@ -462,7 +462,7 @@ Or you can wrap each code section in a try..except clause and call
         'max_retries': 3,
         'interval_start': 0,
         'interval_step': 0.2,
-        'interval_max': 0.2
+        'interval_max': 1
       })
 
 Those solutions are unnecessarily verbose. Instead, we could use a with clause
@@ -475,7 +475,7 @@ if all we want to do is retry.
     with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
       first_operation()
 
-    with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
+    with retry(max_retries=3, interval_start=0, interval_step=0.2, interval_max=1):
       second_operation()
 
 By default messages which cannot be re-published will be stored
@@ -483,6 +483,53 @@ in the :ref:`draft/celery-5-high-level-architecture:messages backlog`.
 
 Implementers may provide other fallbacks such as executing the retried task
 in the same worker or abandoning the task entirely.
+
+Some operations are not important enough to be retried if they fail.
+
+.. admonition:: Example
+
+  We're implementing a BI system that records mouse
+  interactions.
+
+  The BI team has specified that it wants to store the raw data and
+  the time span between interactions.
+  Since we have a lot of data already, if the system failed to insert the raw data
+  into the data store then we should not fail. Instead, we should emit a warning.
+  However, the time span between mouse interactions is critical to the BI
+  team's insight and if that fails to be inserted into the data store
+  we must retry it.
+
+Such a task can be defined using the ``optional`` context manager.
+
+.. code-block:: python
+
+  @task
+  def foo(raw_data):
+    # Using default retry policy
+    with optional():
+      # ignore retry policy and proceed
+      insert_raw_data(raw_data)
+
+    with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
+      calculation = time_span_calculation(raw_data)
+      insert_time_spans(calculation)
+
+In case of a failure inside the optional context manager, a warning is logged.
+
+We can of course be more specific about the failures we allow:
+
+.. code-block:: python
+
+  @task
+  def foo(raw_data):
+    # Using default retry policy
+    with optional(ConnectionError, TimeoutError):
+      # ignore retry policy and proceed
+      insert_raw_data(raw_data)
+
+    with retry(max_retries=10, interval_start=0, interval_step=5, interval_max=120):
+      calculation = time_span_calculation(raw_data)
+      insert_time_spans(calculation)
 
 Health Checks
 ~~~~~~~~~~~~~

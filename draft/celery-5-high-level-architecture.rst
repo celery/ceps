@@ -1102,7 +1102,9 @@ cryptographically signed.
 This requirement can be disabled using a CLI option.
 Whenever the user uses this CLI option a warning log message is emitted.
 
-While disabling the inbox queue is possible, some functionality will be lost.
+While disabling the inbox queue is possible either through a configuration setting
+or a CLI option, some functionality will be lost.
+Whenever the user opts to disable the Inbox Queue a warning log message is emitted.
 
 Publisher
 ---------

@@ -1097,7 +1097,10 @@ Celery uses the Inbox Queue to schedule the execution of the worker's internal
 tasks.
 
 :term:`Messages <Message>` published to the inbox queue must be
-cryptographically signed. This requirement can be disabled using a CLI option.
+cryptographically signed.
+
+This requirement can be disabled using a CLI option.
+Whenever the user uses this CLI option a warning log message is emitted.
 
 While disabling the inbox queue is possible, some functionality will be lost.
 
@@ -1218,8 +1221,16 @@ By default, the Foreman service creates sub-processes for
 all the required components. This is suitable for small scale deployments
 or for deployments where SystemD is unavailable.
 
+Development Mode
+~~~~~~~~~~~~~~~~
+
 During development if explicitly specified, the Foremen will start all of
 Celery's services in the same process.
+
+Since some of the new features in Celery require cryptographically signed
+messages Celery will generate self-signed certificates using the `trustme`_
+library unless certificates are already provided or the user has chosen to
+disable this behavior through a CLI option.
 
 SystemD Integration
 ~~~~~~~~~~~~~~~~~~~
@@ -1348,3 +1359,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Click: https://click.palletsprojects.com/en/7.x/
 .. _Service Locator: https://martinfowler.com/articles/injection.html#UsingAServiceLocator
 .. _dependencies: https://github.com/dry-python/dependencies
+.. _trustme: https://github.com/python-trio/trustme

@@ -180,6 +180,14 @@ Glossary
     Stdout, also known as standard output, is the default file descriptor
     where a process can write output.
 
+  Service Locator
+    Martin Fowler defines a `Service Locator`_ in the following fashion:
+
+      The basic idea behind a service locator is to have an object that knows
+      how to get hold of all of the services that an application might need.
+      So a service locator for this application would have a method that returns
+      a movie finder when one is needed.
+
 Message Types
 -------------
 
@@ -813,6 +821,23 @@ Click supports calling `async` methods and functions
 using the `trio-click <https://github.com/click-contrib/trio-click>`_ extension
 which is likely to be important for us in the future.
 
+Dependency Inversion
+--------------------
+
+Currently Celery uses different singleton registries to customize the behavior
+of it's different components.
+This is known as the :term:`Service Locator` pattern.
+
+Mark Seemann criticized Service Locators as an anti-pattern for multiple reasons:
+
+* It has `API usage problems and maintenance issues <https://blog.ploeh.dk/2010/02/03/ServiceLocatorisanAnti-Pattern/>`_.
+* It `violates encapsulation <https://blog.ploeh.dk/2015/10/26/service-locator-violates-encapsulation/>`_.
+* It `violates SOLID <https://blog.ploeh.dk/2014/05/15/service-locator-violates-solid/>`_.
+
+Using constructor injection is a much better way to invert our dependencies.
+
+For that purpose we have selected the `dependencies`_ library.
+
 Worker
 ------
 
@@ -1321,3 +1346,5 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _GIL: https://realpython.com/python-gil/
 .. _Trio: https://trio.readthedocs.io/en/latest/
 .. _Click: https://click.palletsprojects.com/en/7.x/
+.. _Service Locator: https://martinfowler.com/articles/injection.html#UsingAServiceLocator
+.. _dependencies: https://github.com/dry-python/dependencies

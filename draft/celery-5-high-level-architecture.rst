@@ -1097,7 +1097,7 @@ Celery uses the Inbox Queue to schedule the execution of the worker's internal
 tasks.
 
 :term:`Messages <Message>` published to the inbox queue must be
-cryptographically signed.
+cryptographically signed. This requirement can be disabled using a CLI option.
 
 While disabling the inbox queue is possible, some functionality will be lost.
 

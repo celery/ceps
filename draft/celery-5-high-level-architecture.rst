@@ -727,7 +727,10 @@ Network Resilience
 
 Network Connections may fail at any time.
 In order to be network resilient we must use retries and circuit breakers on
-all outgoing and incoming connections.
+all outgoing and incoming network connections.
+
+In addition, proper timeouts must be set to avoid hanging when the connection
+is slow or unresponsive.
 
 Command Line Interface
 ----------------------

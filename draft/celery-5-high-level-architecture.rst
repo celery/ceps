@@ -77,6 +77,12 @@ Glossary
     `Enterprise Integration Patterns`_ defines an `Document Message`_ as a
     :term:`Message` containing data from a data source.
 
+  Message Dispatcher
+
+    `Enterprise Integration Patterns`_ defines a `Message Dispatcher`_ as a
+    component that will consume messages from a channel and distribute them to
+    performers.
+
   Circuit Breaker
     Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
 
@@ -1188,7 +1194,8 @@ directly, provided that the queue can perform inserts and deletes concurrently.
 Router
 ------
 
-The Router is responsible for managing the connection to a :term:`message broker`
+The Router is a :term:`Message Dispatcher`.
+It is responsible for managing the connection to a :term:`message broker`
 and consuming :term:`messages <Message>` from the :term:`message broker`.
 
 The Router can maintain a connection to a cluster of
@@ -1347,6 +1354,7 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Command Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/CommandMessage.html
 .. _Event Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventMessage.html
 .. _Document Message: https://www.enterpriseintegrationpatterns.com/patterns/messaging/DocumentMessage.html
+.. _Message Dispatcher: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageDispatcher.html
 .. _ubiquitous language: https://martinfowler.com/bliki/UbiquitousLanguage.html
 .. _Message Broker: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessageBroker.html
 .. _Circuit Breaker: https://martinfowler.com/bliki/CircuitBreaker.html

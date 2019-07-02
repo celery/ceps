@@ -287,7 +287,15 @@ Forks
 ~~~~~
 
 Workflows
-----------
+---------
+
+A Workflow is a declarative :ref:`draft/celery-5-high-level-architecture:Canvas`.
+
+Workflows provide an API for incrementally executing business logic by
+dividing it to small, self-contained tasks.
+
+Unlike :ref:`draft/celery-5-high-level-architecture:Canvas`, a Workflow is
+immutable, static and predicable.
 
 Observability
 -------------

@@ -240,6 +240,52 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this
 document and in Celery 5's codebase as well.
 
+Canvas
+------
+
+In Celery Canvas is the mechanism which users can use to define workflows
+dynamically.
+
+In previous versions of Celery there are issues with the protocol which can
+cause Celery to generate very large messages.
+There are also issues with the API and multiple implementation problems.
+
+In Celery 5 we're going to revamp the protocol, API and
+possibly the implementation itself to resolve these issues.
+
+Signatures
+++++++++++
+
+Primitives
+++++++++++
+
+Error Handling
+~~~~~~~~~~~~~~
+
+Error Recovery
+~~~~~~~~~~~~~~
+
+Chains
+~~~~~~
+
+Groups
+~~~~~~
+
+Chords
+~~~~~~
+
+Maps
+~~~~
+
+Starmaps
+~~~~~~~~
+
+Chunks
+~~~~~~
+
+Forks
+~~~~~
+
 Workflows
 ----------
 

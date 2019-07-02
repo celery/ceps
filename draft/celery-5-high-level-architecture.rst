@@ -77,6 +77,20 @@ Glossary
     `Enterprise Integration Patterns`_ defines a `Document Message`_ as a
     :term:`Message` containing data from a data source.
 
+  Service Activator
+    `Enterprise Integration Patterns`_ defines a `Service Activator`_ as a
+    one-way (request only) or two-way (request-reply) adapter between the
+    :term:`Message` and the service it invokes.
+    The service can be a simple as a method call.
+    The activator handles all of the messaging details and invokes the service
+    like any other client, such that the service doesn’t even know it’s being
+    invoked through messaging.
+
+  Idempotent Receiver
+    `Enterprise Integration Patterns`_ defines an `Idempotent Receiver`_ as a
+    component that can safely receive the same message multiple times
+    but will produce the same side effects when facing duplicated messages.
+
   Message Dispatcher
 
     `Enterprise Integration Patterns`_ defines a `Message Dispatcher`_ as a
@@ -903,6 +917,19 @@ Worker
 
 The Worker is the most fundamental architectural component in Celery.
 
+The role of the Worker is to be a :term:`Service Activator`.
+It executes :ref:`draft/celery-5-high-level-architecture:Tasks` in response
+to :term:`messages <Message>`.
+
+A Worker is also an :term:`Idempotent Receiver`.
+If the exact same :term:`Message` is received more than once, the duplicated
+messages are discarded.
+In this case, a warning log message is emitted.
+The Worker maintains a list of identifiers of recently received :term:`messages <Message>`.
+The number of :term:`messages <Message>` is determined by the a configuration
+value.
+By default that value is 100 :term:`messages <Message>`.
+
 Configuration
 +++++++++++++
 
@@ -1050,6 +1077,23 @@ to messages.
 Celery declares some tasks for internal usage.
 
 Users will create their own tasks for their own use.
+
+Deduplication
+~~~~~~~~~~~~~
+
+Some Tasks are not idempotent and may not run more than once.
+
+Users may define a deduplication policy to help Celery discard duplicated
+messages.
+
+.. admonition:: Example
+
+  The ``send_welcome_email`` task is only allowed to send one welcome email per
+  user.
+
+  The user defines a deduplication policy which checks with their 3rd party
+  email delivery provider if that email has already been sent.
+  If it did, the user instructs Celery to reject the task.
 
 I/O Bound Tasks
 ~~~~~~~~~~~~~~~
@@ -1424,3 +1468,5 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Service Locator: https://martinfowler.com/articles/injection.html#UsingAServiceLocator
 .. _dependencies: https://github.com/dry-python/dependencies
 .. _trustme: https://github.com/python-trio/trustme
+.. _Service Activator: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingAdapter.html
+.. _Idempotent Receiver: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IdempotentReceiver.html

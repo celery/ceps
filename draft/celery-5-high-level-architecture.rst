@@ -74,7 +74,7 @@ Glossary
     :term:`Message` which indicates that an event has occurred.
 
   Document Message
-    `Enterprise Integration Patterns`_ defines an `Document Message`_ as a
+    `Enterprise Integration Patterns`_ defines a `Document Message`_ as a
     :term:`Message` containing data from a data source.
 
   Message Dispatcher

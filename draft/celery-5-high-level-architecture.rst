@@ -100,14 +100,14 @@ Glossary
   Circuit Breaker
     Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
 
-      | The basic idea behind the circuit breaker is very simple.
-      | You wrap a protected function call in a circuit breaker object, which monitors
-      | for failures.
-      | Once the failures reach a certain threshold, the circuit breaker trips,
-      | and all further calls to the circuit breaker return with an error,
-      | without the protected call being made at all.
-      | Usually you'll also want some kind of monitor alert if the circuit breaker
-      | trips.
+      The basic idea behind the circuit breaker is very simple.
+      You wrap a protected function call in a circuit breaker object, which monitors
+      for failures.
+      Once the failures reach a certain threshold, the circuit breaker trips,
+      and all further calls to the circuit breaker return with an error,
+      without the protected call being made at all.
+      Usually you'll also want some kind of monitor alert if the circuit breaker
+      trips.
 
   CAP Theorem
     TODO
@@ -121,16 +121,16 @@ Glossary
   Network Resilience
     According to Wikipedia `Network Resilience`_ is:
 
-    | In computer networking: resilience is the ability to provide and maintain
-    | an acceptable level of service in the face of faults and challenges to
-    | normal operation.”
-    | Threats and challenges for services can range from simple misconfiguration
-    | over large scale natural disasters to targeted attacks.
-    | As such, network resilience touches a very wide range of topics.
-    | In order to increase the resilience of a given communication network,
-    | the probable challenges and risks have to be identified
-    | and appropriate resilience metrics have to be defined
-    | for the service to be protected.
+      In computer networking: resilience is the ability to provide and maintain
+      an acceptable level of service in the face of faults and challenges to
+      normal operation.”
+      Threats and challenges for services can range from simple misconfiguration
+      over large scale natural disasters to targeted attacks.
+      As such, network resilience touches a very wide range of topics.
+      In order to increase the resilience of a given communication network,
+      the probable challenges and risks have to be identified
+      and appropriate resilience metrics have to be defined
+      for the service to be protected.
 
   Consistency
     TODO

@@ -638,7 +638,7 @@ execute all the subscribed tasks in order to determine the state of the
 health check.
 
 Health Checks can handle :term:`Document Messages <Document Message>` as input
-from :ref:`draft/celery-5-high-level-architecture:Ingress Only Data Sources`.
+from :ref:`draft/celery-5-high-level-architecture:Data Sources`.
 
 This is useful when you want to respond to an alert from a monitoring system
 or when you want to verify that all incoming data from said source is
@@ -1300,14 +1300,67 @@ The Router can maintain a connection to a cluster of
 :term:`message brokers <message broker>` or even clusters of
 :term:`message brokers <message broker>`.
 
-Data Source
-+++++++++++
+Data Sources and Sinks
+++++++++++++++++++++++
 
-Ingress Only Data Sources
-~~~~~~~~~~~~~~~~~~~~~~~~~
+Data Sources are a new concept in Celery.
+Data Sinks are a concept which replaces Result Backends.
 
-Ingress/Egress Data Sources
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Data Sinks consume :term:`Document Messages <Document Message>` while Data Sources
+produce them.
+
+Data Sources
+~~~~~~~~~~~~
+
+Data Sources are :ref:`task <draft/celery-5-high-level-architecture:Services>`
+which either listen or poll for incoming data from a data source such as a
+database, a file system or an HTTP(S) endpoint.
+
+These services produce :term:`Document Messages <Document Message>`.
+
+Tasks which are subscribed to Data Sources will receive the the raw document
+messages for further processing.
+
+.. admonition:: Example
+
+  We'd like to design a feature which locks Github issues immediately after
+  they are closed.
+
+  Github uses Webhooks to notify us when an issue is closed.
+
+  We set up a Data Source which starts an HTTPS server and expects incoming
+  HTTP requests on an endpoint.
+
+  Whenever a request arrives a :term:`Document Message` is published.
+
+Data Sinks
+~~~~~~~~~~
+
+A result from a :ref:`task <draft/celery-5-high-level-architecture:Tasks>`
+produces a :term:`Document Message` which a Data Sink or multiple Data Sinks
+consume.
+
+These :term:`Document Messages <Document Message>` are then stored in the Sinks
+the task is registered to.
+
+.. admonition:: Example
+
+  We have a task which calculates the hourly average impressions of a user's
+  post over a period of time.
+
+  The BI team requires the data to be inserted to `BigQuery <https://cloud.google.com/bigquery/>`_
+  because it uses it to research the effectiveness of users posts.
+
+  However, the user-facing post analytics dashboard also requires this data
+  and the team that maintains it doesn't want to use BigQuery because it is not
+  a cost-effective solution and because they already use `MongoDB <https://mongodb.com/>`_
+  to store all user-facing analytics data.
+
+  To resolve the issue we declare that the task routes it's results to two data
+  sinks. One for the BI team and the other for the analytics team.
+
+  Each data sink is configured to insert the data to a specific table
+  or collection.
 
 Controller
 ----------

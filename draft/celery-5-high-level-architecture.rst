@@ -1135,6 +1135,20 @@ throttling the concurrency of the worker.
 CPU bound tasks are specifically marked as such using Python's
 `def` notation for defining functions. They will run in a Python thread.
 
+Using threads instead of forking the main process has its upsides.
+
+When using PyPy, this means that we get to keep our previous JIT traces and
+therefor JIT warmup will occur faster.
+
+There are also downsides unfortunately.
+
+The `GIL`_'s implementation in CPython has it's downsides.
+According to a `bug report <https://bugs.python.org/issue7946>`_ the new GIL
+in Python 3 CPU bound threads may starve I/O threads (in our case the main thread).
+
+This is not an issue with PyPy's implementation of the `GIL`_
+`according to Armin Rigo <https://bugs.python.org/msg346495>`_, PyPy's creator.
+
 Internal Tasks
 ++++++++++++++
 

@@ -814,6 +814,12 @@ all outgoing and incoming network connections.
 In addition, proper timeouts must be set to avoid hanging when the connection
 is slow or unresponsive.
 
+Each network connection must be accompanied by a
+:ref:`health check <draft/celery-5-high-level-architecture:Health Checks>`.
+
+Health check failures must eventually trip a
+:ref:`circuit breaker <draft/celery-5-high-level-architecture:Circuit Breaking>`.
+
 Command Line Interface
 ----------------------
 

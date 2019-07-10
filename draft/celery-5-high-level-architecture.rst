@@ -1113,6 +1113,12 @@ notation for defining awaitable functions. They will run in a Python coroutine.
 Due to that, any I/O operation in that task must be asynchronous in order to
 avoid blocking the event loop.
 
+Some of the user's asynchronous tasks won't use trio as their event loop
+but will use the more commonly used asyncio event loop which we do support.
+
+In that case, the user must specify the event loop he is going to use for the
+task.
+
 CPU Bound Tasks
 ~~~~~~~~~~~~~~~
 

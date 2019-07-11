@@ -208,6 +208,38 @@ Glossary
       So a service locator for this application would have a method that returns
       a movie finder when one is needed.
 
+  GIL
+
+    The Global Interpreter Lock, abbreviated as the `GIL`_ is a mutex which
+    prevents executing threads in parallel if both are about to execute a python
+    bytecode.
+
+    This is by design since Python has many atomic operations and maintaining
+    individual locks on each object results in slower execution.
+
+    Depending on the implementation, a thread may be forced to release the `GIL`_
+    when a condition is met. In CPython's implementation of Python 3,
+    a thread is forced to release the `GIL`_ after a it executes for a period of
+    time.
+
+    A thread may also release the `GIL`_ voluntarily when it uses a system call
+    or when a C extension instructs to do so.
+
+  IPC
+
+    According to Wikipedia `Inter-process Communication`_:
+
+      refers specifically to the mechanisms an operating system provides to allow
+      the processes to manage shared data.
+      Typically, applications can use IPC, categorized as clients and servers,
+      where the client requests data and the server responds to client requests.
+      Many applications are both clients and servers, as commonly seen in
+      distributed computing.
+
+      There are many `approaches <https://en.wikipedia.org/wiki/Inter-process_communication#Approaches>`_
+      to IPC. Some of them are available in all operating systems, some are
+      only available in specific operating systems.
+
 Message Types
 -------------
 
@@ -1129,25 +1161,55 @@ In some cases where no asynchronous code for the I/O operation is available
 CPU bound tasks are also an appropriate choice as they will not block
 the event loop for the duration of the task.
 
-Performing operations which release the `GIL`_ is recommended to avoid
+Performing operations which release the :term:`GIL` is recommended to avoid
 throttling the concurrency of the worker.
 
 CPU bound tasks are specifically marked as such using Python's
 `def` notation for defining functions. They will run in a Python thread.
 
-Using threads instead of forking the main process has its upsides.
+Using threads instead of forking the main process has its upsides:
 
-When using PyPy, this means that we get to keep our previous JIT traces and
-therefor JIT warmup will occur faster.
+- It simplifies the Worker's architecture and makes it less brittle.
 
-There are also downsides unfortunately.
+  Processes require :term:`IPC` to communicate with each other.
+  This complicates implementation since multiple methods are required to support
+  :term:`IPC` reliably across all operating systems Celery supports.
+  Threads on the other hand require less complicated means of communication.
 
-The `GIL`_'s implementation in CPython has it's downsides.
-According to a `bug report <https://bugs.python.org/issue7946>`_ the new GIL
-in Python 3 CPU bound threads may starve I/O threads (in our case the main thread).
+  In `trio`_, we simply use a memory channel which is a coroutine and threadsafe
+  way to send and receive values.
 
-This is not an issue with PyPy's implementation of the `GIL`_
-`according to Armin Rigo <https://bugs.python.org/msg346495>`_, PyPy's creator.
+- PyPy's JIT warms up faster.
+
+  When using PyPy, using threads means that we get to keep our previous JIT traces
+  and therefore JIT warmup will occur faster.
+
+  If we'd use processes, each process has to warm up its own JIT which results
+  in tasks being executed slower for a longer period of time.
+
+There are also downsides to using threads for CPU bound tasks unfortunately:
+
+- Pure Python CPU bound workloads cannot be executed in parallel.
+
+  In both CPython and PyPy the :term:`GIL` prevents executing two Python bytecodes
+  in parallel by design.
+
+  This results in slower execution of Python code when using threads.
+
+- The :term:`GIL`'s implementation in CPython 3.x has a defect in design.
+
+  According to a `bug report <https://bugs.python.org/issue7946>`_ the new GIL
+  in Python 3 CPU bound threads may starve I/O threads (in our case the main thread).
+
+  .. note ::
+
+    This is not an issue with PyPy's implementation of the `GIL`_
+    `according to Armin Rigo <https://bugs.python.org/msg346495>`_, PyPy's creator.
+
+  - Tasks are no longer isolated.
+
+    Since we're mixing workloads to maximize our throughput a task which crashes
+    the worker or leaks memory can crash the entire worker.
 
 Internal Tasks
 ++++++++++++++
@@ -1549,3 +1611,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _trustme: https://github.com/python-trio/trustme
 .. _Service Activator: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingAdapter.html
 .. _Idempotent Receiver: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IdempotentReceiver.html
+.. _Inter-process Communication: https://en.wikipedia.org/wiki/Inter-process_communication

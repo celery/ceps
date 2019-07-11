@@ -1,5 +1,6 @@
 AMQP
 argparse
+Armin
 async
 asyncio
 Autoscaler
@@ -30,6 +31,7 @@ Omer
 png
 Pre
 repo
+Rigo
 runtimes
 Seemann
 Starmaps

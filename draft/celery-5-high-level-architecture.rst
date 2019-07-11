@@ -1176,7 +1176,7 @@ Using threads instead of forking the main process has its upsides:
   :term:`IPC` reliably across all operating systems Celery supports.
   Threads on the other hand require less complicated means of communication.
 
-  In `trio`_, we simply use a memory channel which is a coroutine and threadsafe
+  In `trio`_, we simply use a memory channel which is a coroutine and thread safe
   way to send and receive values.
 
 - PyPy's JIT warms up faster.

@@ -1211,6 +1211,26 @@ There are also downsides to using threads for CPU bound tasks unfortunately:
     Since we're mixing workloads to maximize our throughput a task which crashes
     the worker or leaks memory can crash the entire worker.
 
+Boxed Tasks
+~~~~~~~~~~~
+
+To minimize the disadvantages of using threads in Python and workaround the
+shortcomings of the :term:`GIL`, Celery also provides a new type of tasks called
+Boxed Tasks.
+
+Boxed Tasks are processes which execute tasks in an isolated manner.
+
+The processes' lifecycle is managed by the :ref:`draft/celery-5-high-level-architecture:Controller`.
+
+Since Boxed Tasks are run separately from Celery itself, the program the process
+is running can be written in any language as long as it implements IPC in the
+same way the :ref:`draft/celery-5-high-level-architecture:Controller` expects.
+
+Boxed tasks are a special kind of
+:ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`.
+They are executed the same way inside the worker but defined using a different
+API.
+
 Internal Tasks
 ++++++++++++++
 

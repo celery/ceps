@@ -1061,7 +1061,7 @@ Users may create their own services as well.
 Internal Services
 +++++++++++++++++
 
-Celery defines internal services to ensure it's operation and to provide
+The Worker defines internal services to ensure it's operation and to provide
 support for it's features.
 
 The exact API for each service will be determined in another CEP.
@@ -1333,33 +1333,6 @@ or a long running co-routine.
 It can also be run using a separate daemon which can serve all the processes
 publishing to the message brokers.
 
-Publisher Health Checks
-+++++++++++++++++++++++
-
-The Publisher will perform health checks to ensure that
-the :term:`Message Broker` the user is publishing to is available.
-
-If a health check fails a configured number of times, the relevant
-:term:`Circuit Breaker` is tripped.
-
-Each :term:`Message Broker` Celery supports must provide an implementation for
-the default health checks the Publisher will use for verifying its
-availability for new :term:`messages <Message>`.
-
-Further health checks can be defined by the user.
-These health checks allows the user to avoid publishing tasks if for example
-a 3rd party API endpoint is not available or slow, if the database
-the user stores the results in is available or any other check for that matter.
-
-Publisher Circuit Breakers
-++++++++++++++++++++++++++
-
-Each :ref:`health check <draft/celery-5-high-level-architecture:Health Checks>`
-has it's own Circuit Breaker.
-Once a circuit breaker is tripped, the :term:`messages <Message>` are stored
-in the :ref:`draft/celery-5-high-level-architecture:messages backlog` until
-the health check recovers and the circuit is once again closed.
-
 Messages Backlog
 ++++++++++++++++
 
@@ -1394,8 +1367,73 @@ In such cases, a Publisher Daemon can be used. The publishing processes will
 specify it as their target and communicate the :term:`messages <Message>`
 to be published via a socket.
 
-If a disk based queue is used, the user may configure Celery to write to it
-directly, provided that the queue can perform inserts and deletes concurrently.
+Internal Services
++++++++++++++++++
+
+The Publisher defines internal services to ensure it's operation and to provide
+support for it's features.
+
+The exact API for each service will be determined in another CEP.
+
+This list of internal services is not final.
+Other internal services may be defined in other CEPs.
+
+Message Publisher
+~~~~~~~~~~~~~~~~~
+
+The ``Message Publisher`` service is responsible for publishing
+:term:`messages <Message>` to a single :term:`Message Broker`.
+
+This service is run for each :term:`Message Broker` the user configured the
+Publisher to publish messages to.
+
+During the service's initialization it initializes a
+:ref:`draft/celery-5-high-level-architecture:Messages Backlog`.
+This will be the backlog the service consumes :term:`messages <Message>` from.
+
+The service maintains a connection pool to the :term:`Message Broker` and is
+responsible for scaling the pool according to the pressure on the broker.
+
+The connection pool's limits are configurable by the user.
+By default, we only maintain one connection to the :term:`Message Broker`.
+
+Listener
+~~~~~~~~
+
+The ``Listener`` service is responsible for receiving messages and enqueuing
+them in the appropriate :ref:`draft/celery-5-high-level-architecture:Messages Backlog`.
+
+During initialization the service starts listening to incoming TCP connections.
+
+The service is only run in case the user opts to run the Publisher in
+:ref:`draft/celery-5-high-level-architecture:Publisher Daemon` mode.
+
+Publisher Health Checks
++++++++++++++++++++++++
+
+The Publisher will perform health checks to ensure that
+the :term:`Message Broker` the user is publishing to is available.
+
+If a health check fails a configured number of times, the relevant
+:term:`Circuit Breaker` is tripped.
+
+Each :term:`Message Broker` Celery supports must provide an implementation for
+the default health checks the Publisher will use for verifying its
+availability for new :term:`messages <Message>`.
+
+Further health checks can be defined by the user.
+These health checks allows the user to avoid publishing tasks if for example
+a 3rd party API endpoint is not available or slow, if the database
+the user stores the results in is available or any other check for that matter.
+
+Publisher Circuit Breakers
+++++++++++++++++++++++++++
+
+Each :ref:`health check <draft/celery-5-high-level-architecture:Health Checks>`
+has it's own Circuit Breaker.
+Once a circuit breaker is tripped, the :term:`messages <Message>` are stored
+in the :ref:`draft/celery-5-high-level-architecture:messages backlog` until
+the health check recovers and the circuit is once again closed.
 
 Router
 ------

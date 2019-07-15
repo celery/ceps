@@ -244,8 +244,13 @@ Message Types
 -------------
 
 In relation to Celery :term:`Command messages <Command Message>`
-are the messages we publish whenever we delay a task.
+are the messages we publish to the :term:`Message Broker` whenever we want to
+execute a task.
+
 :term:`Document messages <Document Message>` are the messages we get as a result.
+
+:term:`Document messages <Document Message>` may also be produced whenever
+we publish a representation of a domain model.
 
 .. code-block:: pycon
 

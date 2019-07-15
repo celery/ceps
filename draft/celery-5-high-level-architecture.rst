@@ -240,12 +240,17 @@ Glossary
       to IPC. Some of them are available in all operating systems, some are
       only available in specific operating systems.
 
+  Task
+
+    A task is a unit of business logic that is completely independent and can be
+    executed regardless of the execution platform.
+
 Message Types
 -------------
 
 In relation to Celery :term:`Command messages <Command Message>`
 are the messages we publish to the :term:`Message Broker` whenever we want to
-execute a task.
+execute a :term:`Task`.
 
 :term:`Document messages <Document Message>` are the messages we get as a result.
 

@@ -245,6 +245,34 @@ Glossary
     A task is a unit of business logic that is completely independent and can be
     executed regardless of the execution platform.
 
+  Domain Model
+
+    Martin Fowler defines a `Domain Model`_ in the following fashion:
+
+      An object model of the domain that incorporates both behavior and data.
+
+  Domain Event
+
+    Martin Fowler defines a `Domain Event`_ in the following fashion:
+
+      I go to Babur's for a meal on Tuesday, and pay by credit card.
+      This might be modeled as an event, whose event type is 'make purchase',
+      whose subject is my credit card, and whose occurred date is Tuesday.
+      If Babur's uses an old manual system and doesn't transmit the transaction
+      until Friday, the noticed date would be Friday.
+
+      Things happen. Not all of them are interesting, some may be worth
+      recording but don't provoke a reaction.
+      The most interesting ones cause a reaction.
+      Many systems need to react to interesting events.
+      Often you need to know why a system reacts in the way it did.
+
+      By funneling inputs to a system into streams of Domain Event you can keep
+      a record of all the inputs to a system.
+      This helps you organize your processing logic, and also allows you to keep
+      an audit log of the inputs to the system.
+
+
 Message Types
 -------------
 
@@ -255,7 +283,7 @@ execute a :term:`Task`.
 :term:`Document messages <Document Message>` are the messages we get as a result.
 
 :term:`Document messages <Document Message>` may also be produced whenever
-we publish a representation of a domain model.
+we publish a serialized representation of a :term:`Domain Model`.
 
 .. code-block:: pycon
 
@@ -268,7 +296,7 @@ we publish a representation of a domain model.
   3
 
 :term:`Event messages <Event Message>` are a new concept for Celery.
-They describe that a domain event occurred.
+They describe that a :term:`Domain Event` occurred.
 Multiple tasks can be subscribed to an event.
 
 .. code-block:: pycon
@@ -1680,3 +1708,5 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Service Activator: https://www.enterpriseintegrationpatterns.com/patterns/messaging/MessagingAdapter.html
 .. _Idempotent Receiver: https://www.enterpriseintegrationpatterns.com/patterns/messaging/IdempotentReceiver.html
 .. _Inter-process Communication: https://en.wikipedia.org/wiki/Inter-process_communication
+.. _Domain Event: https://martinfowler.com/eaaDev/DomainEvent.html
+.. _Domain Model: https://martinfowler.com/eaaCatalog/domainModel.html

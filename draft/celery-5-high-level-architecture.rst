@@ -1405,8 +1405,8 @@ In such cases, a Publisher Daemon can be used. The publishing processes will
 specify it as their target and communicate the :term:`messages <Message>`
 to be published via a socket.
 
-Internal Services
-+++++++++++++++++
+Publisher Internal Services
+++++++++++++++++++++++++++++
 
 The Publisher defines internal services to ensure it's operation and to provide
 support for it's features.
@@ -1552,23 +1552,36 @@ Controller
 The Controller is responsible for managing the lifecycle of all other Celery
 components.
 
-It spawns the :ref:`Workers <draft/celery-5-high-level-architecture:Worker>`,
-:ref:`Routers <draft/celery-5-high-level-architecture:Router>`,
-:ref:`Schedulers <draft/celery-5-high-level-architecture:Scheduler>`
-and if configured and possible, the :term:`Message Brokers <Message Broker>`
-as well.
+Celery 5 is a more complex system with multiple components and will often be
+deployed in high throughput, highly available production systems.
+
+The introduction of multiple components require us to have another component
+that manages the entire Celery cluster.
+
+During the lifecycle of a worker the Controller also manages and optimizes the
+execution of tasks to ensure we maximize the utilization of all our resources
+and to prevent expected errors.
+
+.. note::
+
+  The Controller is meant to be run as a user service.
+  If the Controller is run with root privileges, a log message with
+  the warning level will be emitted.
 
 Foreman
 +++++++
 
+The Foreman service is responsible for spawning the :ref:`Workers <draft/celery-5-high-level-architecture:Worker>`,
+:ref:`Routers <draft/celery-5-high-level-architecture:Router>` and
+:ref:`Schedulers <draft/celery-5-high-level-architecture:Scheduler>`.
+
 By default, the Foreman service creates sub-processes for
-all the required components. This is suitable for small scale deployments
-or for deployments where SystemD is unavailable.
+all the required components. This is suitable for small scale deployments.
 
 Development Mode
 ~~~~~~~~~~~~~~~~
 
-During development if explicitly specified, the Foremen will start all of
+During development, if explicitly specified, the Foremen will start all of
 Celery's services in the same process.
 
 Since some of the new features in Celery require cryptographically signed
@@ -1588,11 +1601,23 @@ Celery will provide the required services for such a deployment.
 The Controller will use the `sd_notify`_ protocol to announce when the cluster
 is fully operational.
 
-.. note::
+The user must configure the list of hosts the controller will manage and ensure
+SSH communication between the Controller's host and the other hosts is possible.
 
-  The Controller is meant to be run as a user service.
-  If the Controller is run with root privileges, a log message with
-  the warning level will be emitted.
+Other Integrations
+~~~~~~~~~~~~~~~~~~
+
+Celery may be run in Kubernetes, Swarm, Mesos, Nomad or any other container
+scheduler.
+
+Users may provide their own integrations with the Foreman which allows them to
+create and manage the different Celery components in a way that is native to the
+container scheduler.
+
+The Controller may also manage the lifecycle of the :term:`Message Broker` if
+the user wishes to do so.
+
+Such an integration may be provided by the user as well.
 
 Scheduler
 +++++++++
@@ -1611,7 +1636,7 @@ avoid consuming the task or rejecting it.
 Suspend/Resume Tasks
 ~~~~~~~~~~~~~~~~~~~~
 
-Whenever a Circuit Breaker trips, the :ref:`draft/celery-5-high-level-architecture:Router`
+Whenever a :term:`Circuit Breaker` trips, the :ref:`draft/celery-5-high-level-architecture:Router`
 must issue an event to the Scheduler.
 The exact payload of the suspension event will be determined in another CEP.
 
@@ -1664,6 +1689,9 @@ Concurrency Limitations
 
 Autoscaler
 ~~~~~~~~~~
+
+Controller Internal Services
+++++++++++++++++++++++++++++
 
 Motivation
 ==========

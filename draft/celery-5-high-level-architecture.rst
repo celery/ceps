@@ -1684,6 +1684,15 @@ In Celery 5 we will use the `APScheduler <https://github.com/agronholm/apschedul
 APScheduler has proved itself in production, is flexible and customizable and
 will provide trio support in 4.0, it's next major version.
 
+In addition, APScheduler 4.0 will be highly available, a highly demanded feature
+from our users. This means that two Controller instances may exist simultaneously
+without duplicated :ref:`draft/celery-5-high-level-architecture:Tasks` being scheduled
+for execution.
+
+The Scheduler only uses APScheduler to publish :ref:`draft/celery-5-high-level-architecture:Tasks`
+at the appropriate time according to the schedule provided by the user.
+Periodic tasks do not run inside the Scheduler.
+
 Concurrency Limitations
 ~~~~~~~~~~~~~~~~~~~~~~~
 

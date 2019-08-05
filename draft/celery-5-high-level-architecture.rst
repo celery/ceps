@@ -1756,6 +1756,9 @@ Backwards Compatibility
 Reference Implementation
 ========================
 
+This document describes the high level architecture of Celery 5.
+As such, it does not have an implementation at the time of writing.
+
 Copyright
 =========
 

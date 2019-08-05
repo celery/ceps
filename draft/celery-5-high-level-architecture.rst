@@ -1633,6 +1633,51 @@ The scheduler is aware when tasks should no longer be executed due to manual
 intervention or a circuit breaker trip. To do so, it commands the router to
 avoid consuming the task or rejecting it.
 
+Concurrency Limitations
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Not all :ref:`draft/celery-5-high-level-architecture:Tasks` are born equal.
+Some tasks require more resources than others, some may only be executed once
+at a time due to a business requirement,
+other tasks may be executed only once per user at a time to avoid data corruption.
+At times, some tasks should not be executed at all.
+
+The Scheduler is responsible for limiting the concurrency of such tasks.
+
+A task's concurrency may be limited per worker or globally across all workers
+depending on the requirements.
+In case there are tasks which are limited globally, an external data store is required.
+
+If a :ref:`task <draft/celery-5-high-level-architecture:Tasks>` is rate limited
+any concurrency limitations are ignored.
+
+There are multiple types of limits the user can impose on a task's concurrency:
+
+* **Fixed Limit**: A task can only be run at a maximum concurrency of a fixed number.
+  This strategy is used when there is a predetermined limit on the number of
+  concurrent tasks of the same type either because of lack of computing resources
+  or due to business requirements.
+* **Range**: A task can only be run at a maximum concurrency of a calculated limit
+  between a range of numbers.
+  This strategy is used to calculate the appropriate concurrency for a task based on some
+  external resource such as the number of available database connections or currently
+  available network bandwidth.
+* **Concurrency Token**: A task can only be run at a maximum concurrency of either a **Fixed Limit**
+  or a **Range** if it has the same Concurrency Token.
+  A Concurrency Token is an identifier constructed from the task's :term:`Message`
+  by which we group a number of tasks for the purpose of limiting their concurrency.
+  This strategy is used when the user would like to run one concurrent task per
+  user or when a task may connect to multiple database instances in the cluster
+  and the user wishes to limit the concurrency of the task per the available
+  database connections in the selected instance.
+
+
+A concurrency limitation of 0 implies that the task will be rejected and the queue
+it is on will not be consumed if possible.
+
+The Scheduler may impose a concurrency limit if it deems fit at any time, these
+limits take precedence over any user imposed limit.
+
 Suspend/Resume Tasks
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -1692,9 +1737,6 @@ for execution.
 The Scheduler only uses APScheduler to publish :ref:`draft/celery-5-high-level-architecture:Tasks`
 at the appropriate time according to the schedule provided by the user.
 Periodic tasks do not run inside the Scheduler.
-
-Concurrency Limitations
-~~~~~~~~~~~~~~~~~~~~~~~
 
 Autoscaler
 ~~~~~~~~~~

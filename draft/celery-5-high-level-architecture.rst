@@ -1700,6 +1700,20 @@ The exact payload of the resumption event will be determined in another CEP.
 Task Prioritization
 ~~~~~~~~~~~~~~~~~~~
 
+The Scheduler may instruct workers to prioritize tasks and to prefer consuming
+from specific queues first.
+
+Priority based queues are only a partial solution to prioritizing tasks.
+Some :term:`Message Brokers <Message Broker>` don't support it.
+Those who do support priority based queues do not prioritize messages between
+queues.
+
+This feature can be used to prefer to execute tasks which can be quickly executed
+first or to execute tasks which take a long time to complete first or to execute
+tasks which are rarely seen first.
+
+Users may supply their own strategies for prioritizing tasks.   
+
 Resource Saturation
 ~~~~~~~~~~~~~~~~~~~
 

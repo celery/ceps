@@ -1712,10 +1712,17 @@ This feature can be used to prefer to execute tasks which can be quickly execute
 first or to execute tasks which take a long time to complete first or to execute
 tasks which are rarely seen first.
 
-Users may supply their own strategies for prioritizing tasks.   
+Users may supply their own strategies for prioritizing tasks.
 
 Resource Saturation
 ~~~~~~~~~~~~~~~~~~~
+
+Celery provides the Resource Saturation :ref:`draft/celery-5-high-level-architecture:Task Prioritization`
+strategy to ensure we can utilize the full capacity of all the workers in the cluster.
+
+The scheduler instructs each worker to prefer executing :ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`
+if the capacity of the worker for executing :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks`
+is nearing its maximum and vice versa.
 
 Rate Limiting
 ~~~~~~~~~~~~~

@@ -61,7 +61,6 @@ Glossary
     to the correct channel.
 
   Message
-
     `Enterprise Integration Patterns`_ defines a `Message`_ as  data record that
     the messaging system can transmit through a message channel.
 
@@ -209,7 +208,6 @@ Glossary
       a movie finder when one is needed.
 
   GIL
-
     The Global Interpreter Lock, abbreviated as the `GIL`_ is a mutex which
     prevents executing threads in parallel if both are about to execute a python
     bytecode.
@@ -226,7 +224,6 @@ Glossary
     or when a C extension instructs to do so.
 
   IPC
-
     According to Wikipedia `Inter-process Communication`_:
 
       refers specifically to the mechanisms an operating system provides to allow
@@ -241,18 +238,15 @@ Glossary
       only available in specific operating systems.
 
   Task
-
     A task is a unit of business logic that is completely independent and can be
     executed regardless of the execution platform.
 
   Domain Model
-
     Martin Fowler defines a `Domain Model`_ in the following fashion:
 
       An object model of the domain that incorporates both behavior and data.
 
   Domain Event
-
     Martin Fowler defines a `Domain Event`_ in the following fashion:
 
       I go to Babur's for a meal on Tuesday, and pay by credit card.

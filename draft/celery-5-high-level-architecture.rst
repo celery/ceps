@@ -1687,7 +1687,7 @@ The exact payload of the suspension event will be determined in another CEP.
 
 This will notify the Scheduler that it no longer has to take this task into
 account when calculating the Celery workers cluster capacity.
-In addition this will set the task's :ref:`<concurrency limitation> draft/celery-5-high-level-architecture:Concurrency Limitations`
+In addition this will set the task's :ref:`concurrency limitation <draft/celery-5-high-level-architecture:Concurrency Limitations>`
 to 0.
 
 The user may elect to send this event directly to the Scheduler if suspension
@@ -1741,7 +1741,7 @@ The event notifies the Router that it should not consume these tasks if possible
 The exact payload of the rate limiting event will be determined
 in another CEP.
 
-In addition the task is :ref:`suspended <Suspend/Resume Tasks>` until the rate
+In addition the task is :ref:`suspended <draft/celery-5-high-level-architecture:Suspend/Resume Tasks>` until the rate
 limiting period is over.
 
 Periodic Tasks

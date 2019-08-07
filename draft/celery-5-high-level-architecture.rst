@@ -457,7 +457,7 @@ As an architectural guideline Celery must retry operations **by default**
 and must avoid doing so **indefinitely and without proper limits**.
 
 Any operation which cannot be executed either momentarily or permanently
-as a result of a bug must not be retried beyond the the configured limits.
+as a result of a bug must not be retried beyond the configured limits.
 Instead, Celery must store the operation for further inspection
 and if required, manual intervention.
 
@@ -1186,7 +1186,7 @@ avoid blocking the event loop.
 Some of the user's asynchronous tasks won't use trio as their event loop
 but will use the more commonly used asyncio event loop which we do support.
 
-In that case, the user must specify the event loop he is going to use for the
+In that case, the user must specify the event loop they are going to use for the
 task.
 
 CPU Bound Tasks
@@ -1502,7 +1502,7 @@ database, a file system or an HTTP(S) endpoint.
 
 These services produce :term:`Document Messages <Document Message>`.
 
-Tasks which are subscribed to Data Sources will receive the the raw document
+Tasks which are subscribed to Data Sources will receive the raw document
 messages for further processing.
 
 .. admonition:: Example

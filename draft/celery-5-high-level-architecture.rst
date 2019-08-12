@@ -1263,6 +1263,38 @@ Boxed tasks are a special kind of
 They are executed the same way inside the worker but defined using a different
 API.
 
+Concurrency Budget
+~~~~~~~~~~~~~~~~~~
+
+Each worker has a concurrency budget for each type of task it can run.
+
+The budget for each type of task is defined by a minimal
+and an optional maximal concurrency.
+
+.. note::
+
+	 If a user specifies a concurrency of more than 10 for :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks`
+   a warning log message is emitted.
+   Too many threads can cause task execution to grind down to a halt.
+
+If there are more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
+than what is currently the allowed maximum task concurrency we increase the
+current maximum by that number of tasks.
+After this increase, there will be a configurable cooldown period during which
+the worker will execute the new tasks.
+After the cooldown period, if there are still more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
+than the current maximum capacity we increase the maximum concurrency exponentially
+by a configurable exponent multiplied by the number of increases.
+The result is rounded up.
+
+This process goes on until we either reach the maximum concurrency budget for
+that type of tasks or if the number of tasks in
+:ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue` is lower than
+the current maximum concurrency.
+
+If the current number of tasks is lower than the current maximal concurrency
+we decrease it to the number of tasks that are currently executing.
+
 Internal Tasks
 ++++++++++++++
 
@@ -1760,6 +1792,37 @@ Periodic tasks do not run inside the Scheduler.
 
 Autoscaler
 ~~~~~~~~~~
+
+The Scheduler contains all the data required for making autoscaling decisions.
+
+It is aware of how many tasks will be automatically rejected because
+they are :ref:`suspended <draft/celery-5-high-level-architecture:Suspend/Resume Tasks>`
+for any reason.
+
+It is aware of how many :ref:`draft/celery-5-high-level-architecture:Periodic Tasks`
+are going to be scheduled in the future.
+
+The Scheduler is aware for the maximum concurrency allowed for each worker and
+the :ref:`draft/celery-5-high-level-architecture:Concurrency Limitations` of specific tasks.
+
+The Scheduler also periodically samples the queues' length.
+
+Unfortunately, modeling such a queuing system is beyond the scope of Celery 5 due
+to the already large amount of new feature and changes in this version
+and our lack of knowledge in the math involved in such a model.
+
+Instead we're going to provide the simple algorithm we use now in Celery 4
+with some adjustments but allow room for extension.
+
+In Celery 4 each worker checks if it should autoscale every second.
+This can cause a lot of thrashing as new processes are created and destroyed.
+
+In Celery 5 after each autoscale event, there will be a cooldown period.
+The cooldown period increases exponentially until a configurable limit.
+
+If the number of tasks in all the queues is larger than the current concurrency
+budget the Autoscaler publishes an event to all the routers.
+The routers will increase their prefetching multiplier as a response to this event.
 
 Controller Internal Services
 ++++++++++++++++++++++++++++

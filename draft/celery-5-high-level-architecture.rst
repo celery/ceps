@@ -1272,24 +1272,23 @@ The budget for each type of task is defined by a minimal
 and an optional maximal concurrency.
 
 .. note::
+	 If a user specifies a concurrency of more than 10 for :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks` a warning log message is emitted.
 
-	 If a user specifies a concurrency of more than 10 for :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks`
-   a warning log message is emitted.
    Too many threads can cause task execution to grind down to a halt.
 
-If there are more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
+If there are more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`
 than what is currently the allowed maximum task concurrency we increase the
 current maximum by that number of tasks.
 After this increase, there will be a configurable cooldown period during which
 the worker will execute the new tasks.
-After the cooldown period, if there are still more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
+After the cooldown period, if there are still more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`
 than the current maximum capacity we increase the maximum concurrency exponentially
 by a configurable exponent multiplied by the number of increases.
 The result is rounded up.
 
 This process goes on until we either reach the maximum concurrency budget for
 that type of tasks or if the number of tasks in
-:ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue` is lower than
+:ref:`draft/celery-5-high-level-architecture:Internal Task Queue` is lower than
 the current maximum concurrency.
 
 If the current number of tasks is lower than the current maximal concurrency

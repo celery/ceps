@@ -3,6 +3,7 @@ argparse
 Armin
 async
 asyncio
+autoscale
 Autoscaler
 autoscaling
 awaitable
@@ -11,6 +12,7 @@ barebones
 BigQuery
 ceps
 Config
+cooldown
 coroutine
 coroutines
 cryptographically
@@ -31,6 +33,7 @@ Mesos
 Omer
 png
 Pre
+prefetching
 repo
 Rigo
 runtimes

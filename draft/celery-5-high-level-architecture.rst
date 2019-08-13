@@ -325,7 +325,7 @@ In Celery Canvas is the mechanism which users can use to define workflows
 dynamically.
 
 In previous versions of Celery there are issues with the protocol which can
-cause Celery to generate very large messages.
+cause Celery to generate messages too large for storage in :term:`Message Brokers <Message Broker>`.
 There are also issues with the API and multiple implementation problems.
 
 In Celery 5 we're going to revamp the protocol, API and
@@ -1219,7 +1219,7 @@ Using threads instead of forking the main process has its upsides:
   If we'd use processes, each process has to warm up its own JIT which results
   in tasks being executed slower for a longer period of time.
 
-There are also downsides to using threads for CPU bound tasks unfortunately:
+Using threads for CPU bound tasks unfortunately has some downsides as well:
 
 - Pure Python CPU bound workloads cannot be executed in parallel.
 

@@ -1115,7 +1115,8 @@ executes them and enqueues the results into the
 :ref:`draft/celery-5-high-level-architecture:Internal Results Queue`.
 
 The service supervises how many tasks are run concurrently and limits the
-number of concurrent tasks to the configured amount.
+number of concurrent tasks to the configured amount in accordance to the
+:ref:`draft/celery-5-high-level-architecture:Concurrency Budget`.
 
 The service also attempts to saturate all of the available resources by
 scheduling as many as :ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`
@@ -1130,7 +1131,8 @@ The ``Consumer`` service consumes :term:`messages <Message>` from one or many
 :term:`Message Brokers <Message Broker>`.
 
 The service enqueues the consumed :term:`messages <Message>`
-into the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`.
+into the appropriate :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
+according to the task's type.
 
 Result Publisher
 ~~~~~~~~~~~~~~~~
@@ -1139,6 +1141,13 @@ The ``Result Publisher`` service consumes results from the
 :ref:`draft/celery-5-high-level-architecture:Internal Results Queue` and
 publishes them to the :ref:`draft/celery-5-high-level-architecture:Router`'s
 :ref:`draft/celery-5-high-level-architecture:Inbox Queue`.
+
+Maximal Concurrency Budget
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ``Maximal Concurrency Budget`` service runs the user's concurrency budget
+strategies and notifies the :ref:`tasks <draft/celery-5-high-level-architecture:Task Execution>`
+service of changes in concurrency.
 
 Tasks
 +++++
@@ -1248,7 +1257,6 @@ Using threads for CPU bound tasks unfortunately has some downsides as well:
 To mitigate these issues CPU Bound Tasks may be globally rate limited to allow
 the main thread to complete executing :ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`.
 
-
 Boxed Tasks
 ~~~~~~~~~~~
 
@@ -1277,6 +1285,11 @@ Each worker has a concurrency budget for each type of task it can run.
 The budget for each type of task is defined by a minimal
 and an optional maximal concurrency.
 
+The maximal concurrency budget can be dynamic or fixed.
+Dynamic maximal concurrency strategies may be used to determine the maximum
+concurrency based on the load factor of the server, available network bandwidth
+or any other requirement the user may have.
+
 .. note::
 	 If a user specifies a concurrency of more than 10 for :ref:`draft/celery-5-high-level-architecture:CPU Bound Tasks` a warning log message is emitted.
 
@@ -1289,7 +1302,7 @@ After this increase, there will be a configurable cooldown period during which
 the worker will execute the new tasks.
 After the cooldown period, if there are still more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
 than the current maximum capacity we increase the maximum concurrency exponentially
-by a configurable exponent multiplied by the number of increases.
+by a configurable exponent multiplied by the number of budget increases.
 The result is rounded up.
 
 This process goes on until we either reach the maximum concurrency budget for
@@ -1299,6 +1312,8 @@ the current maximum concurrency.
 
 If the current number of tasks is lower than the current maximal concurrency
 we decrease it to the number of tasks that are currently executing.
+
+This algorithm can be replaced or customized by the user. 
 
 Internal Tasks
 ++++++++++++++

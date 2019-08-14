@@ -1066,6 +1066,8 @@ Internal Tasks Queue
 The internal tasks queue is an in-memory queue which the worker uses
 to queue tasks for execution.
 
+Each task type has its own queue.
+
 The queue must be thread-safe and coroutine-safe.
 
 Internal Results Queue

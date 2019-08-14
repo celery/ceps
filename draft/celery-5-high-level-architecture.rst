@@ -1313,7 +1313,7 @@ the current maximum concurrency.
 If the current number of tasks is lower than the current maximal concurrency
 we decrease it to the number of tasks that are currently executing.
 
-This algorithm can be replaced or customized by the user. 
+This algorithm can be replaced or customized by the user.
 
 Internal Tasks
 ++++++++++++++
@@ -1843,6 +1843,9 @@ The cooldown period increases exponentially until a configurable limit.
 If the number of tasks in all the queues is larger than the current concurrency
 budget the Autoscaler publishes an event to all the routers.
 The routers will increase their prefetching multiplier as a response to this event.
+
+The Scheduler will select which workers should increase their prefetching of tasks
+in order to reach the maximal concurrency budget.
 
 Controller Internal Services
 ++++++++++++++++++++++++++++

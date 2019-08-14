@@ -1063,7 +1063,7 @@ ourselves.
 Internal Task Queue
 +++++++++++++++++++
 
-The internal task queue is an in-memory priority queue which the worker uses
+The internal task queue is an in-memory queue which the worker uses
 to queue tasks for execution.
 
 The queue must be thread-safe and coroutine-safe.
@@ -1071,7 +1071,7 @@ The queue must be thread-safe and coroutine-safe.
 Internal Results Queue
 ++++++++++++++++++++++
 
-The internal results queue is an in-memory priority queue which the worker uses
+The internal results queue is an in-memory queue which the worker uses
 to report the result of tasks back to the
 :ref:`draft/celery-5-high-level-architecture:Router`.
 

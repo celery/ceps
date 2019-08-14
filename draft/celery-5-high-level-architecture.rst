@@ -1060,10 +1060,10 @@ All of those features save us from writing a lot of code. If we were to select
 asyncio as our Event Loop, we'd have to implement most of those features
 ourselves.
 
-Internal Task Queue
-+++++++++++++++++++
+Internal Tasks Queue
+++++++++++++++++++++
 
-The internal task queue is an in-memory queue which the worker uses
+The internal tasks queue is an in-memory queue which the worker uses
 to queue tasks for execution.
 
 The queue must be thread-safe and coroutine-safe.
@@ -1108,7 +1108,7 @@ The ``Task Execution`` service is responsible for executing all Celery
 :ref:`tasks <draft/celery-5-high-level-architecture:Tasks>`.
 
 It consumes tasks from the
-:ref:`draft/celery-5-high-level-architecture:Internal Task Queue`,
+:ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`,
 executes them and enqueues the results into the
 :ref:`draft/celery-5-high-level-architecture:Internal Results Queue`.
 
@@ -1128,7 +1128,7 @@ The ``Consumer`` service consumes :term:`messages <Message>` from one or many
 :term:`Message Brokers <Message Broker>`.
 
 The service enqueues the consumed :term:`messages <Message>`
-into the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`.
+into the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`.
 
 Result Publisher
 ~~~~~~~~~~~~~~~~
@@ -1276,19 +1276,19 @@ and an optional maximal concurrency.
 
    Too many threads can cause task execution to grind down to a halt.
 
-If there are more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`
+If there are more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
 than what is currently the allowed maximum task concurrency we increase the
 current maximum by that number of tasks.
 After this increase, there will be a configurable cooldown period during which
 the worker will execute the new tasks.
-After the cooldown period, if there are still more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Task Queue`
+After the cooldown period, if there are still more tasks in the :ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue`
 than the current maximum capacity we increase the maximum concurrency exponentially
 by a configurable exponent multiplied by the number of increases.
 The result is rounded up.
 
 This process goes on until we either reach the maximum concurrency budget for
 that type of tasks or if the number of tasks in
-:ref:`draft/celery-5-high-level-architecture:Internal Task Queue` is lower than
+:ref:`draft/celery-5-high-level-architecture:Internal Tasks Queue` is lower than
 the current maximum concurrency.
 
 If the current number of tasks is lower than the current maximal concurrency

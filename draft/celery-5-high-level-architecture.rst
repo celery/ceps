@@ -1245,6 +1245,10 @@ Using threads for CPU bound tasks unfortunately has some downsides as well:
     Since we're mixing workloads to maximize our throughput a task which crashes
     the worker or leaks memory can crash the entire worker.
 
+To mitigate these issues CPU Bound Tasks may be globally rate limited to allow
+the main thread to complete executing :ref:`draft/celery-5-high-level-architecture:I/O Bound Tasks`.
+
+
 Boxed Tasks
 ~~~~~~~~~~~
 

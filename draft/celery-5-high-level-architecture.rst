@@ -969,7 +969,7 @@ Dependency Inversion
 --------------------
 
 Currently Celery uses different singleton registries to customize the behavior
-of it's different components.
+of its' different components.
 This is known as the :term:`Service Locator` pattern.
 
 Mark Seemann criticized Service Locators as an anti-pattern for multiple reasons:
@@ -996,7 +996,7 @@ If the exact same :term:`Message` is received more than once, the duplicated
 messages are discarded.
 In this case, a warning log message is emitted.
 The Worker maintains a list of identifiers of recently received :term:`messages <Message>`.
-The number of :term:`messages <Message>` is determined by the a configuration
+The number of :term:`messages <Message>` is determined by a configuration
 value.
 By default that value is 100 :term:`messages <Message>`.
 
@@ -1037,10 +1037,10 @@ the clients we use do not allow non-blocking operations.
 The most important feature of Celery 5 is to replace the custom Event Loop
 with `Trio`_.
 
-We selected it because of it's
+We selected it because of its
 `design <https://trio.readthedocs.io/en/latest/design.html>`_,
 `interoperability with asyncio <https://github.com/python-trio/trio-asyncio>`_
-and it's many features.
+and its many features.
 
 Trio provides a context manager which limits the concurrency of coroutines
 and/or threads. This saves us from further bookkeeping when a Worker executes

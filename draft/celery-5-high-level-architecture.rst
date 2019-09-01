@@ -318,6 +318,69 @@ These architectural building blocks will aid us in creating a better messaging
 system. To encourage `ubiquitous language`_, we will be using them in this
 document and in Celery 5's codebase as well.
 
+Message Passing Protocol
+------------------------
+
+In previous versions of Celery the only protocol we defined was for the message
+format itself.
+
+Whenever a client published a message to the broker using `task.delay()` Celery
+serialized it to a known format which it can use to invoke the task remotely.
+
+This meant that you needed a special client library to publish tasks that Celery
+will later consume and execute.
+The architectural implication is a coupling between the publisher and the consumer
+which defeats the general use-case of message passing: decoupling the publisher
+from the consumer.
+
+In addition, the communication protocol between the master process and the workers
+was an internal implementation detail which was not well defined or understood
+by the maintainers or users.
+
+Introduction to AMQP 1.0 Terminology
+++++++++++++++++++++++++++++++++++++
+
+AMQP 1.0 is a flexible messaging protocol that is designed to pass messages between nodes.
+Nodes can be queues, exchanges, Kafka-like log stream or any other entity which
+which publishes or consumes a message from another node.
+
+AMQP 1.0, unlike AMQP 0.9.1, does not mandate the presence of a broker to
+facilitate message passing.
+
+This feature allows us to use it to communicate effectively between the different
+Celery components without overloading the broker with connections and messages.
+It also allows users to invoke tasks directly without the usage
+of a :term:`Message Broker`, thus treating a Worker as an actor.
+
+Connections
+~~~~~~~~~~~
+
+Sessions
+~~~~~~~~
+
+Channels
+~~~~~~~~
+
+Nodes (Components)
+~~~~~~~~~~~~~~~~~~
+
+Nodes (also called Components) are entities on either different processes which
+establish links.
+
+Links
+~~~~~
+
+Terminus
+~~~~~~~~
+
+Implementation
+++++++++++++++
+
+The python bindings to the `qpid-proton`_ library exposes all these features,
+can be used with trio and is supported on PyPy.
+
+We will use it as a fundamental building block for our entire architecture.
+
 Canvas
 ------
 
@@ -1369,12 +1432,6 @@ Others are optional and their execution will be deferred to the
 
 Users may create and use their own Boot Steps if they wish to do so.
 
-Protocol
-++++++++
-
-Introduction to AMQP 1.0 Terminology
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 Worker Health Checks
 ++++++++++++++++++++
 
@@ -1898,3 +1955,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Inter-process Communication: https://en.wikipedia.org/wiki/Inter-process_communication
 .. _Domain Event: https://martinfowler.com/eaaDev/DomainEvent.html
 .. _Domain Model: https://martinfowler.com/eaaCatalog/domainModel.html
+.. _qpid-proton: http://qpid.apache.org/releases/qpid-proton-0.29.0/proton/python/book/tutorial.html

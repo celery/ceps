@@ -74,7 +74,7 @@ sufficient motivation may be rejected outright.
 Rationale
 =========
 
-This section should flesh out out the specification by describing what motivated
+This section should flesh out the specification by describing what motivated
 the specific design design and why particular design decisions were made.  It
 should describe alternate designs that were considered and related work.
 

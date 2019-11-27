@@ -61,7 +61,18 @@ Instead we opt to use a battle-tested solution which allows us to remove the ent
 This allows us to delegate the maintenance overhead to others and reduce the surface of potential bugs introduced in
 Celery 5.
 
-In addition, the ecosystem provides us with many features that argparse lacks such as `"Did you mean" <https://github.com/click-contrib/click-didyoumean>`_ messages,
+Argparse which our previous implementation was based on wasn't a good fit.
+We needed to create a framework around it to support sub-commands such as `celery worker` and nested sub-commands
+were not possible at all which means that each command that had them figured out how they should be implemented for
+itself.
+In addition, We had to implement a REPL nearly from scratch for `celery amqp` while Click has a plugin which uses
+the `python-prompt-toolkit <https://python-prompt-toolkit.readthedocs.io/en/latest/>`_ library called `click-repl <https://github.com/click-contrib/click-repl>`_.
+
+This resulted in an implementation of ~3k LOC.
+
+Our new implementation is only ~2.2K LOC and is easier to reason about just by using Click.
+
+The Click ecosystem provides us with many features that argparse lacks such as `"Did you mean" <https://github.com/click-contrib/click-didyoumean>`_ messages,
 `automatic documentation <https://github.com/click-contrib/sphinx-click>`_ using Sphinx and other user experience
 enhancing features which :mod:`argparse` lacks.
 

@@ -1,3 +1,4 @@
+amqp
 AMQP
 argparse
 Armin
@@ -21,6 +22,7 @@ Deduplication
 deserialization
 dev
 devs
+Docopt
 dsl
 enqueues
 Etcd
@@ -34,6 +36,8 @@ Omer
 png
 Pre
 prefetching
+Preload
+repl
 repo
 Rigo
 runtimes

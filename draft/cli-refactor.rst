@@ -84,6 +84,15 @@ Alternative CLI Frameworks
 
 Docopt was considered as part of this effort but was found insufficient for our needs.
 
+While Doctopt does support sub-commands, it does not dispatching them to functions which requires us to write
+the same type of framework we wanted to avoid.
+
+Furthermore, Docopt does not parse parameter types and leaves that to the implementor.
+
+Docopt however does allow us to customize our help page better.
+
+The aforementioned disadvantages outweigh the only advantage.
+
 Parameter Types
 ---------------
 

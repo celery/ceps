@@ -25,6 +25,7 @@ devs
 Docopt
 dsl
 enqueues
+entrypoints
 Etcd
 Github
 http

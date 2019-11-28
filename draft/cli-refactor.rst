@@ -51,6 +51,18 @@ across our CLI implementation.
 Plugins
 -------
 
+Click allows extending existing CLIs using setuptools's entrypoints using the `click-plugins <https://github.com/click-contrib/click-plugins>`_
+extension.
+
+Frameworks which base themselves over Celery will now be able to extend or customize the CLI for their needs.
+
+Acceptance Test Suite
+---------------------
+
+The former implementation was only covered by unit tests which did not cover the entire surface of the implementation.
+
+The new implementation will be covered by both unit tests and BDD-style acceptance tests.
+
 Motivation
 ==========
 

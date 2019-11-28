@@ -80,13 +80,16 @@ itself.
 In addition, We had to implement a REPL nearly from scratch for `celery amqp` while Click has a plugin which uses
 the `python-prompt-toolkit <https://python-prompt-toolkit.readthedocs.io/en/latest/>`_ library called `click-repl <https://github.com/click-contrib/click-repl>`_.
 
-This resulted in an implementation of ~3k LOC.
+This resulted in an implementation of ~3k LOC (without spaces or comments).
 
-Our new implementation is only ~2.2K LOC and is easier to reason about just by using Click.
+By using Click, our new implementation has only ~2.2K LOC (without spaces or comments).
+This 27% reduction makes the code easier to reason about and is simpler due to Click's API.
 
 The Click ecosystem provides us with many features that argparse lacks such as `"Did you mean" <https://github.com/click-contrib/click-didyoumean>`_ messages,
 `automatic documentation <https://github.com/click-contrib/sphinx-click>`_ using Sphinx and other user experience
 enhancing features which :mod:`argparse` lacks.
+
+We use these extensions for enriching our CLI implementation.
 
 Rationale
 =========

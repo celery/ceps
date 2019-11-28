@@ -134,8 +134,36 @@ The only changes in our API are around the CLI's customization.
 User Options
 ------------
 
+User Options now pass the relevant Click Command object to the callbacks.
+
+If you are using this feature you have to migrate your code from Argparse to Click.
+
+In addition the API changed. Previously the following code was required:
+
+.. code-block:: python
+
+    def add_worker_arguments(parser):
+        parser.add_argument(
+            '--enable-my-option', action='store_true', default=False,
+            help='Enable custom option.',
+        ),
+    app.user_options['worker'].add(add_worker_arguments)
+
+With this refactor you either need to set the relevant `user_options` key with a list of
+`click.Option`s or `click.Argument`s or provide a callback which will return those.
+
+.. code-block:: python
+
+    import click
+    app.user_options['worker'] = [click.Option('--enable-my-option', is_flag=True, help='Enable custom option')]
+
+
 Preload Options
 ---------------
+
+Preload options are User Options and are subject to the same breaking change.
+
+In addition the signal's sender is now changed to the `click.Context` of the invoked command.
 
 Reference Implementation
 ========================

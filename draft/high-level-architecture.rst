@@ -39,6 +39,10 @@ major versions.
 Specification
 =============
 
+.. figure:: celery-5-architecture-figure01.png
+
+  High Level Architecture Diagram
+
 Motivation
 ==========
 

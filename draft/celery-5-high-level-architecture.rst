@@ -161,7 +161,7 @@ Glossary
       of a system can be inferred from knowledge of its external outputs.
 
     In the context of distributed systems observability is a super-set of
-    :term:`monitoring`.
+    :term:`Monitoring`.
 
     According to `fastly`_ the three pillars of observability are:
 
@@ -1580,12 +1580,12 @@ Router
 ------
 
 The Router is a :term:`Message Dispatcher`.
-It is responsible for managing the connection to a :term:`message broker`
-and consuming :term:`messages <Message>` from the :term:`message broker`.
+It is responsible for managing the connection to a :term:`Message Broker`
+and consuming :term:`messages <Message>` from the :term:`Message Broker`.
 
 The Router can maintain a connection to a cluster of
-:term:`message brokers <message broker>` or even clusters of
-:term:`message brokers <message broker>`.
+:term:`message brokers <Message Broker>` or even clusters of
+:term:`message brokers <Message Broker>`.
 
 Data Sources and Sinks
 ++++++++++++++++++++++

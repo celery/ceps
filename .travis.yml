@@ -10,11 +10,12 @@ cache:
 
 install:
   - pyenv global 3.7
-  - pip3 install --user 'sphinx>=2.0'
+  - pip3 install --user -r requirements.txt
   - npm install prettyjson
 
 script:
 - bash ci/errata.sh pre ./ content/
 - rm -rf content/
+- mkdir _static/
 - make html linkcheck -j2
-- bash ci/errata.sh post _build/html || true
+- bash ci/errata.sh post _build/html

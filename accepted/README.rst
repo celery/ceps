@@ -1,3 +1,5 @@
+.. vale off
+
 Approved CEPs
 =============
 

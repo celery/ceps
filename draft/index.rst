@@ -5,3 +5,10 @@
    :caption: Contents:
 
    celery-5-high-level-architecture.rst
+   features-release-schedule.rst
+   high-level-architecture.rst
+   controller.rst
+   router.rst
+   execution-platform.rst
+   configuration.rst
+   observability.rst

@@ -230,6 +230,24 @@ Glossary
   Ubiquitous Language
     TODO
 
+  Result Backend
+    TODO
+
+  Celery Master
+    TODO
+
+  Celery Worker
+    TODO
+
+  Celery Multi
+    TODO
+
+  Flower
+    TODO
+
+  Cell
+    TODO
+
 
 Copyright
 =========

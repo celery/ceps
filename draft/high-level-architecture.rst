@@ -39,9 +39,30 @@ major versions.
 Specification
 =============
 
+.. note::
+    From now on when we write Celery we refer to Celery NextGen.
+
+    Whenever we refer to a previous major version of Celery we will specify the version number.
+
 .. figure:: celery-5-architecture-figure01.png
 
   High Level Architecture Diagram
+
+In Celery 4.x we had the following architectural building blocks:
+
+- :term:`Message Broker`
+- :term:`Result Backend`
+- :term:`Celery Master`
+- :term:`Celery Worker`
+
+In addition we had a few optional architectural building blocks (some of them maintained by the community):
+
+- :term:`Celery Multi`
+- :term:`Flower`
+- :term:`Cell`
+
+The only architectural building block that remains in Celery is the :term:`Message Broker`.
+The rest are replaced by new ones which provide more functionality and flexibility for our users.
 
 Motivation
 ==========

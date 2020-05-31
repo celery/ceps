@@ -54,6 +54,10 @@ Refactoring the codebase to support Python 3+ allows us to keep a slimmer, more 
 
 Furthermore, we'd like to resolve long-standing design bugs in our implementation.
 
+Gradually evolving our codebase is currently not possible due to the many changes
+in technology since Celery was conceived.
+We need to move fast and break things until we match all our goals.
+
 Rationale
 =========
 

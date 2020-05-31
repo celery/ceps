@@ -46,6 +46,14 @@ Specification
 Motivation
 ==========
 
+We want to modernize Celery for the Cloud Native age.
+We need to keep Celery relevant for our users and help them in new ways. Therefore, we must adjust and evolve to meet the unique challenges of the Cloud Native age.
+
+Also, we want to modernize the code to support Python 3+, which will allow us to remove workarounds, backports, and compatibility shims.
+Refactoring the codebase to support Python 3+ allows us to keep a slimmer, more maintainable codebase.
+
+Furthermore, we'd like to resolve long-standing design bugs in our implementation.
+
 Rationale
 =========
 

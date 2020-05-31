@@ -94,6 +94,34 @@ On some :term:`Message Broker` implementations the `Controller`_ will assist in 
 Data Sources & Sinks
 --------------------
 
+In Celery 4.x we had a :term:`Result Backend` which was used to store task results and coordinate
+the execution of chords.
+
+We extend the :term:`Result Backend` concept further to allow new use cases such:
+
+- :term:`ETL`.
+- :term:`Data Integration`.
+- Reporting.
+- Taking action when data is inserted or updated.
+
+In addition, like we did for the `Message Broker`_, we now allow multiple data sources and sinks
+instead of one cluster of a :term:`Result Backend`.
+
+The responsibility for coordination of the execution of chords has moved to the `Execution Platform`_.
+
+Data Sinks
+~~~~~~~~~~
+
+A data sink is where task results are saved.
+
+A task result may be saved in more than one data sink (e.g. a Kafka Topic and S3).
+
+The `Router`_ is responsible for routing task results to the correct data sink(s) and properly
+serializing them.
+
+Data Sources
+~~~~~~~~~~~~
+
 Controller
 ----------
 

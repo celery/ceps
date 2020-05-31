@@ -248,6 +248,11 @@ Glossary
   Cell
     TODO
 
+  ETL
+    TODO
+
+  Data Integration
+    TODO
 
 Copyright
 =========

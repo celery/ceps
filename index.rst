@@ -1,3 +1,4 @@
+================================
 Welcome to CEPs's documentation!
 ================================
 
@@ -7,6 +8,7 @@ Welcome to CEPs's documentation!
    :maxdepth: 2
    :caption: Contents:
 
+   glossary.rst
    final/index.rst
    accepted/index.rst
    draft/index.rst

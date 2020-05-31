@@ -11,6 +11,10 @@ CEP XXXX: Celery NextGen High Level Architecture
 :Created: 2020-05-27
 :Last-Modified: 2020-05-27
 
+.. contents:: Table of Contents
+   :depth: 4
+   :local:
+
 Abstract
 ========
 

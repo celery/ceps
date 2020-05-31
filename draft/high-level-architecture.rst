@@ -16,21 +16,23 @@ Abstract
 
 When Celery was conceived, production environments were radically different from today.
 
-Nowadays most applications are (or should be):
+Nowadays most applications are (or often should be):
 
 * Deployed to a cloud provider's computing resources.
 * Distributed (sometimes between data centers).
-* Available or Consistent (We must pick one according to :term:`CAP Theorem`).
-* Network Partition Tolerant.
-* Observable.
+* :term:`Available <Availability>` or :term:`Consistent <Consistency>` (If we store state, we must pick one according to :term:`CAP Theorem`).
+* :term:`Network Partition Tolerant <Partition Tolerant>`.
+* :term:`Observable <Observability>`.
 * Built with scalability in mind.
 * Cloud Native - The application's lifecycle is managed using Kubernetes, Swarm, or any other scheduler.
+* Heterogeneous - Microservices may be written in different languages.
 
 Also, Celery lacks proper support for large scale deployments and some useful messaging architectural patterns.
 
 Celery 5 is the next major version of Celery, and so we can break backward compatibility, even in significant ways.
 
-As such, our next major version should represent the beginning of a paradigm shift in the way we implement our task execution platform.
+As such, our next major version should represent the beginning of a paradigm shift
+in the way we implement our task execution platform.
 Future major versions will drastically change how Celery works.
 
 This document provides a high-level overview of the new architecture for the next generation of Celery

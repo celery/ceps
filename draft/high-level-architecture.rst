@@ -89,6 +89,8 @@ This feature is useful when, for example:
 - The user wants to split the load between clusters.
 - There's a security reason to publish some messages to a specific cluster.
 
+On some :term:`Message Broker` implementations the `Controller`_ will assist in managing the cluster.
+
 Data Sources & Sinks
 --------------------
 

@@ -89,6 +89,18 @@ This feature is useful when, for example:
 - The user wants to split the load between clusters.
 - There's a security reason to publish some messages to a specific cluster.
 
+Data Sources & Sinks
+--------------------
+
+Controller
+----------
+
+Router
+------
+
+Execution Platform
+------------------
+
 Motivation
 ==========
 

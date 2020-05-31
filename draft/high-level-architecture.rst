@@ -66,6 +66,25 @@ In addition we had a few optional architectural building blocks (some of them ma
 The only architectural building block that remains in Celery is the :term:`Message Broker`.
 The rest are replaced by new ones which provide more functionality and flexibility for our users.
 
+In the rest of this specification we will describe the architectural building blocks of Celery.
+
+Message Broker
+--------------
+
+In Celery 4.x each :term:`Celery Master` connected to only one :term:`Message Broker` cluster.
+
+This is no longer the case.
+Celery now allows connecting to multiple :term:`Message Brokers <Message Broker>`
+even if they are of clusters that use different implementations of a message broker.
+
+Users can consume messages from a Redis cluster, a RabbitMQ cluster, and an ActiveMQ cluster if they so desire.
+
+This feature is useful when, for example:
+
+- The user migrates from a legacy system that uses other implementation of a :term:`Message Broker`, but the new system uses a more modern one.
+- The user wants to split the load between clusters.
+- There's a security reason to publish some messages to a specific cluster.
+
 Motivation
 ==========
 

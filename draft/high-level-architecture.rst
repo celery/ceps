@@ -72,6 +72,34 @@ The rest are replaced by new ones which provide more functionality and flexibili
 
 In the rest of this specification we will describe the architectural building blocks of Celery.
 
+Message Types
+-------------
+
+In Celery 4.x we only have tasks which are serialized to :term:`Command Messages <Command Message>`
+that we publish to the :term:`Message Broker` whenever we want to
+execute a :term:`Task`.
+
+:term:`Document messages <Document Message>` are the messages we got as a result.
+Those message were stored in the :term:`Result Backend`.
+They had a specific format which only the Celery 4.x library knew how to parse.
+
+In Celery, we now have new types of messages we can use.
+
+:term:`Document Messages <Document Message>` may now also be produced whenever
+we publish a serialized representation of a :term:`Domain Model` to the :term:`Message Broker`.
+These messages may be received from a `Data Source <Data Sources>`_ or published directly
+from the application.
+
+:term:`Event Messages <Event Message>` are a new concept for Celery.
+They describe that a :term:`Domain Event` occurred.
+Multiple tasks can subscribe to an event.
+Whenever we receive an :term:`Event Message` we publish those tasks as
+:term:`Command Messages <Command Message>` to the :term:`Message Broker`.
+
+These fundamental architectural building blocks will aid us in creating a better messaging
+system. To encourage :term:`Ubiquitous Language`, we will be using them in this
+document when applicable and in Celery's codebase as well.
+
 Message Broker
 --------------
 

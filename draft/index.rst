@@ -8,6 +8,7 @@
    features-release-schedule.rst
    high-level-architecture.rst
    controller.rst
+   publisher.rst
    router.rst
    execution-platform.rst
    configuration.rst

@@ -1,8 +1,8 @@
 .. vale off
 
-======================
-CEP XXXX: CEP template
-======================
+============================
+CEP XXXX: Execution Platform
+============================
 
 :CEP: XXXX
 :Author: Omer Katz

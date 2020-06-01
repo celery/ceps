@@ -1,8 +1,8 @@
 .. vale off
 
-======================
-CEP XXXX: CEP template
-======================
+================
+CEP XXXX: Router
+================
 
 :CEP: XXXX
 :Author: Omer Katz

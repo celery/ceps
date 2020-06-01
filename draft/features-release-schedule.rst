@@ -1,8 +1,8 @@
 .. vale off
 
-======================
-CEP XXXX: CEP template
-======================
+==================================
+CEP XXXX: Feature Release Schedule
+==================================
 
 :CEP: XXXX
 :Author: Omer Katz

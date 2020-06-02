@@ -150,8 +150,23 @@ serializing them.
 Data Sources
 ~~~~~~~~~~~~
 
+A data source is a anything that stores data.
+It can be a Kafka topic, a S3 bucket, a RDBMS or even your local filesystem.
+
+Some data sources can notify Celery of incoming data.
+Others, Celery needs to poll periodically using the `Scheduler`_.
+
+The `Router`_ is responsible for listening to incoming data from the various data sources
+connected to it.
+
+Whenever the Router receives incoming data it sends a :term:`Document Message` to the
+`Publisher`_ which in turn will publish it to the :term:`Message Broker`.
+
 Controller
 ----------
+
+Scheduler
+~~~~~~~~~
 
 Publisher
 ---------

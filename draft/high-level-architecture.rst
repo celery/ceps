@@ -193,7 +193,7 @@ task concurrency limitations, task execution prioritization and all other manage
 user needs to operate a Celery cluster.
 
 Platform Manager
-++++++++++++++++
+~~~~~~~~~~~~~~~~
 
 The Platform Manager is responsible for interacting with the production environment.
 
@@ -203,7 +203,7 @@ Each implementation of the Platform Manager will be provided in a different pack
 Some of them will be maintained by the community.
 
 Foreman
-+++++++
+~~~~~~~
 
 The Foreman is responsible for deploying & managing the lifecycle of all Celery instances and ensuring
 they stay up and running.

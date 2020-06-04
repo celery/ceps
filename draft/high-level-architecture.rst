@@ -60,6 +60,7 @@ In Celery 4.x we had the following architectural building blocks:
 - :term:`Result Backend`
 - :term:`Celery Master`
 - :term:`Celery Worker`
+- :term:`Celery Beat`
 
 In addition we had a few optional architectural building blocks (some of them maintained by the community):
 
@@ -165,8 +166,58 @@ Whenever the Router receives incoming data it sends a :term:`Document Message` t
 Controller
 ----------
 
+In Celery 4.x we provided a basic tool for controlling Celery instances called :term:`Celery Multi`.
+We also provided :term:`Celery Beat` for periodically scheduling tasks.
+
+The Controller replaces those two components and extends their functionality in many ways.
+
+The Controller is responsible for managing the lifecycle of all other Celery
+components.
+
+Celery is a complex system with multiple components and will often be
+deployed in high throughput, highly available, cloud-native production systems.
+
+The introduction of multiple components require us to have another component
+that manages the entire Celery cluster.
+
+Instead of controlling Celery instances on one machine in a way that is agnostic to the production environment we're
+operating in the Controller now provides a `Platform Manager`_ which manages Celery instances on one or many
+machines.
+
+The Controller also manages and optimizes the
+execution of tasks to ensure we maximize the utilization of all our resources
+and to prevent expected errors.
+
+That is why the Controller is now responsible for auto-scaling Celery instances, rate-limiting tasks,
+task concurrency limitations, task execution prioritization and all other management operations a
+user needs to operate a Celery cluster.
+
+Platform Manager
+++++++++++++++++
+
+The Platform Manager is responsible for interacting with the production environment.
+
+The platform itself can be anything Celery can run on e.g.: Pre-fork, SystemD, OpenRC, Docker, Swarm, Kubernetes, Nomad.
+
+Each implementation of the Platform Manager will be provided in a different package.
+Some of them will be maintained by the community.
+
+Foreman
++++++++
+
+The Foreman is responsible for deploying & managing the lifecycle of all Celery instances and ensuring
+they stay up and running.
+
+It can spawn new instances of Celery processes, stop or restart them either on demand or based on policies
+the user has specified for auto-scaling.
+
+It interacts with the `Platform Manager`_ to do so.
+
+On some platforms, the Foreman can instruct the `Platform Manager` to deploy and manage the
+lifecycle of :term:`Message Brokers <Message Broker>`.
+
 Scheduler
-~~~~~~~~~
++++++++++
 
 Publisher
 ---------

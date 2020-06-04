@@ -242,6 +242,9 @@ Glossary
   Celery Multi
     TODO
 
+  Celery Beat
+    TODO
+
   Flower
     TODO
 

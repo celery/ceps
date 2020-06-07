@@ -50,9 +50,18 @@ Specification
 
     Whenever we refer to a previous major version of Celery we will specify the version number.
 
+Diagram
+-------
+
 .. figure:: celery-5-architecture-figure01.png
+  :figwidth: 100%
+  :height: 800px
+  :align: center
 
   High Level Architecture Diagram
+
+Preface
+-------
 
 In Celery 4.x we had the following architectural building blocks:
 

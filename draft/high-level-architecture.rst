@@ -155,7 +155,7 @@ A data source is a anything that stores data.
 It can be a Kafka topic, a S3 bucket, a RDBMS or even your local filesystem.
 
 Some data sources can notify Celery of incoming data.
-Others, Celery needs to poll periodically using the `Scheduler`_.
+Others, Celery needs to poll periodically using the `Task Scheduler`_.
 
 The `Router`_ is responsible for listening to incoming data from the various data sources
 connected to it.
@@ -216,8 +216,8 @@ It interacts with the `Platform Manager`_ to do so.
 On some platforms, the Foreman can instruct the `Platform Manager` to deploy and manage the
 lifecycle of :term:`Message Brokers <Message Broker>`.
 
-Scheduler
-+++++++++
+Task Scheduler
+~~~~~~~~~~~~~~
 
 Publisher
 ---------

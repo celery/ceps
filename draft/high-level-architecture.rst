@@ -53,7 +53,7 @@ Specification
 Diagram
 -------
 
-.. figure:: celery-5-architecture-figure01.png
+.. figure:: celery-nextgen-architecture-figure01.png
   :figwidth: 100%
   :height: 800px
   :align: center

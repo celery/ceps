@@ -55,7 +55,7 @@ Diagram
 
 .. figure:: celery-nextgen-architecture-figure01.png
   :figwidth: 100%
-  :height: 800px
+  :height: 580px
   :align: center
 
   High Level Architecture Diagram

@@ -220,7 +220,7 @@ they stay up and running.
 It can spawn new instances of Celery processes, stop or restart them either on demand or based on policies
 the user has specified for auto-scaling.
 
-It interacts with the `Platform Manager`_ to do so.
+It interacts with the `Platform Manager`_ to do so on the platform the Controller manages.
 
 On some platforms, the Foreman can instruct the `Platform Manager` to deploy and manage the
 lifecycle of :term:`Message Brokers <Message Broker>`.

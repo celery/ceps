@@ -223,7 +223,7 @@ the user has specified for auto-scaling.
 It interacts with the `Platform Manager`_ to do so on the platform the Controller manages.
 
 On some platforms, the Foreman can instruct the `Platform Manager` to deploy and manage the
-lifecycle of :term:`Message Brokers <Message Broker>`.
+lifecycle of :term:`Message Brokers <Message Broker>`, `Data Sources <Data Source>`_ & `Data Sinks <Data Sink>`_.
 
 Task Scheduler
 ~~~~~~~~~~~~~~

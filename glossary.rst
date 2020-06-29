@@ -257,6 +257,21 @@ Glossary
   Data Integration
     TODO
 
+  Python
+    Python is an easy to learn, powerful programming language.
+    It has efficient high-level data structures and a simple but effective approach to object-oriented programming.
+    Python’s elegant syntax and dynamic typing, together with its interpreted nature,
+    make it an ideal language for scripting and rapid application development in many areas on most platforms.
+
+  CPython
+    CPython is the reference implementation of the Python programming language.
+    Written in C and Python, CPython is the default and most widely used implementation of the language.
+
+  PyPy
+    PyPy is a replacement for CPython.
+    It is built using the RPython language that was co-developed with it.
+    The main reason to use it instead of CPython is speed: it runs generally faster.
+
 Copyright
 =========
 

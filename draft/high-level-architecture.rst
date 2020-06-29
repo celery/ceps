@@ -65,6 +65,7 @@ Preface
 
 In Celery 4.x we had the following architectural building blocks:
 
+- A :term:`Python` Runtime
 - :term:`Message Broker`
 - :term:`Result Backend`
 - :term:`Celery Master`
@@ -77,10 +78,22 @@ In addition we had a few optional architectural building blocks (some of them ma
 - :term:`Flower`
 - :term:`Cell`
 
-The only architectural building block that remains in Celery is the :term:`Message Broker`.
+The only architectural building blocks that remain in Celery are the :term:`Python` Runtime and the :term:`Message Broker`.
 The rest are replaced by new ones which provide more functionality and flexibility for our users.
 
 In the rest of this specification we will describe the architectural building blocks of Celery.
+
+Python Runtime
+--------------
+
+Python 2 no longer receives support and security patches from the community as of January 1st, 2020.
+Therefore, Celery will drop support for Python 2 and will run on Python 3 and above.
+
+Celery supports the :term:`CPython` and :term:`PyPy` Python runtimes.
+Other runtimes will be considered in different CEPs on a case-by-case basis.
+
+As a general guideline, we will attempt to keep support for the latest Python version :term:`PyPy` supports.
+However, if the need arises we will opt to use new Python language features and hope :term:`PyPy` can catch up.
 
 Message Types
 -------------

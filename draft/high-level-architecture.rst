@@ -297,6 +297,11 @@ Rationale
 Backwards Compatibility
 =======================
 
+As evident from this document, Celery NextGen is not backwards compatible with previous versions of Celery.
+
+The syntax for defining tasks will remain the same so you can reuse your code with little to no
+adjustments.
+
 Reference Implementation
 ========================
 

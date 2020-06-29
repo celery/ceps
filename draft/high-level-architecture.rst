@@ -228,6 +228,16 @@ lifecycle of :term:`Message Brokers <Message Broker>`, `Data Sources <Data Sourc
 Task Scheduler
 ~~~~~~~~~~~~~~
 
+The Task Scheduler is responsible for managing the scheduling of tasks for execution
+on a cluster of workers.
+
+The scheduler calculates the amount of tasks to be executed in any given time
+in order to make cluster wide decisions when autoscaling workers or increasing
+concurrency for an existing worker.
+
+The scheduler is aware when tasks should no longer be executed for any reason.
+To do so, it commands the router to avoid consuming the task or rejecting it.
+
 Publisher
 ---------
 

@@ -241,6 +241,22 @@ To do so, it commands the router to avoid consuming the task or rejecting it.
 Publisher
 ---------
 
+The Publisher is responsible for publishing :term:`Messages <Message>`
+to a :term:`Message Broker`.
+
+It is responsible for publishing a :term:`Message` to the appropriate :term:`Message Broker` cluster
+according to the configuration provided to the publisher.
+
+The publisher must be able to run in-process inside a long-running thread
+or a long running co-routine.
+
+It can also be run using a separate daemon which can serve all the processes
+publishing to the message brokers.
+
+Whenever the :term:`Message Broker` cluster is unavailable or unresponsive, the Publisher stores
+the :term:`Messages <Message>` in the Messages Backlog.
+The Publisher will later retry publishing the message.
+
 Router
 ------
 

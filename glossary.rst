@@ -41,10 +41,18 @@ Glossary
     but will produce the same side effects when facing duplicated messages.
 
   Message Dispatcher
-
     `Enterprise Integration Patterns`_ defines a `Message Dispatcher`_ as a
     component that will consume messages from a channel and distribute them to
     performers.
+
+  Process Manager
+    `Enterprise Integration Patterns`_ defines a `Process Manager`_ as a component
+    that maintains the state of the sequence and determines the next processing step
+    based on intermediate results.
+
+  Event Driven Consumer
+    `Enterprise Integration Patterns`_ defines an `Event Driven Consumer`_ as a component
+    that consumes a message as soon as it is delivered.
 
   Circuit Breaker
     Martin Fowler defines a `Circuit Breaker`_ in the following fashion:
@@ -298,3 +306,5 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _Domain Event: https://martinfowler.com/eaaDev/DomainEvent.html
 .. _Domain Model: https://martinfowler.com/eaaCatalog/domainModel.html
 .. _GIL: https://realpython.com/python-gil/
+.. _Process Manager: https://www.enterpriseintegrationpatterns.com/patterns/messaging/ProcessManager.html
+.. _Event Driven Consumer: https://www.enterpriseintegrationpatterns.com/patterns/messaging/EventDrivenConsumer.html

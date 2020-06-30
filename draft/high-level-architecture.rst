@@ -273,6 +273,26 @@ The Publisher will later retry publishing the message.
 Router
 ------
 
+In Celery 4.x there was a master process which consumes :term:`Messages <Message>`
+and workers which process them.
+
+In Celery we now decouple the execution of the tasks completely from the routing of :term:`Messages <Message>`
+to the `Execution Platform`_.
+
+The Router is a combination of the following architectural patterns:
+- :term:`Event Driven Consumer`
+- :term:`Message Dispatcher`
+- :term:`Service Activator`
+- :term:`Process Manager`.
+
+The Router consumes :term:`Messages <Message>` from a :term:`Message Broker` cluster or multiple clusters,
+dispatches the consumed :term:`Messages <Message>` to the `Execution Platform`_ for processing and awaits
+for the results of the task and stores them in the appropriate `Data Sink(s) <Data Sinks>`_.
+
+When the execution of a task requires coordination in case of a workflow, an :term:`Event Message` or an incoming
+:term:`Document Message` from a `Data Source <Data Sources>`_ the Router is responsible for the order of the execution
+of the task(s).
+
 Execution Platform
 ------------------
 

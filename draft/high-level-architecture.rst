@@ -324,6 +324,17 @@ We need to move fast and break things until we match all our goals.
 Rationale
 =========
 
+This architecture moves Celery from the past to the present.
+
+We have the following goals:
+
+- Observability
+- Cloud Nativity
+- Flexibility
+- Increased Task Completion Throughput
+
+The proposed architecture will guarantee that those goals will be met.
+
 Backwards Compatibility
 =======================
 

@@ -273,8 +273,8 @@ The Publisher will later retry publishing the message.
 Router
 ------
 
-In Celery 4.x there was a master process which consumes :term:`Messages <Message>`
-and workers which process them.
+In Celery 4.x there was a :term:`Celery Master` which was responsible for consuming :term:`Messages <Message>`, storing
+results and executing canvases.
 
 In Celery we now decouple the execution of the tasks completely from the routing of :term:`Messages <Message>`
 to the `Execution Platform`_.
@@ -295,6 +295,16 @@ of the task(s).
 
 Execution Platform
 ------------------
+
+In Celery 4.x we had :term:`Celery Worker` which was responsible for executing tasks.
+
+In Celery we now have an execution platform which will execute tasks and report their results back to the `Router`_.
+
+Celery will provide a default implementation but other implementations may be provided as well by the community or
+the maintainers.
+
+Alternative implementations may provide task execution on :term:`Serverless Computing` platforms or as Kubernetes Jobs
+for example.
 
 Motivation
 ==========

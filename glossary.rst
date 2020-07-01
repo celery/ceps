@@ -235,6 +235,9 @@ Glossary
       This helps you organize your processing logic, and also allows you to keep
       an audit log of the inputs to the system.
 
+  Serverless Computing
+    TODO
+
   Ubiquitous Language
     TODO
 

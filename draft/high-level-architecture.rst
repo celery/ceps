@@ -303,8 +303,8 @@ In Celery we now have an execution platform which will execute tasks and report 
 Celery will provide a default implementation but other implementations may be provided as well by the community or
 the maintainers.
 
-Alternative implementations may provide task execution on :term:`Serverless Computing` platforms or as Kubernetes Jobs
-for example.
+Alternative implementations may provide task execution on :term:`Serverless Computing` platforms, as Kubernetes Jobs
+for example or provide task execution for tasks written in a different language.
 
 Motivation
 ==========

@@ -24,6 +24,8 @@ devs
 dsl
 enqueues
 Etcd
+eventlet
+gevent
 Github
 http
 https
@@ -34,6 +36,7 @@ Omer
 png
 Pre
 prefetching
+prefork
 repo
 Rigo
 runtimes

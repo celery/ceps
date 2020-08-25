@@ -5,7 +5,7 @@
    :caption: Contents:
 
    celery-5-high-level-architecture.rst
-   features-release-schedule.rst
+   features-roadmap.rst
    high-level-architecture.rst
    controller.rst
    publisher.rst

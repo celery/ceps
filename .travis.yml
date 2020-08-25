@@ -9,7 +9,7 @@ cache:
     - $HOME/.cache/pip
 
 install:
-  - pyenv global 3.7
+  - pyenv global 3.8
   - pip3 install --user -r requirements.txt
   - npm install prettyjson
 

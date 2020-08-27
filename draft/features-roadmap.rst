@@ -41,7 +41,6 @@ Breaking Changes
 - :breaking-change:`Drop support for Python 2.7.`
 - :breaking-change:`Drop support for Python 3.5.`
 - :breaking-change:`Drop support for the Riak result backend.`
-- :breaking-change:`Drop support for librabbitmq.`
 
 New Features
 ~~~~~~~~~~~~
@@ -64,6 +63,7 @@ Breaking Changes
 - :breaking-change:`Drop support for the event workers pool.`
 - :breaking-change:`Drop custom event loop.`
 - :breaking-change:`Drop support for Redis < 5.0.0 as a message broker.`
+- :breaking-change:`Drop support for librabbitmq.`
 
 New Features
 ~~~~~~~~~~~~

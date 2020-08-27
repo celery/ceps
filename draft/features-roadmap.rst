@@ -72,6 +72,8 @@ New Features
 - :new-feature:`New Redis message broker implementation using Redis streams.`
 - :new-feature:`Worker is now completely asynchronous.`
 - :new-feature:`Users can now define and execute asynchronous tasks.`
+- :new-feature:`Execution Platform`
+- :new-feature:`Asynchronous AMQP 0.9.1 client.`
 
 Celery 7.x
 -----------

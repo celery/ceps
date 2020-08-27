@@ -41,6 +41,7 @@ Breaking Changes
 - :breaking-change:`Drop support for Python 2.7.`
 - :breaking-change:`Drop support for Python 3.5.`
 - :breaking-change:`Drop support for the Riak result backend.`
+- :breaking-change:`Remove the deprecated old tasks API.`
 
 New Features
 ~~~~~~~~~~~~

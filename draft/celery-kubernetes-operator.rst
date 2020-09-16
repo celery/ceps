@@ -20,7 +20,7 @@ CEP XXXX: Celery Kubernetes Operator - Architecture Document
 Abstract
 ========
 
-Kubernetes as a container orchestrator is nowadays a popular choice for deploying applications. To run Celery in production on Kubernetes, there are manual steps involved like -
+Kubernetes is a popular deployment target nowadays. To run Celery applications on Kubernetes, there are manual steps involved like -
 
 	* Writing deployment spec for workers
 	* Setting up monitoring using `Flower <https://flower.readthedocs.io/en/latest/>`_ 
@@ -28,15 +28,13 @@ Kubernetes as a container orchestrator is nowadays a popular choice for deployin
 
 Apart from that, there’s no standard or consistent way to set up multiple clusters, everyone configures their own way which could create problems for infrastructure teams to manage and audit later.
 
-This project attempts to solve(or automate) these issues. It is aiming to bridge the gap between application engineers and infrastructure operators who manually manage the celery clusters.
+This document proposes writing a Kubernetes `Operator <https://kubernetes.io/docs/concepts/extend-kubernetes/operator/>`_ for automating management of Celery clusters. This CEP is currently written keeping Celery 4.X in mind. Controller implementation will differ for Celery 5 and is under discussion.
 
-Moreover, since Celery is written in Python, we plan to use open-source `KOPF <https://github.com/nolar/kopf>`_\ (Kubernetes Operator Pythonic Framework) to write the custom controller implementation. 
-
-This CEP is currently written keeping Celery 4.X in mind. Controller implementation will differ for Celery 5 and is under discussion.
-
+Specification
+=============
 
 Scope
-=====
+-----
 
 1. Provide a Custom Resource Definition(CRD) to spec out a Celery and
    Flower deployment having all the configuration options that they
@@ -58,13 +56,13 @@ Discussions involving other things that this operator should do based on
 your production use-case are welcome.
 
 Diagram
-=======
+-------
 
 .. figure:: https://i.imgur.com/dTBuG58.png
    :alt: CKO Arch Diagram
 
 Workflow
-========
+--------
 
 End user starts by writing and creating a YAML spec for the desired celery cluster. Creation event is listened by the Creation Handler(KOPF based) which creates deployment for workers, flower and a Service object to expose flower UI to external users.
 
@@ -76,29 +74,29 @@ Both creation and updation handlers will return their statuses to be stored in p
 
 User can choose to setup autoscaling of workers by resource constraints(CPU, Memory) or broker queue length. Operator will automatically take care of creating an HPA or use KEDA based autoscaling(See `Autoscaling <#Autoscaling>`_ section below) to make that happen.
 
-Components & Specification
-==========================
+Components
+----------
 
 Worker Deployment
------------------
++++++++++++++++++
 
 A Kubernetes `Deployment <https://kubernetes.io/docs/concepts/workloads/controllers/deployment/>`_ to manage celery worker pods/replicaset.
 These workers consume the tasks from broker and process them.
 
 Flower Deployment
------------------
++++++++++++++++++
 
 A Kubernetes `Deployment <https://kubernetes.io/docs/concepts/workloads/controllers/deployment/>`_ to manage flower pods/replicaset. Flower is
 de-facto standard to monitor and remote control celery.
 
 Flower Service
---------------
+++++++++++++++
 
 Expose flower UI to an external IP through a Kubernetes `Service <https://kubernetes.io/docs/concepts/services-networking/service/>`_
 object. We should additionally explore `Ingress <https://kubernetes.io/docs/concepts/services-networking/ingress/>`_ as well.
 
 Celery CRD(Custom Resource Definition)
---------------------------------------
+++++++++++++++++++++++++++++++++++++++
 
 CRDs are a native way to extend Kubernetes APIs to recognize custom
 applications/objects. Celery CRD will contain the schema for celery
@@ -139,15 +137,16 @@ We plan to have following objects in place with their high level description -
 A more detailed version/documentation for CRD spec is underway.
 
 Celery CR(Custom Resource)
---------------------------
+++++++++++++++++++++++++++
 
 Custom Resource Object for a Celery application. Multiple clusters will
 have multiple custom resource objects.
 
 Custom Controller
------------------
++++++++++++++++++
 
-`Custom controller <https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#custom-controllers>`__ implementation to manage Celery applications(CRs). Contains the code for creation, updation, deletion and scaling handlers of the cluster.
+`Custom controller <https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/#custom-controllers>`__ implementation to manage Celery applications(CRs). Contains the code for creation, updation, deletion and scaling handlers of the cluster. We plan to use open-source `KOPF <https://github.com/nolar/kopf>`_ (Kubernetes Operator Pythonic Framework) to write this implementation.
+
 
 Async KOPF Handlers(Controller Implementation)
 ----------------------------------------------
@@ -158,7 +157,7 @@ respectively and return their status to be stored back as resource's
 status.
 
 Creation Handler
-----------------
+++++++++++++++++
 
 Generates deployment spec for worker and flower deployments dynamically
 based on incoming parameters specified in custom celery resource. Also
@@ -169,7 +168,7 @@ Additionally, it might handle the HPA object creation too if the scaling
 is to be done on native metrics(CPU and Memory utilization).
 
 Updation Handler
-----------------
+++++++++++++++++
 
 Updates deployment spec for worker and flower deployments(and service -
 HPA) dynamically and patch them. Status of each children is sent back to
@@ -177,13 +176,13 @@ be stored under parent resource status field.
 
 
 Autoscaling
-===========
+-----------
 
 This section covers how operator is going to handle autoscaling. We plan
 to supporting scaling based on following two metrics.
 
 Native Metrics(CPU, Memory Utilization)
----------------------------------------
++++++++++++++++++++++++++++++++++++++++
 
 If workers need to be scaled only on CPU/Memory constraints, we can
 simply create an HPA object in creation/updation handlers and it'll take
@@ -192,7 +191,7 @@ these two metrics out of the box. For custom metrics, we need to do
 additional work.
 
 Broker Queue Length(KEDA based autoscaling)
--------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++
 
 Queue Length based scaling needs custom metric server for an HPA to
 work. `KEDA <https://keda.sh/docs/1.5/concepts/>`__ is a wonderful
@@ -205,9 +204,8 @@ Helm, Operator Hub and Yaml. Celery Operator can package KEDA along with
 itself for distribution.
 
 
-
 Deployment Strategy
-===================
+-------------------
 
 Probably the best way would be distribute a Helm Chart which packages
 CRD, controller and KEDA together(More to be explored here). We'll also
@@ -219,21 +217,28 @@ well to start with Celery on Kubernetes out of the box without much
 efforts.
 
 
-Motivation & Rationale
-======================
+Motivation
+==========
 
-Celery is one of the most popular distributed task queue system written
-in Python. Kubernetes is the de-facto standard for
-container-orchestration. We plan to write this operator to help manage
-celery applications gracefully and with ease on a Kubernetes cluster.
+Celery is one of the most popular distributed task queue system and Kubernetes
+is the de-facto standard for container-orchestration nowadays.
+Running and managing Celery applications on Kubernetes is a largely manual process.
+Having a Kubernetes operator to help setup and manage celery
+in a consistent and graceful way would benefit users immensely.
+We'd also be able to bridge the gap between application engineers and 
+infrastructure operators who manually manage the celery clusters.
 
-Moreover, it'd be great to build this operator with Python. Kubernetes is
-written in golang. There is a good learning curve to understand
-internals and write(also maintain) an operator with Go.
 
-With the help of framework like KOPF, it'll be good to have Celery spearhead the Python
-ecosystem for developing production ready Kubernetes extensions. It'll
-motivate community to overcome the learning barrier and create useful
+Rationale
+=========
+
+Having this operator will automate the setup and management of a Celery cluster. It'll
+also enable Celery project which is written in Python to spearhead the development of 
+production ready Kubernetes extensions which are generally written in Golang.
+
+The rationale behind using KOPF and Python to building this operator is that there is a
+good learning curve to understand internals and write(also maintain) an operator with Go.
+It'll also motivate community to overcome the learning barrier and create useful
 libraries, tools and other operators while staying in Python ecosystem.
 
 
@@ -245,19 +250,18 @@ Steps to try out are available in the Readme.
 
 Also a talk in EuroPython 2020 describing this POC implementation and demo - `Youtube <https://www.youtube.com/watch?v=MoVHxRZ1688&feature=youtu.be&t=9882>`__
 
-
 Want to Help?
-=============
+-------------
 
 If you're running celery on a Kubernetes cluster, your inputs to how you
 manage applications will be valuable. You could contribute to the
 discussion `here <https://github.com/brainbreaker/Celery-Kubernetes-Operator/issues/12>`__.
 
 
-TODOs for Exploration
-=====================
+Future Work
+===========
 
--  Helm chart to install the operator along with a broker of choice
+-  Explore Helm chart to install the operator along with a broker of choice
 -  Add role based access control section for the operator
 -  Ingress Resource
 -  KEDA Autoscaling Implementation
@@ -270,4 +274,3 @@ Copyright
 
 This document has been placed in the public domain per the Creative Commons
 CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/deed).
-

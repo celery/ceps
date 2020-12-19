@@ -255,18 +255,13 @@ Want to Help?
 
 If you're running celery on a Kubernetes cluster, your inputs to how you
 manage applications will be valuable. You could contribute to the
-discussion `here <https://github.com/brainbreaker/Celery-Kubernetes-Operator/issues/12>`__.
+discussion `here <https://github.com/celery/ceps/issues/30>`__.
 
 
 Future Work
 ===========
 
--  Explore Helm chart to install the operator along with a broker of choice
--  Add role based access control section for the operator
--  Ingress Resource
--  KEDA Autoscaling Implementation
--  Create new issue thread to discuss Celery use-cases
--  What should not be in scope of celery operator?
+`This <https://github.com/celery/ceps/issues/30>`__ issue lists open points for the operator
 
 
 Copyright

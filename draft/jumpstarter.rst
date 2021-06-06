@@ -49,7 +49,7 @@ like:
 
 Also, we want Celery to work with the emerging and maturing asynchronous python
 landscape.  Celery is *very asynchronous* by nature, dealing with brokers,
-queues, results, timeouts, chord-like joins, task groups, you name it.
+queues, results, timeouts, chord-like joins, task groups, etc.
 Modern asynchronous python frameworks have provided new, innovative, and robust
 solutions to many things that overlap with Celery's goals.
 

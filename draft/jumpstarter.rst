@@ -26,7 +26,7 @@ Abstract
 
 2. Resolve long-standing design bugs in our implementation. 
 
-3. Modernize the code to support Python3+. 
+3. Modernize the code to use the all latest Python 3+ idioms and best practices. 
 
 4. Do a number of other things not entirely in the scope of this document (see `Next Gen Rationale`_). 
 

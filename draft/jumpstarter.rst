@@ -20,175 +20,143 @@ CEP XXXX: Jumpstarter
 Abstract
 ========
 
-`Next-Gen Celery`_ aims to:
+Since Celery was conceived over a decade ago, the Python landscape has evolved
+considerably. Of the key recent developments has been the introduction and successive
+improvements of Python's ``async/await`` support, with the growing ecosystem surrounding
+its asynchronous/concurrent programming paradigm.
 
-1. Move Celery from the past to the present. 
+When Celery was initially built, it was very innovative and forward/future-thinking for its time.
+It had (and still has) its own event loop implementation, and supported top-of-the-line
+asynchronous programming models of the time, such as ``gevent`` and ``eventlet``.
 
-2. Resolve long-standing design bugs in our implementation. 
+Enter the start of the 2020s decade and Python, along with its ``async/await`` ecosystem
+has been rapidly growing and thriving, providing a number of advancements improving
+Python's asynchronous/concurrent programming model.
 
-3. Modernize the code to support Python3+. 
+Currently, Celery does not natively support ``async/await``, either with queueing or
+waiting on the result of tasks, like ``await some_task.apply_async(...)``, nor the usage
+of ``async def`` and ``await`` from within tasks themselves. For example, without using
+some custom written code of your own or a newer community-supported project like
+`Celery Pool AsyncIO`_, you cannot define a task with ``async def`` nor can your task (because
+it's not defined with ``async def``) do something like ``await some_async_fn(...)``
+unless within your task you booted up a modern ``async/await`` compatible event loop or
+used some other workaround.
 
-4. Do a number of other things not entirely in the scope of this document (see `Next Gen Rationale`_). 
+That leads this CEP, whose purpose is to provide a foundational asynchronous programming
+framework for the broader Python community modeled after the `Actor Model`_, and also
+provide a foundation for `Next-Gen Celery`_ to be built upon. This will, down the line:
 
-Before work is to begin on this next generation of Celery, it's crucial to have
-a discussion about and carve out the building blocks that will form the
-primitives for the upcoming Celery. These building blocks should fulfill 1, 2,
-and 3 (especially) above, and also help fulfill the goals from the linked
-`Next-Gen Rationale`_.
+1. Allow awaiting on an asynchronous task results:
 
-For Celery to move forward into the modern age, and the future of computing
-with increasingly decentralized systems, it's important for Celery to follow a
-standardized asynchronous execution model. Namely, we want to define things
-like: 
+  .. code-block:: python
 
-1. How does Celery interact with itself (its own internal components)? 
+  await some_task.apply_async(args=(1,2), kwargs={"kwarg1": 3 })
 
-2. How does Celery interact with others (and how do others interact with it)? 
+2. Allow definining ``async`` tasks that can utilize ``await``, ``async with``, and all
+the other features of Python's ``async/await`` programming model.
 
-3. How do Celery's internal components interact with each other and their outside environment? 
+  .. code-block:: python
 
-Also, we want Celery to work with the emerging and maturing asynchronous python
-landscape.  Celery is *very asynchronous* by nature, dealing with brokers,
-queues, results, timeouts, chord-like joins, task groups, you name it.
-Modern asynchronous python frameworks have provided new, innovative, and robust
-solutions to many things that overlap with Celery's goals.
-
-To do all of this, we propose modeling next-gen Celery off of the `Actor Model`_. Namely,
-we propose that the Celery Worker will be modeled as an `Actor System`_ of sorts.
-
-By the end of this initial implementation, we should have a proposal and reference implementation that: 
-
-1. Models Tasks and other key Celery primitives (some to be implemented and
-further specced-out down the line) as Actors. 
-
-2. Can give a clear overview about how these various Celery primitives (as
-Actors) communicate with each other and pass messages (referencing the Actor
-model). 
-
-3. Can enable the development of a future version of Celery where it can be run
-embedded with ``async/await`` (if desired by the programmer, not necessary),
-and can have synchronous-friendly workers and asynchronous-friendsly/purely
-asynchronous workers. 
-
+  @task
+  async def my_task(...):
+    x = await some_async_fn1(...)
+    async with (...):
+      y = await some_async_fn2(...)
 
 Specification
 =============
 
-TODO
-
-This section should contain a complete, detailed technical specification should
-describe the syntax and semantics of any new feature.  The specification should
-be detailed enough to allow implementation -- that is, developers other than the
-author should (given the right experience) be able to independently implement
-the feature, given only the CEP.
-
 Motivation
 ==========
 
-TODO (WIP)
+There are two primary motivations to discuss.
 
-This section should explain *why* this CEP is needed. The motivation is critical
-for CEPs that want to add substantial new features or materially refactor
-existing ones.  It should clearly explain why the existing solutions are
-inadequate to address the problem that the CEP solves.  CEP submissions without
-sufficient motivation may be rejected outright.
+1. The motivation to build `Jumpstarter`_.
 
-Let's start with an example, and then generalize. A quick search in Celery's
-GitHub issue tracker for `chord
-<https://github.com/celery/celery/issues?q=is%3Aissue+is%3Aopen+chord>`_ shows
-a many issues. A number of them (of which some have been fixed) involve complex
-cases involving non-trivial Celery workflows. While fixes have been released
-over time as these have come up, many issues stand unresolved to this day. The
-Celery team could continue to try and fix these issues, or we could take a look
-back and think about how we want to design Celery for the future. although
-there have been a number of difficulties with getting started on fixing these
-issues in the first place! I'll try and list some of what I see these to be:
+2. The motivation to, down the line, use `Jumpstarter`_ as a foundation for parts of
+`Next-Gen Celery`_.
 
-1. Celery has had to support, for a long time, both Python 2 and Python 3.
-While the codebase has been modernized to a degree with Python 3 nowadays, it
-wasn't originally conceived or written that way. It was built back in the
-Python 2 days, and had (and still continues to have), a number of features and
-ideas. It was (and still is), incredibly pluggible, and supports a number of
-use cases and very high throughout if configured correctly. However, Python as
-a language has changed significantly in the last 10 years. Namely, proper
-support for coroutines in the form of `async/await`. 
+For the first motivation, one of Celery's main use cases is to build asynchronous,
+distributed systems that communicate via message passing. The `Actor Model`_, which has
+been around for almost half a century and is a tried and tested way to design and build
+large-scale concurrent systems. It very much matches what Celery aims to do and has
+shown to have great success in projects like `Akka`_ and many others. The `Actor Model`_
+also works great with Python's ``async/await`` support as messages are able to be
+asynchronously sent and awaited upon very efficiently.
 
-2. Celery, as a whole, involves a number of different working parts that are
-integrated together. In the current scheme of things, we have workers, brokers,
-result stores, workflows (``canvas`` primitives), rate limiting, policies,
-signatures, settings, periodic tasks, scheduling, ..., and many other things.
-Many of the primitives for these integrated parts were built almost a decade
-ago, when both the language landscape (as mentioned above), but also the
-*library landscape* was quite a bit different than today. Celery came with a
-custom CLI parser, custom event loop implementation (which it still has at the
-time of writing), and support for a number of other things that are today
-implemented in multiple different solid third party libraries. 
+`Jumpstarter`_ comes in to fill the spot of being that fundamental/primititve library to
+build `Next-Gen Celery`_ on top of, while simultaneously being a modern implementation
+and interpretation of the `Actor Model`_ (and an `Actor System`_, or at least blocks for
+building one) in Python. For reasons why Celery would build its own library instead of
+using an existing Actor framework in Python, see the :ref:`Rationale` below.
 
-3. Given the complexity of the mentioned issues, it's not easy to get to the
-root cause of what's happening in the first place. Because Celery is very
-*asynchronous* by nature, many of the tests are wrapped with a ``flaky``
-decorator which means, sometimes (depending on the arrival of messages, speed
-of IPC, speed of the network, and many other factors), maybe the test won't
-pass in an expected amount of time or might not always succeed. Testing and
-modeling asynchronous processes is definitely not easy, but the python
-language, tooling, and libraries have evolved considerably in the last
-*decade*, and Celery is well positioned for a large restructuring that allows
-it both internally take advantage of the latest Python features, and also
-provide external integration with them as well. 
-
-With all of these mentioned, and given the chord example, again, we could
-continue to try and improve and fix things as is, or we could take a step back
-and reflect as to *why* there are so many subleties and quirks with the
-implementation. I think one of the ultimate reasons boils down to a lack of
-simplicity. In Celery, certain aspects of the codebase are responsible for
-a number of things...
-
-^ TODO: I want to elborate on this more, but I'm not sure if it's appropriate.
-I think the Actor Model and modeling the worker as an Actor System gives us a
-number of benefits, which I want to succintly summarize in the beginning and
-give a lot more detail as a part of the CEP. Specifically, I'd like to
-explain/say why modeling things as an Actor system will make Celery a lot
-easier to reason about, maintain, and add new, for example, Canvas primitives
-to (or even re-build/design them, etc. if that's something that's desired).
-There are clear advantages to keeping state internal to the worker, for
-example, adding cancel groups, and other things that make some of the more
-asynchronous parts of Celery easier to work with, test, and reason about. The
-main thing also, though, is to really separate concerns and responsibilities.
-It *seems* to me that some of the current Celery code is not very SRP, in the
-sense that it's responsible for calling code at a number of different layers
-and doing a number of complex things. With the actor system, each actor gets a
-lot more specialized and I think that makes the implementation a lot easier to
-both reason about and extend.  Composition (vs., for example, inheritance
-currently present with ``Signature`` objects for example to then create the
-canvas objects) then becomes a lot more attractive and possible.  To give an
-example, a ``chord`` then simply becomes responsible for passing a message to
-the underlying ``Task`` (s) or ``result`` (s) (to define more) that would
-essentially make them then send off another "message" (we'll call it right now)
-or messages to other components in the actor system that are then responsible
-for handling that message (think of ``on_chord_part_return`` here).
-
-
+For the second motivation, certain bugs and issues in Celery resolve around things like
+chord synchronization/counting errors, very hard to reproduce concurrency issues, canvas
+edge cases, etc. Looking at these issues from a higher perspective and the current state
+of the codebase, future versions of Celery could benefit from code that adheres to
+something like the `Actor Model`_, which really helps to eliminate race conditions,
+locking issues, shared state issues, and other things like that which are out of the
+scope of this document.  Modeling workers, tasks, canvas primitives, and other Celery
+components after an `Actor System`_ and making them hold to the fundamental axioms of
+the `Actor Model`_ will encourage code that is far more Single Responsibility Principle
+(SRP) than the current codebase is, and encourage both designs and implementations that
+are easier to reason about, easier to test, and easier to extend and work with. The
+design of various Celery components using `Jumpstarter`_ primitives is outside of the
+scope of this document and would be addressed in future CEPs.
 
 Rationale
 =========
 
-TODO
+A quick internet search of Python actor libraries and packages returns a
+few different results. Before listing some of those libraries, the main
+reasons for building our own `Actor Model`_ implementation are as follows:
 
-This section should flesh out the specification by describing what motivated
-the specific design design and why particular design decisions were made.  It
-should describe alternate designs that were considered and related work.
+1. We want a framework that is built with and for ``async/await`` from the beginning, and
+that takes advantage of all the latest abstractions and innovations in Python's
+``async/await`` support and the latest general language features as well (like
+``typing`` and other things). Many of the other frameworks listed below were built
+either before ``async/await`` or in the earlier stages. 
 
-The rationale should provide evidence of consensus within the community and
-discuss important objections or concerns raised during discussion.
+2. We want something that can be a standalone framework, but that can _also_ be informed by
+the needs of `Next-Gen Celery`_. Hence, we'd like for the Celery organization to
+maintain and shepherd the project. We may find that we need to make changes rapidly in
+the beginning, and we'd like to see the project evolve and grow quickly without being
+blocked by other large dependent projects (like some or many of these other libraries
+may be), especially in the beginning. By Celery creating a new library, we can both
+enable rapid development of `Jumpstarter`_ and `Next-Gen Celery`_ now and down the line, while
+still providing a framework that the greater Python community may find helpful to build
+other projects off of.
+
+With that being said, let's take a look at a few existing projects:
+
+* `Pykka`_ is a Python-based actor that was extracted originally from `Mopidy`_, an "extensible music server written in Python". We wouldn't use `Pykka`_ for two main reasons:
+
+  * It doesn't support ``async/await`` currently, and hasn't supported it from the beginning.
+  * It powers `Mopidy`_, and probably a number of other significant projects rely on it to some extent, so it wouldn't make sense to rely upon it for reasons listed above.
+
+* `Cell`_ was an earlier attempt at an actor model/framework for Celery. It wasn't very widely used and developed.
+
+  * Given reason #1 above, it makes sense to archive `Cell`_ and move forward with `Jumpstarter`_ (`comment <https://github.com/celery/jumpstarter/issues/1#issuecomment-755347761>`_).
+
+* `Thespian`_ is a very rich-featured "Python Actor concurrency library." Of all the libraries listed, it would seem the most promising for something to use and/or build off, of, except that:
+
+  * It seems to have been built out before the early ``asyncio`` ``async/await`` phase of Python's development. The ``async/await`` syntax wasn't quite around yet, and libraries like `Curio`_ and `Trio`_ weren't around yet. Python's asynchronous programming model has come a long way since the 3.3/3.4 and early ``asyncio`` days. Along with reason #1 above, we really want to support some of the newer asynchronous ideas (and use them as a base) with `Jumpstarter`_. Given the large size of `Threspian`_'s codebase, it would be very seemingly impractical to try and tweak an aircraft carrier (metaphorically speaking) to fit our use cases.
+  * The library seems to have been in maintenance mode for the last few years. It was originally built in house at GoDaddy, and the original author does not work there anymore.  Scanning the release history shows more maintenance releases than new activity, which, given its large size, possibly external large-project dependencies, and reason #2 above, makes us inclined to still build our own framework. That being said, there may be useful things that can be learned from `Threspian`_, whether high level structure or low level details.
+
+* `Pulsar`_ is an "Event driven concurrent" framework for Python. It's goal, according to its README, "is to provide an easy way to build scalable network programs." It was built upon ``asyncio`` from the Python3.5+ days and supports ``async/await``. However, while it has a number of powerful and interesting features, it has been archived by its owner, so discussing it more does not feel necessary for the scope of this document.
+
+  * Additionally, while it does seem to have great support for building generally network connected programs, a number of examples show how to use it to build something like a non-blocking ``wsgi`` server. Celery does intend to handle such use cases, especially given the development of the ``asgi`` specification, and many other modern libraries under current development that are doing a great job with ``asgi``. Similar to what was said about `Thespian`_, there may be useful things that can be learned from `Pulsar`_, but it's not something that we think should be built upon, for similar reasons to `Thespian`_ above, along with our general reasons #1 (``asyncio`` only would not satisfy that) and #2 (`Pulsar`_ seems to have been by and potentially for a group called `Quantmind <https://quantmind.com/>`_).
 
 Backwards Compatibility
 =======================
 
-TODO
-
-If this CEP introduces backwards incompatibilities, you must must include this
-section. It should describe these incompatibilities and their severity, and what
-mitigation you plan to take to deal with these incompatibilities.
+Given that `Jumpstarter`_ is a library being built from scratch, there isn't too much to
+talk about on the backwards compatibility side of things. It's an open discussion at the
+moment of we should support Python 3.7+ or Python 3.10+. It might be nice, given
+``trio``, ``asyncio``, and other ``async/await``/event loop implementation improvements
+in the last number of Python versions to rely on 3.10+. And on top of that, we'd get the
+latest improvements in the ``typing`` world, and pattern matching that we could use from
+the beginning.
 
 Reference Implementation
 ========================
@@ -216,3 +184,14 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. Next-Gen Rationale https://github.com/celery/ceps/blob/master/draft/high-level-architecture.rst#rationale
 .. Actor Model https://en.wikipedia.org/wiki/Actor_model
 .. Actor System https://doc.akka.io/docs/akka/current/general/actor-systems.html
+.. Celery Pool AsyncIO https://github.com/kai3341/celery-pool-asyncio
+.. Akka https://akka.io/
+.. Pykka https://github.com/jodal/pykka
+.. Mopidy https://github.com/mopidy/mopidy
+.. Cell https://github.com/celery/cell
+.. Thespian https://github.com/thespianpy/Thespian
+.. Pulsar https://github.com/quantmind/pulsar
+.. Asyncio https://docs.python.org/3/library/asyncio.html
+.. Curio https://github.com/dabeaz/curio
+.. Trio https://github.com/python-trio/trio
+.. Trio-Asyncio https://github.com/python-trio/trio-asyncio

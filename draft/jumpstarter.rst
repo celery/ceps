@@ -37,10 +37,10 @@ Currently, Celery does not natively support ``async/await``, either with queuein
 waiting on the result of tasks, like ``await some_task.apply_async(...)``, nor the usage
 of ``async def`` and ``await`` from within tasks themselves. For example, without using
 some custom written code of your own or a newer community-supported project like
-`Celery Pool AsyncIO`_, you cannot define a task with ``async def`` nor can your task (because
-it's not defined with ``async def``) do something like ``await some_async_fn(...)``
-unless within your task you booted up a modern ``async/await`` compatible event loop or
-used some other workaround.
+`Celery Pool AsyncIO`_, you cannot define a task with ``async def`` nor can your task
+(because it's not defined with ``async def``) do something like ``await
+some_async_fn(...)`` unless within your task you booted up a modern ``async/await``
+compatible event loop or used some other workaround.
 
 That leads this CEP, whose purpose is to provide a foundational asynchronous programming
 framework for the broader Python community modeled after the `Actor Model`_, and also

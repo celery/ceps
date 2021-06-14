@@ -807,7 +807,7 @@ provides many extensions we can use to create a better user experience
 for our users.
 
 Click supports calling `async` methods and functions
-using the `trio-click <https://github.com/click-contrib/trio-click>`_ extension
+using the `asyncclick` <https://github.com/click-contrib/asyncclick>`_ fork
 which is likely to be important for us in the future.
 
 Dependency Inversion

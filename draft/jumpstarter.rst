@@ -143,23 +143,29 @@ Actors may depend on other actors to run before starting themselves. In some cas
 
 The proposed public API is as follows:
 
-```
-from jumpstarter import Actor, depends_on
+  .. code-block:: python
+  from jumpstarter import Actor, depends_on
 
-class AccountBalanceActor(Actor):
-  def __init__(self, user_id: int):
-    self.user_id = user_id
+  class AccountBalanceActor(Actor):
+    def __init__(self, user_id: int):
+      self.user_id = user_id
 
-class AccountBookkeepingActor(Actor):
-  def __init__(self, user_id: int, account_balance_actor: AccountBalanceActor):
-    self._account_balance_actor = account_balance_actor
+  class AccountBookkeepingActor(Actor):
+    def __init__(self, user_id: int, account_balance_actor: AccountBalanceActor):
+      self._account_balance_actor = account_balance_actor
 
-  @depends_on
-  def account_balance_actor(self):
-    return account_balance_actor
+    @depends_on
+    def account_balance_actor(self):
+      # It's presumed here `account_balance_actor` is an already existing instance of 
+      # an `AccountBalanceActor`.
+      return account_balance_actor
 ```
 
 In this example, the ``AccountBalanceActor`` maintains the balance in a single user ID's account. The ``AccountBookkeepingActor`` is responsible for logging and auditing withdrawals and income, possibly passing these audit logs to another actor responsible for detecting fraud.
+
+Instead of returning an already existing *instance* of an ``AccountBalanceActor`` in ``@depends_on``, you can also:
+1. Use a factory method to initialize a brand new ``AccountBalanceActor`` instance (since every actor must inherit from ``Actor`` we'll define some helpful factory methods in ``Actor`` which can be used by all subclasses/instances).
+2. Return a subclass of ``Actor`` and it will be initialized for you, proiding all the arguments are available for that actor. This uses the `Inversion of Control`_ pattern. How this works will be left as an implementation detail, but Jumpstarter, given that it knows each ``Actor``'s dependencies and has them all in a graph should be able to satisfy dependencies and inject arguments as long as it's able to find them in an accessible way.
 
 Resources
 ---------
@@ -170,6 +176,56 @@ Actors have resources they manage during their lifetime, such as:
 
 A resource can be an asynchronous context manager or a synchronous context manager. It's entered whenever the Actor is ``starting``, specifically just before the state machine transitions to the ``starting -> resources_acquired`` state.
 It is exited whenever the Actor is stopping, specifically just before the state machine transitions to the ``starting -> resources_released`` state. Given the asynchronous nature of Jumpstarter, resources can be released concurrently (even if there are synchronous resource releases that are run, say, in a thread pool). Additionally, any and every actor, once resources are acquired, will be have `cancel scope`_ (acquired once ``starting -> resources_acquired`` state has been entered) in the that can be used to shut down the worker or cancel any running task(s), whether because of a timeout, a crash, a restart, or some other reason. Even if the task is run in a thread pool, the `cancel_scope` and fact that the Jumpstarter is running in an event loop means that more robust cancellation of tasks may be possible in future versions of Celery than have been up to this point (see https://vorpus.org/blog/timeouts-and-cancellation-for-humans/ for some helpful background on this).
+
+The proposed public API is as follows:
+
+  .. code-block:: python
+  from pathlib import Path
+
+  from jumpstarter import Actor, resource
+
+  class FileHeadActor(Actor):
+    def __init__(self, file_path: Path):
+      self.file_path = file_path
+
+    @resource
+    def log_file(self):
+      return open(file_path)
+
+
+Tasks
+-----
+An actor repeatedly runs tasks to fulfill its purpose. Using tasks, the user implements the business logic of the Actor. A task can be asynchronous or synchronous. If the task is synchronous, the task is run in a thread pool. If it is asynchronous, the task runs using the event loop.
+
+The proposed public API is:
+
+  .. code-block:: python
+  from pathlib import Path
+
+  from jumpstarter import Actor, task
+  from jumpstarter.tasks import Success
+
+  class CountingActor(Actor):
+    def __init__(self):
+      self.i: int = 0
+
+    @task
+    def count_to_ten(self):
+      self.i += 1
+      print(self.i)
+
+      if self.i == 10:
+        return Success()
+
+When you start the actor, specifically before the transition to ``starting -> tasks_running``, the ``count_to_ten`` method is repeatedly called until you ``stop`` the actor (which in turn triggers the cancel scope). This actor counts to 10 and prints the current count. When it reaches 10, the task stops running as it was successful.
+
+There are two types of tasks: continuous and periodic. There may be more types of task in the future that either Jumpstarter defines or future Celery-related libraries that work with Jumpstarter define. Regardless, Jumpstarter's public API will enable lots of flexibility for working with tasks and even defining new task types. To give a theoretical example: Consider a type of task called a **A/B Task**. Since most things in Jumpstarter are extendable, we could extend the task states to include two new states:
+
+1. ``started -> running -> healthy -> A``
+2. ``started -> running -> healthy -> B``
+
+Now, suppose we have an actor called ``ProvideAutocompleteSuggestion`` whose job is to take in some search query and return some autocomplete suggestions. Maybe we have a new autocomplete engine we'd like to A/B test, with 5% of the queries going to the "B" test to see how the new engine is performing, eventually ramping up to 50/50 and maybe eventually replacing it. We could hook into Jumpstarter to, when tasks transition to ``started -> running -> healthy``, either then transition into the ``A`` substate or ``B`` substate with given probability, and then have conditional task(s) that
+run depending on whether we're in the ``A`` substate or the ``B`` substate.
 
 
 
@@ -308,3 +364,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. transitions-gui https://github.com/pytransitions/transitions-gui
 .. AnyIO https://github.com/agronholm/anyio
 .. cancel scope https://anyio.readthedocs.io/en/stable/api.html#anyio.CancelScope
+.. Inversion of Control https://martinfowler.com/bliki/InversionOfControl.html

@@ -67,15 +67,11 @@ Specification
 Jumpstarter is a Python implementation of an `Actor System`_ (which utilizies the `Actor Model`_). There
 are three fundamental axioms within the actor model (quoting the previous Wikipedia link): 
 
-(Start Blockquote)
+  An actor is a computational entity that, in response to a message it receives, can *concurrently* (emphasis ours):
 
-An actor is a computational entity that, in response to a message it receives, can _concurrently_ (emphasis ours):
-
-1. Send a finite number of messages to other actors;
-2. Create a finite number of new actors;
-3. Designate the behavior to be used for the next message it receives.
-
-(End Blockquote)
+  1. Send a finite number of messages to other actors;
+  2. Create a finite number of new actors;
+  3. Designate the behavior to be used for the next message it receives.
 
 It's important to remember that, although that is the technical definition of the actor, the interpretation and implementation of Actors and Actor Systems can be very flexible. Namely, what constitutes a "message" and "state" is very much up to the interpretation of the developer(s) and the system(s) they're using.
 
@@ -91,16 +87,22 @@ In Jumpstarter, we've chosen to take direct/literal approach to 3., modeling the
 Within those parent states, we have sub-states. For example:
 
 * Starting
+
   * Dependencies Started --> The state of the actor after all of the actor's dependencies have been started.
   * Resources Acquired --> The state of the actor after all resources have been acquired.
   * Tasks Started --> The state of the actor after all tasks have been started.
+
 * Started
+
   * Paused --> The state of the actor when all tasks are halted without shutting down the entire actor.
   * Running --> The state of the actor when all tasks are running.
+
     * Healthy --> The state of the actor when the actor is functioning properly.
     * Degraded --> The state of the actor when the actor is not functioning properly but is still able to perform some of its duties.
     * Unhealthy --> The state of the actor when the actor is temporarily not functioning.
+
 * Stopping
+  
   * Tasks Stopped --> The state of the actor after all tasks have been started.
   * Resources Released --> The state of the actor after all resources have been acquired.
   * Dependencies Stopped --> The state of the actor after all of the actor's dependencies have been started.
@@ -113,14 +115,16 @@ In order to effectively model these states in Python, we propose using the matur
 
 For a high level view, the parent states, their substates, and the transitions between them can be seen in the diagram below:
 
-TODO: Insert Jumpstarter State Machine Diagram Here: https://user-images.githubusercontent.com/48936/107506089-43225a00-6ba6-11eb-810e-0ac14bf0e1e9.png
+.. figure:: jumpstarter-state-machines-diagram.png
 
 Also, in that diagram you can also see the ``Restart`` state. We propose a separate state machine which we'll call *Actor Restart State Machine* that models the Actor's state as it relates to restarts:
 
 * Ignore --> A special state which is ignored by the Actor (effectively meaning we're not in any sort of restart state).
 * Restarting --> The state of the actor once it has begun restarting.
+
   * Stopping --> The state of the actor while stopping during a restart.
   * Starting --> The state of the actor while starting during a restart.
+
 * Restarted --> The state of the actor after it has been restarted.
 
 With these states and sub-states, for both the main state machine and the regular state machine, we provide a clear public API for code to hook into any part of the Actor's Lifecycle. Similar to how, for example, modern asynchronous frontend web frameworks like React and Vue provide hooks into the lifecycle of their components, `transitions`_ provides many different hooks to:
@@ -130,6 +134,19 @@ With these states and sub-states, for both the main state machine and the regula
 * Do many other things at various granularities and moments. See https://github.com/pytransitions/transitions#callback-execution-order for specific details on the order and timing of when specific callbacks are invoked.
 
 With that base API, Jumpstarter provides a solid foundation and a lot of flexibility to help define self-contained pieces of business logic and facilitate communication between them while maintaining a separation of concerns.
+
+For reference, the currently proposed transitions (as can be seen in the diagram above) are:
+
+* ``initialize()`` -> Initializes the actor without starting it.
+* ``start()`` -> 	Starts the actor.
+* ``pause()`` -> 	Pauses the actor's tasks without shutting it down completely.
+* ``resume()`` -> 	Resumes the actor's tasks after it has been paused.
+* ``stop()`` -> 	Stops the actor.
+* ``restart()`` -> 	Restarts the actor.
+* ``report_error()`` -> 	Report that an error has occurred while starting or stopping the actor.
+* ``report_warning()`` -> 	Report an issue with the actor which interferes with some of the actor's functionality.
+* ``report_problem()`` -> 	Report an issue with the actor which causes the actor to be temporarily malfunctioning.
+* ``recover()`` -> 	Recover from a degraded or unhealthy states.
 
 Three abstractions Jumpstarter provides that are addressed in both the ``starting`` and ``stopping`` states are:
 
@@ -156,26 +173,26 @@ The proposed public API is as follows:
 
     @depends_on
     def account_balance_actor(self):
-      # It's presumed here `account_balance_actor` is an already existing instance of 
-      # an `AccountBalanceActor`.
+      # It's presumed here `account_balance_actor` is an already existing `AccountBalanceActor` instance.
       return account_balance_actor
-```
 
 In this example, the ``AccountBalanceActor`` maintains the balance in a single user ID's account. The ``AccountBookkeepingActor`` is responsible for logging and auditing withdrawals and income, possibly passing these audit logs to another actor responsible for detecting fraud.
 
 Instead of returning an already existing *instance* of an ``AccountBalanceActor`` in ``@depends_on``, you can also:
+
 1. Use a factory method to initialize a brand new ``AccountBalanceActor`` instance (since every actor must inherit from ``Actor`` we'll define some helpful factory methods in ``Actor`` which can be used by all subclasses/instances).
 2. Return a subclass of ``Actor`` and it will be initialized for you, proiding all the arguments are available for that actor. This uses the `Inversion of Control`_ pattern. How this works will be left as an implementation detail, but Jumpstarter, given that it knows each ``Actor``'s dependencies and has them all in a graph should be able to satisfy dependencies and inject arguments as long as it's able to find them in an accessible way.
 
 Resources
 ---------
 Actors have resources they manage during their lifetime, such as:
+
 * Connections to databases and message brokers
 * File Handles
 * Synchronization Mechanisms (useful for short-lived actors)
 
 A resource can be an asynchronous context manager or a synchronous context manager. It's entered whenever the Actor is ``starting``, specifically just before the state machine transitions to the ``starting -> resources_acquired`` state.
-It is exited whenever the Actor is stopping, specifically just before the state machine transitions to the ``starting -> resources_released`` state. Given the asynchronous nature of Jumpstarter, resources can be released concurrently (even if there are synchronous resource releases that are run, say, in a thread pool). Additionally, any and every actor, once resources are acquired, will be have `cancel scope`_ (acquired once ``starting -> resources_acquired`` state has been entered) in the that can be used to shut down the worker or cancel any running task(s), whether because of a timeout, a crash, a restart, or some other reason. Even if the task is run in a thread pool, the `cancel_scope` and fact that the Jumpstarter is running in an event loop means that more robust cancellation of tasks may be possible in future versions of Celery than have been up to this point (see https://vorpus.org/blog/timeouts-and-cancellation-for-humans/ for some helpful background on this).
+It is exited whenever the Actor is stopping, specifically just before the state machine transitions to the ``starting -> resources_released`` state. Given the asynchronous nature of Jumpstarter, resources can be released concurrently (even if there are synchronous resource releases that are run, say, in a thread pool). Additionally, any and every actor, once resources are acquired, will be have `cancel scope`_ (acquired once ``starting -> resources_acquired`` state has been entered) in the that can be used to shut down the worker or cancel any running task(s), whether because of a timeout, a crash, a restart, or some other reason. Even if the task is run in a thread pool, the `cancel_scope` and fact that the Jumpstarter is running in an event loop means that more robust cancellation of tasks may be possible in future versions of Celery than have been up to this point (see `Nathaniel Smith's (of Trio) blog <https://vorpus.org/blog/timeouts-and-cancellation-for-humans/>`_ for some helpful background on this).
 
 The proposed public API is as follows:
 

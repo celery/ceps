@@ -78,7 +78,7 @@ It's important to remember that, although that is the technical definition of th
 In Jumpstarter, we've chosen to take direct/literal approach to 3., modeling the state of an Actor using an actual state machine abstraction, namely a `Hierarchical State Machine`_. The difference between a standard State Machine and a Hierarchical State Machine is that a standard State Machine is consistent from states and transitions between them, but in an Hierarchical State Machine, states can also have their own sub-state machines. Hierarchical State Machines help both tame the complexity of large (non-hierarchical) state machines and more clearly model the relationships and transitions between them. To give an example with Jumpstarter, we propose only a small number of parent states:
 
 * Initializing --> The initial state of the Actor when created.
-* Initialized --> he state of the actor when we start it for the very first time.
+* Initialized --> The state of the actor when we start it for the very first time.
 * Starting --> The state of the actor immediately after calling ``actor.start()``. We'll have to transition through a number of substates of ``starting`` first (like starting dependencies, acquiring resources, and starting tasks), which we'll explain in more detail below (think of this like powering on a computer. You typically have to wait a few seconds for the computer to set up its internal state nicely before its fully operational. It also needs to connect to internal and external devices, and be ready for operation, etc.).
 * Stopping --> The state of the actor immediately after calling ``actor.stop()``. We'll have to transition through a number of substates of ``stopping`` first (like stopping tasks, releasing resources, and stopping dependencies), which we'll explain in more detail below (think of this like powering off a computer. You typically have to wait a few seconds for the computer to clean up its internal state nicely before it can fully shut down).
 * Stopped --> The state of the actor after it has finished all of its ``stopping`` activities (think about how when you power off a computer).
@@ -258,7 +258,7 @@ There are two primary motivations to discuss.
 
 For the first motivation, one of Celery's main use cases is to build asynchronous,
 distributed systems that communicate via message passing. The `Actor Model`_, which has
-been around for almost half a century and is a tried and tested way to design and build
+been around for almost half a century is a tried and tested way to design and build
 large-scale concurrent systems. It very much matches what Celery aims to do and has
 shown to have great success in projects like `Akka`_ and many others. The `Actor Model`_
 also works great with Python's ``async/await`` support as messages are able to be
@@ -354,8 +354,6 @@ Copyright
 
 This document has been placed in the public domain per the Creative Commons
 CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/deed).
-
-(All CEPs must include this exact copyright statement.)
 
 .. Next-Gen Celery https://github.com/celery/ceps/blob/master/draft/high-level-architecture.rst
 .. Jumpstarter https://github.com/celery/jumpstarter

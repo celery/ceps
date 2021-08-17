@@ -42,7 +42,7 @@ compatible event loop or used some other workaround.
 
 That leads this CEP, whose purpose is to provide a foundational asynchronous programming
 framework for the broader Python community modeled after the `Actor Model`_, and also
-provide a foundation for `Next-Gen Celery`_ to be built upon. This will, down the line:
+provide a foundation for `Celery Next-Gen`_ to be built upon. This will, down the line:
 
 1. Allow awaiting on an asynchronous task results:
 
@@ -50,10 +50,10 @@ provide a foundation for `Next-Gen Celery`_ to be built upon. This will, down th
 
   await some_task.apply_async(args=(1,2), kwargs={"kwarg1": 3 })
 
-2. Allow definining ``async`` tasks that can utilize ``await``, ``async with``, and all
+2. Allow defining ``async`` tasks that can utilize ``await``, ``async with``, and all
 the other features of Python's ``async/await`` programming model.
 
-  .. code-block:: python
+.. code-block:: python
 
   @task
   async def my_task(...):
@@ -64,14 +64,16 @@ the other features of Python's ``async/await`` programming model.
 Specification
 =============
 
-Jumpstarter is a Python implementation of an `Actor System`_ (which utilizies the `Actor Model`_). There
-are three fundamental axioms within the actor model (quoting the previous Wikipedia link): 
+Jumpstarter is a Python implementation of an `Actor System`_ (which utilizes the `Actor Model`_). There
+are three fundamental axioms within the actor model:
 
-  An actor is a computational entity that, in response to a message it receives, can *concurrently* (emphasis ours):
+  "An actor is a computational entity that, in response to a message it receives, can *concurrently* (emphasis ours):
 
   1. Send a finite number of messages to other actors;
   2. Create a finite number of new actors;
-  3. Designate the behavior to be used for the next message it receives.
+  3. Designate the behavior to be used for the next message it receives."
+
+  -- Wikipedia
 
 It's important to remember that, although that is the technical definition of the actor, the interpretation and implementation of Actors and Actor Systems can be very flexible. Namely, what constitutes a "message" and "state" is very much up to the interpretation of the developer(s) and the system(s) they're using.
 
@@ -160,7 +162,8 @@ Actors may depend on other actors to run before starting themselves. In some cas
 
 The proposed public API is as follows:
 
-  .. code-block:: python
+.. code-block:: python
+
   from jumpstarter import Actor, depends_on
 
   class AccountBalanceActor(Actor):
@@ -196,7 +199,8 @@ It is exited whenever the Actor is stopping, specifically just before the state 
 
 The proposed public API is as follows:
 
-  .. code-block:: python
+.. code-block:: python
+
   from pathlib import Path
 
   from jumpstarter import Actor, resource
@@ -216,7 +220,8 @@ An actor repeatedly runs tasks to fulfill its purpose. Using tasks, the user imp
 
 The proposed public API is:
 
-  .. code-block:: python
+.. code-block:: python
+
   from pathlib import Path
 
   from jumpstarter import Actor, task
@@ -254,7 +259,7 @@ There are two primary motivations to discuss.
 1. The motivation to build `Jumpstarter`_.
 
 2. The motivation to, down the line, use `Jumpstarter`_ as a foundation for parts of
-`Next-Gen Celery`_.
+`Celery Next-Gen`_.
 
 For the first motivation, one of Celery's main use cases is to build asynchronous,
 distributed systems that communicate via message passing. The `Actor Model`_, which has
@@ -264,11 +269,11 @@ shown to have great success in projects like `Akka`_ and many others. The `Actor
 also works great with Python's ``async/await`` support as messages are able to be
 asynchronously sent and awaited upon very efficiently.
 
-`Jumpstarter`_ comes in to fill the spot of being that fundamental/primititve library to
-build `Next-Gen Celery`_ on top of, while simultaneously being a modern implementation
+`Jumpstarter`_ comes in to fill the spot of being that fundamental/primitives library to
+build `Celery Next-Gen`_ on top of, while simultaneously being a modern implementation
 and interpretation of the `Actor Model`_ (and an `Actor System`_, or at least blocks for
 building one) in Python. For reasons why Celery would build its own library instead of
-using an existing Actor framework in Python, see the :ref:`Rationale` below.
+using an existing Actor framework in Python, see the `Rationale`_ below.
 
 For the second motivation, certain bugs and issues in Celery resolve around things like
 chord synchronization/counting errors, very hard to reproduce concurrency issues, canvas
@@ -298,12 +303,12 @@ that takes advantage of all the latest abstractions and innovations in Python's
 either before ``async/await`` or in the earlier stages. 
 
 2. We want something that can be a standalone framework, but that can _also_ be informed by
-the needs of `Next-Gen Celery`_. Hence, we'd like for the Celery organization to
+the needs of `Celery Next-Gen`_. Hence, we'd like for the Celery organization to
 maintain and shepherd the project. We may find that we need to make changes rapidly in
 the beginning, and we'd like to see the project evolve and grow quickly without being
 blocked by other large dependent projects (like some or many of these other libraries
 may be), especially in the beginning. By Celery creating a new library, we can both
-enable rapid development of `Jumpstarter`_ and `Next-Gen Celery`_ now and down the line, while
+enable rapid development of `Jumpstarter`_ and `Celery Next-Gen`_ now and down the line, while
 still providing a framework that the greater Python community may find helpful to build
 other projects off of.
 
@@ -346,8 +351,7 @@ The `Reference Implementation`_ has a nice sketch of how actors might look in
 that's the place to go and start taking a look at the time of writing. Further
 buildout of certain aspects of the reference implementation (which are also
 related to `Celery Next-Gen`_) may be blocked or waiting on some third-party
-library support. One example is we're waiting for an `APScheduler 4.0
-Release`_.
+library support. One example is we're waiting for an `AP Scheduler 4.0 Release`_.
 
 Copyright
 =========
@@ -355,28 +359,27 @@ Copyright
 This document has been placed in the public domain per the Creative Commons
 CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/deed).
 
-.. Next-Gen Celery https://github.com/celery/ceps/blob/master/draft/high-level-architecture.rst
-.. Jumpstarter https://github.com/celery/jumpstarter
-.. Reference Implementation https://github.com/celery/jumpstarter/tree/actor
-.. AP Scheduler 4.0 Release https://github.com/agronholm/apscheduler/issues/465
-.. Next-Gen Rationale https://github.com/celery/ceps/blob/master/draft/high-level-architecture.rst#rationale
-.. Actor Model https://en.wikipedia.org/wiki/Actor_model
-.. Actor System https://doc.akka.io/docs/akka/current/general/actor-systems.html
-.. Celery Pool AsyncIO https://github.com/kai3341/celery-pool-asyncio
-.. Akka https://akka.io/
-.. Pykka https://github.com/jodal/pykka
-.. Mopidy https://github.com/mopidy/mopidy
-.. Cell https://github.com/celery/cell
-.. Thespian https://github.com/thespianpy/Thespian
-.. Pulsar https://github.com/quantmind/pulsar
-.. AsyncIO https://docs.python.org/3/library/asyncio.html
-.. Curio https://github.com/dabeaz/curio
-.. Trio https://github.com/python-trio/trio
-.. Trio-Asyncio https://github.com/python-trio/trio-asyncio
-.. Hierarchical State Machine https://www.eventhelix.com/design-patterns/hierarchical-state-machine/
-.. transitions https://github.com/pytransitions/transitions
-.. transitions-anyio https://github.com/pytransitions/transitions-anyio
-.. transitions-gui https://github.com/pytransitions/transitions-gui
-.. AnyIO https://github.com/agronholm/anyio
-.. cancel scope https://anyio.readthedocs.io/en/stable/api.html#anyio.CancelScope
-.. Inversion of Control https://martinfowler.com/bliki/InversionOfControl.html
+.. _Celery Next-Gen: https://github.com/celery/ceps/blob/master/draft/high-level-architecture.rst
+.. _Jumpstarter: https://github.com/celery/jumpstarter
+.. _Reference Implementation: https://github.com/celery/jumpstarter/tree/actor
+.. _AP Scheduler 4.0 Release: https://github.com/agronholm/apscheduler/issues/465
+.. _Actor Model: https://en.wikipedia.org/wiki/Actor_model
+.. _Actor System: https://doc.akka.io/docs/akka/current/general/actor-systems.html
+.. _Celery Pool AsyncIO: https://github.com/kai3341/celery-pool-asyncio
+.. _Akka: https://akka.io/
+.. _Pykka: https://github.com/jodal/pykka
+.. _Mopidy: https://github.com/mopidy/mopidy
+.. _Cell: https://github.com/celery/cell
+.. _Thespian: https://github.com/thespianpy/Thespian
+.. _Pulsar: https://github.com/quantmind/pulsar
+.. _AsyncIO: https://docs.python.org/3/library/asyncio.html
+.. _Curio: https://github.com/dabeaz/curio
+.. _Trio: https://github.com/python-trio/trio
+.. _Trio-Asyncio: https://github.com/python-trio/trio-asyncio
+.. _Hierarchical State Machine: https://www.eventhelix.com/design-patterns/hierarchical-state-machine/
+.. _transitions: https://github.com/pytransitions/transitions
+.. _transitions-anyio: https://github.com/pytransitions/transitions-anyio
+.. _transitions-gui: https://github.com/pytransitions/transitions-gui
+.. _AnyIO: https://github.com/agronholm/anyio
+.. _cancel scope: https://anyio.readthedocs.io/en/stable/api.html#anyio.CancelScope
+.. _Inversion of Control: https://martinfowler.com/bliki/InversionOfControl.html

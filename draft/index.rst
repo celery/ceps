@@ -13,3 +13,4 @@
    execution-platform.rst
    configuration.rst
    observability.rst
+   jumpstarter.rst

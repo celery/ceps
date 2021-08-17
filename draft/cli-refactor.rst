@@ -149,8 +149,8 @@ In addition the API changed. Previously the following code was required:
         ),
     app.user_options['worker'].add(add_worker_arguments)
 
-With this refactor you either need to set the relevant `user_options` key with a list of
-`click.Option`s or `click.Argument`s or provide a callback which will return those.
+With this refactor you either need to set the relevant ``user_options`` key with a list of
+``click.Option``s or ``click.Argument``'s or provide a callback which will return those.
 
 .. code-block:: python
 
@@ -163,7 +163,7 @@ Preload Options
 
 Preload options are User Options and are subject to the same breaking change.
 
-In addition the signal's sender is now changed to the `click.Context` of the invoked command.
+In addition the signal's sender is now changed to the ``click.Context`` of the invoked command.
 
 Reference Implementation
 ========================

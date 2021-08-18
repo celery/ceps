@@ -14,3 +14,5 @@
    configuration.rst
    observability.rst
    jumpstarter.rst
+   celery-kubernetes-operator.rst
+   cli-refactor.rst

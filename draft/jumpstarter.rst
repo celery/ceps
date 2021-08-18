@@ -77,7 +77,32 @@ are three fundamental axioms within the actor model:
 
 It's important to remember that, although that is the technical definition of the actor, the interpretation and implementation of Actors and Actor Systems can be very flexible. Namely, what constitutes a "message" and "state" is very much up to the interpretation of the developer(s) and the system(s) they're using.
 
-In Jumpstarter, we've chosen to take direct/literal approach to 3., modeling the state of an Actor using an actual state machine abstraction, namely a `Hierarchical State Machine`_. The difference between a standard State Machine and a Hierarchical State Machine is that a standard State Machine is consistent from states and transitions between them, but in an Hierarchical State Machine, states can also have their own sub-state machines. Hierarchical State Machines help both tame the complexity of large (non-hierarchical) state machines and more clearly model the relationships and transitions between them. To give an example with Jumpstarter, we propose only a small number of parent states:
+In Jumpstarter, we've chosen to take direct/literal approach to 3., modeling the state of an Actor using an actual state machine abstraction, namely a `Hierarchical State Machine`_. The difference between a standard State Machine and a Hierarchical State Machine is that a standard State Machine is consistent from states and transitions between them, but in an Hierarchical State Machine, states can also have their own sub-state machines. Hierarchical State Machines help both tame the complexity of large (non-hierarchical) state machines and more clearly model the relationships and transitions between them. 
+
+States
+------
+
+The transitions library exposes an imperative API to define state machines. This is fine for software developers who have interest in employing a state machine or a few of them in their codebase.
+Since Jumpstarter's Actor implementation relies on a state machine, we expect the users of our library to have to use the transitions API for even the simplest of actor implementations.
+
+This presents two major design problems:
+1) We will expose transitions as Jumpstarter's public API. This will create a coupling between the libraries and if transitions introduce a backwards incompatitable change, it will break all Jumpstarter codebases, including Celery.
+2) Using transition's imperative API to define the Actor's state machine is not ergonomic. It requires you to fiddle with the Actor's privates or expose them as public API which is far from desired.
+
+To resolve these problems, we introduce an internal `Domain Specific Language`_ (abbreviated as DSL) for defining states and transitions between them decleratively.
+The difference between an internal DSL and an external one is that an internal DSL uses the host language (Python) to give the host language the feel of a particular language.
+
+In contrast to Ruby or Lisp, Python has been traditionally considered less of a candidate for internal DSLs due to lack of metaprogramming capabilities in Python.
+However, in Python 3 there are ways to create declerative APIs with ease if you get a little bit creative.
+
+Since Python 3.0, we can populate the class' namespace using a metaclass which has a ``__prepare__`` method present.
+This allows us to define the base Actor's state machine in the following fashion:
+
+.. code-block:: python
+   
+   class Actor(metaclass=ActorDSLMeta):
+      (initializing >> initialized >> starting >> starting.dependencies_started >> starting.resources_acquired
+      >> starting.tasks_started >> started)
 
 * Initializing --> The initial state of the Actor when created.
 * Initialized --> The state of the actor when we start it for the very first time.
@@ -383,3 +408,4 @@ CC0 1.0 Universal license (https://creativecommons.org/publicdomain/zero/1.0/dee
 .. _AnyIO: https://github.com/agronholm/anyio
 .. _cancel scope: https://anyio.readthedocs.io/en/stable/api.html#anyio.CancelScope
 .. _Inversion of Control: https://martinfowler.com/bliki/InversionOfControl.html
+.. _Domain Specific Language: https://en.wikipedia.org/wiki/Domain-specific_language

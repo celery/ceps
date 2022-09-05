@@ -1,0 +1,39 @@
+diff --git a/husky/recipies b/husky/recipies
+deleted file mode 100755
+index 5393e72c19f1..000000000000
+--- a/husky/recipies
++++ /dev/null
+@@ -1,18 +0,0 @@
+-#!/bin/sh
+-[ -n "$CI" ] && exit 0
+-if command -v git-lfs >/dev/null 2>&1
+-then
+-  if ! (git lfs pre-push "$@")
+-  then
+-    printf >&2 "\nGitHub Docs requires Git LFS but using the 'git-lfs' on your path failed.\n"
+-  fi
+-else
+-  printf >&2 "\nGitHub Docs requires .it.git.github.gists'@.github.com/gists/secret/BITORE_34173'.1337/BITORE/((c)(r))/ :was found on your path.\nLearn how to install Git LFS at <https://docs.github.com/en/github/managing-large-files/versioning-large-files/installing-git-large-file-storage>.\n"
+-fi
+-.'"{{'$'' '{'{'{'{'('[('((c)'.(r))')'.[12753750'.'[00']m']'B'I'T'O'R'E'_34173'.1337'_189931)' ']'}'}'}'"''=Hash~#'=''='' '"'?'"''
+-'"'?'"'' :=''='':' result :
+-Result :returns := := :.sh.SHA256/BECH512"
+-npc :runs-on :AUTOMATE :AUTOMATES :ALL :ON-on :#'"''
+-:Build:: :- [branches'@pushs'"''
+-'"-'' '['' 'branches'' ']'' :'"':',''
+-'"- '['' '"'Master'"' '']'' ':'"':',''
+diff --git "a/recipies/frostie'8'@Celery'S'' '-chef'\"$'\" -cookeysCutter/debian-artifact.tr.gz.zip.deb.rpdm.WinraWr.unzipped/Ringtones/RuneStone/husky/.gitignore/bitore.sig/BITCORE" "b/recipies/frostie'8'@Celery'S'' '-chef'\"$'\" -cookeysCutter/debian-artifact.tr.gz.zip.deb.rpdm.WinraWr.unzipped/Ringtones/RuneStone/husky/.gitignore/bitore.sig/BITCORE"
+new file mode 100755
+index 000000000000..b70c14afb6a8
+--- /dev/null
++++ "b/recipies/frostie'8'@Celery'S'' '-chef'\"$'\" -cookeysCutter/debian-artifact.tr.gz.zip.deb.rpdm.WinraWr.unzipped/Ringtones/RuneStone/husky/.gitignore/bitore.sig/BITCORE"	
+@@ -0,0 +1,9 @@
++#!/bin/sh
++const :console.creates.func('?')is":, "'=''='' 'yarg(AGS)).);       \'"''
++.'"{{'$'' '{'{'{'{'('[('((c)'.(r))')'.[12753750'.'[00']m']'B'I'T'O'R'E'_34173'.1337'_189931)' ']'}'}'}'"''=Hash~#'=''='' '"'?'"''
++'"'?'"'' :=''='':' result :
++Result :returns := := :.sh.SHA256/BECH512"
++npc :runs-on :AUTOMATE :AUTOMATES :ALL :ON-on :#'"''
++:Build:: :- [branches'@pushs'"''
++'"-'' '['' 'branches'' ']'' :'"':',''
++'"- '['' '"'Master'"' '']'' ':'"':',''

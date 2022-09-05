@@ -13,3 +13,5 @@
    execution-platform.rst
    configuration.rst
    observability.rst
+   celery-kubernetes-operator.rst
+   cli-refactor.rst

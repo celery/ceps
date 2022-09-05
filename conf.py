@@ -67,6 +67,10 @@ html_theme = 'sphinx_celery'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+html_css_files = [
+    'style.css',
+]
+
 
 # -- Extension configuration -------------------------------------------------
 
@@ -77,3 +81,7 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/', None),
     'celery4': ('http://docs.celeryproject.org/en/v4.3.0', None)
 }
+
+suppress_warnings = [
+    'autosectionlabel.draft/features-roadmap',
+]
